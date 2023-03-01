@@ -20,13 +20,6 @@ test {
 	systemProperty("spring.profiles.active", project.properties.get("springProfiles"))
 }
 
-flyway {
-	url = 'jdbc:postgresql://localhost:5432/bookstore?searchpath=public'
-	user = 'postgres'
-	password = 'postgres'
-	locations = ['classpath:db/migration/COMMON', 'classpath:db/migration/DEV']
-}
-
 repositories {
 	mavenCentral()
 }
