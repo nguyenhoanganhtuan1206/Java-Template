@@ -17,10 +17,6 @@ public class BookService {
     public List<Book> findAll() {
         final List<Book> books = bookStore.findAll();
 
-        if (books.size() == 0) {
-            throw new DomainException(HttpStatus.NO_CONTENT, "Book is empty");
-        }
-
         return books;
     }
 }
