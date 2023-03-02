@@ -15,6 +15,6 @@ CREATE TABLE books
 
 INSERT INTO books (name, author, user_id)
 VALUES
-    ('The Lord of the Rings', 'Anh Tuan', (SELECT id FROM users where username='nguyenhanhtuan1206' )),
-    ('Harry Potter', 'Anh Tuan', (SELECT id FROM users where username='nguyenhanhtuan1206' )),
-    ('Three Kingdoms', 'Anh Tuan', (SELECT id FROM users where username='anhtuan2001' ));
+    ('The Lord of the Rings', 'Anh Tuan', '961d553a-b8dd-11ed-afa1-0242ac120002'),
+    ('Harry Potter', 'Anh Tuan', '961d553a-b8dd-11ed-afa1-0242ac120002'),
+    ('Three Kingdoms', 'Anh Tuan', 'be00f232-b8dd-11ed-afa1-0242ac120002');
