@@ -10,5 +10,6 @@ import java.util.UUID;
 public class BookDTO {
 
     private UUID id;
+
     private String name;
 }
