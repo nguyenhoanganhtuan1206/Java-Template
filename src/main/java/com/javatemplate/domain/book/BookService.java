@@ -1,9 +1,7 @@
 package com.javatemplate.domain.book;
 
-import com.javatemplate.error.DomainException;
 import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
