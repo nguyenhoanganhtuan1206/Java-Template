@@ -13,8 +13,6 @@ public class BookService {
     private final BookStore bookStore;
 
     public List<Book> findAll() {
-        final List<Book> books = bookStore.findAll();
-
-        return books;
+        return bookStore.findAll();
     }
 }
