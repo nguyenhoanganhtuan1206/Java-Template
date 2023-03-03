@@ -33,8 +33,9 @@ public class UserStore {
                 .map(UserEntityMapper::toUser);
     }
 
-    public User createUser(final User user) {
-        final Role role = roleStore.findById(user.getRoleId()).orElseThrow(supplyRoleNotFound(user.getRoleId()));
+    public User createOrUpdateUser(final User user) {
+        final Role role = roleStore.findById(user.getRoleId())
+                .orElseThrow(supplyRoleNotFound(user.getRoleId()));
 
         final UserEntity userCreate = UserEntityMapper.toUserEntity(user);
         userCreate.setRole(toRoleEntity(role));

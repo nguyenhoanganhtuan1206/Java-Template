@@ -20,12 +20,24 @@ public class UserService {
     }
 
     public User createUser(final User user) {
-        return userStore.createUser(user);
+        return userStore.createOrUpdateUser(user);
     }
 
     public User findById(final UUID userId) {
         return userStore.findById(userId)
                 .orElseThrow(supplyUserNotFound(userId));
+    }
+
+    public User updateUser(final UUID userId, final User userUpdate) {
+        User user = findById(userId);
+
+        user.setUsername(userUpdate.getUsername());
+        user.setFirstName(userUpdate.getFirstName());
+        user.setLastName(userUpdate.getLastName());
+        user.setAvatar(userUpdate.getAvatar());
+        user.setEnabled(userUpdate.getEnabled());
+
+        return userStore.createOrUpdateUser(user);
     }
 
     public void deleteById(final UUID id) {

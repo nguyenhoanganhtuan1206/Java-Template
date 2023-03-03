@@ -31,6 +31,13 @@ public class UserController {
         return toUserDTO(userService.createUser(toUser(userDTO)));
     }
 
+    @Operation(summary = "Update user")
+    @PatchMapping("/update/{userId}")
+    public UserDTO updateUser(final @RequestBody UserDTO userDTO,
+                              final @PathVariable UUID userId) {
+        return toUserDTO(userService.updateUser(userId, toUser(userDTO)));
+    }
+
     @Operation(summary = "Delete user by Id")
     @DeleteMapping("/delete/{userId}")
     public UserDTO deleteById(final @PathVariable UUID userId) {
