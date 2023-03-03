@@ -37,7 +37,6 @@ public class UserEntity {
 
     private String avatar;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private RoleEntity role;
+    @Column(name = "role_id")
+    private UUID roleId;
 }

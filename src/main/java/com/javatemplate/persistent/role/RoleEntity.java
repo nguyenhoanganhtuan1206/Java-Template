@@ -1,13 +1,11 @@
 package com.javatemplate.persistent.role;
 
-import com.javatemplate.persistent.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +21,4 @@ public class RoleEntity {
     private UUID id;
 
     private String name;
-
-    @OneToMany(mappedBy = "role")
-    private Set<UserEntity> users;
 }

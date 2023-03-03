@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public User createUser(final User user) {
-        return userStore.createOrUpdateUser(user);
+        return userStore.createUser(user);
     }
 
     public User findById(final UUID userId) {
@@ -37,7 +37,7 @@ public class UserService {
         user.setAvatar(userUpdate.getAvatar());
         user.setEnabled(userUpdate.getEnabled());
 
-        return userStore.createOrUpdateUser(user);
+        return userStore.updateUser(user);
     }
 
     public void deleteById(final UUID id) {

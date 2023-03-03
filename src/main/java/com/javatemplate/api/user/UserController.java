@@ -25,6 +25,12 @@ public class UserController {
         return toUsersDTO(userService.findAll());
     }
 
+    @Operation(summary = "Find user by id")
+    @GetMapping("/{userId}")
+    public UserDTO findById(final @PathVariable UUID userId) {
+        return toUserDTO(userService.findById(userId));
+    }
+
     @Operation(summary = "Create user")
     @PostMapping("/create")
     public UserDTO createUser(final @RequestBody UserDTO userDTO) {
