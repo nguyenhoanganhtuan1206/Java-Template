@@ -1,4 +1,4 @@
-package com.javatemplate.domain.user;
+package com.javatemplate.api.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class User {
+public class UserDTO {
 
     private UUID id;
 
