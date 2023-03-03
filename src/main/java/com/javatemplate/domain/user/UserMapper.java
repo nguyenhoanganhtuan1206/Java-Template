@@ -10,7 +10,6 @@ public class UserMapper {
         return User.builder()
                 .id(userDTO.getId())
                 .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
                 .firstName(userDTO.getFirstName())
                 .lastName(userDTO.getLastName())
                 .avatar(userDTO.getAvatar())

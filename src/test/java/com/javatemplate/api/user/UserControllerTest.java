@@ -42,7 +42,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName()))
                 .andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName()))
                 .andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled()))
-                .andExpect(jsonPath("$[0].password").value(users.get(0).getPassword()))
                 .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()))
                 .andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId()));
 
@@ -61,7 +60,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
-                .andExpect(jsonPath("$.password").value(user.getPassword()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
                 .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
 
@@ -69,14 +67,15 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser() {
+    void shouldCreateUser_Ok() {
+
     }
 
     @Test
-    void updateUser() {
+    void shouldUpdateUser_Ok() {
     }
 
     @Test
-    void deleteById() {
+    void shouldDeleteById_Ok() {
     }
 }
