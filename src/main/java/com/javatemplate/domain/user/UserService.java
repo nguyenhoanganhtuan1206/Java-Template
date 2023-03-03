@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
 
 @Service
@@ -21,6 +23,14 @@ public class UserService {
 
     public User createUser(final User user) {
         return userStore.createUser(user);
+    }
+
+    public void verifyUserAvailable(final User user) {
+        final Optional<User> userOptional = userStore.findByUsername(user.getUsername());
+
+        if (userOptional.isPresent()) {
+            throw supplyUserExisted(user.getUsername()).get();
+        }
     }
 
     public User findById(final UUID userId) {
