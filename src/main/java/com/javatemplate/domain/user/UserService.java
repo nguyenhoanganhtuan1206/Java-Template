@@ -20,7 +20,6 @@ public class UserService {
     }
 
     public User createUser(final User user) {
-        // Find role by name in here
         return userStore.createUser(user);
     }
 }

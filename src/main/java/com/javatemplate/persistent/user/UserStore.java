@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.javatemplate.domain.role.RoleError.supplyRoleNotFound;
+import static com.javatemplate.persistent.role.RoleEntityMapper.toRoleEntity;
+import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
 import static com.javatemplate.persistent.user.UserEntityMapper.toUsers;
 import static org.apache.commons.collections4.IterableUtils.toList;
 
@@ -25,10 +27,11 @@ public class UserStore {
     }
 
     public User createUser(final User user) {
-        final Role role = roleStore.findById(user.getRoleId())
-                .orElseThrow(supplyRoleNotFound(user.getRoleId()));
+        final Role role = roleStore.findById(user.getRoleId()).orElseThrow(supplyRoleNotFound(user.getRoleId()));
 
         final UserEntity userCreate = UserEntityMapper.toUserEntity(user);
-        return null;
+        userCreate.setRole(toRoleEntity(role));
+
+        return toUser(userRepository.save(userCreate));
     }
 }

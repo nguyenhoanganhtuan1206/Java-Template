@@ -12,4 +12,11 @@ public class RoleEntityMapper {
                 .name(roleEntity.getName())
                 .build();
     }
+
+    public static RoleEntity toRoleEntity(final Role role) {
+        return RoleEntity.builder()
+                .id(role.getId())
+                .name(role.getName())
+                .build();
+    }
 }

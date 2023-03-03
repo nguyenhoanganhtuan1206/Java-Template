@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.api.user.UserDTOMapper.toUsersDTO;
+import static com.javatemplate.domain.user.UserMapper.toUser;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -22,7 +24,6 @@ public class UserController {
 
     @PostMapping
     public UserDTO createUser(final @RequestBody UserDTO userDTO) {
-
-        return null;
+        return toUserDTO(userService.createUser(toUser(userDTO)));
     }
 }
