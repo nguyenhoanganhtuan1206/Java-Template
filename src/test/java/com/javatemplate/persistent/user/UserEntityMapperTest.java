@@ -2,10 +2,8 @@ package com.javatemplate.persistent.user;
 
 import org.junit.jupiter.api.Test;
 
-import static com.javatemplate.fakes.UserFakes.buildUserEntity;
-import static com.javatemplate.fakes.UserFakes.builderUserEntities;
-import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
-import static com.javatemplate.persistent.user.UserEntityMapper.toUsers;
+import static com.javatemplate.fakes.UserFakes.*;
+import static com.javatemplate.persistent.user.UserEntityMapper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserEntityMapperTest {
@@ -32,8 +30,15 @@ class UserEntityMapperTest {
     }
 
     @Test
-    void toUserEntity() {
-        final var user = buildUserEntity();
-        ;
+    void shouldToUserEntity_Ok() {
+        final var user = buildUser();
+        final var userEntity = toUserEntity(user);
+
+        assertEquals(userEntity.getId(), user.getId());
+        assertEquals(userEntity.getUsername(), user.getUsername());
+        assertEquals(userEntity.getFirstName(), user.getFirstName());
+        assertEquals(userEntity.getLastName(), user.getLastName());
+        assertEquals(userEntity.getAvatar(), user.getAvatar());
+        assertEquals(userEntity.getEnabled(), user.getEnabled());
     }
 }
