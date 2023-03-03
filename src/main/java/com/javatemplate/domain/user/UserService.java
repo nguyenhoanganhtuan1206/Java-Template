@@ -22,6 +22,8 @@ public class UserService {
     }
 
     public User createUser(final User user) {
+        verifyUserAvailable(user);
+
         return userStore.createUser(user);
     }
 

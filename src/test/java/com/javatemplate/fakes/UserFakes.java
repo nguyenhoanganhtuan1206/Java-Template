@@ -17,6 +17,11 @@ public class UserFakes {
         return User.builder()
                 .id(randomUUID())
                 .username(randomAlphabetic(3, 10))
+                .firstName(randomAlphabetic(3, 10))
+                .lastName(randomAlphabetic(3, 10))
+                .avatar(randomAlphabetic(3, 10))
+                .roleId(randomUUID())
+                .enabled(Boolean.TRUE)
                 .build();
     }
 
@@ -29,7 +34,12 @@ public class UserFakes {
     public static UserEntity buildUserEntity() {
         return UserEntity.builder()
                 .id(randomUUID())
+                .username(randomAlphabetic(3, 10))
                 .firstName(randomAlphabetic(3, 10))
+                .lastName(randomAlphabetic(3, 10))
+                .avatar(randomAlphabetic(3, 10))
+                .roleId(randomUUID())
+                .enabled(Boolean.TRUE)
                 .build();
     }
 

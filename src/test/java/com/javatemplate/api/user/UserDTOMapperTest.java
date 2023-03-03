@@ -25,9 +25,9 @@ class UserDTOMapperTest {
 
     @Test
     void shouldToUsersDTO_Ok() {
-        final var books = buildUsers();
-        final var booksDTO = toUsersDTO(books);
+        final var users = buildUsers();
+        final var userDTOS = toUsersDTO(users);
 
-        assertEquals(books.size(), booksDTO.size());
+        assertEquals(userDTOS.size(), users.size());
     }
 }

@@ -1,11 +1,13 @@
 package com.javatemplate.api.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javatemplate.domain.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -67,12 +69,44 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldCreateUser_Ok() {
+    void shouldCreateUser_Ok() throws Exception {
+        final var user = buildUser();
 
+        when(userService.createUser(user)).thenReturn(user);
+
+        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+
+        verify(userService).createUser(user);
     }
 
     @Test
-    void shouldUpdateUser_Ok() {
+    void shouldUpdateUser_Ok() throws Exception {
+        final var user = buildUser();
+        final var userUpdated = buildUser();
+
+        when(userService.updateUser(user.getId(), userUpdated)).thenReturn(userUpdated);
+
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+
+        verify(userService).updateUser(user.getId(), userUpdated);
     }
 
     @Test
