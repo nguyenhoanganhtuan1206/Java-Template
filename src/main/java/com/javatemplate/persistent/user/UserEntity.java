@@ -21,15 +21,12 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "username")
     private String username;
 
     private String password;
 
-    @Column(name = "firstname")
     private String firstName;
 
-    @Column(name = "lastname")
     private String lastName;
 
     private Boolean enabled;
