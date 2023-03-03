@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.javatemplate.domain.role.RoleError.supplyRoleNotFound;
 import static com.javatemplate.persistent.role.RoleEntityMapper.toRoleEntity;
@@ -26,6 +28,11 @@ public class UserStore {
         return toUsers(toList(userRepository.findAll()));
     }
 
+    public Optional<User> findById(final UUID userId) {
+        return userRepository.findById(userId)
+                .map(UserEntityMapper::toUser);
+    }
+
     public User createUser(final User user) {
         final Role role = roleStore.findById(user.getRoleId()).orElseThrow(supplyRoleNotFound(user.getRoleId()));
 
@@ -33,5 +40,9 @@ public class UserStore {
         userCreate.setRole(toRoleEntity(role));
 
         return toUser(userRepository.save(userCreate));
+    }
+
+    public void deleteById(final UUID id) {
+        userRepository.deleteById(id);
     }
 }
