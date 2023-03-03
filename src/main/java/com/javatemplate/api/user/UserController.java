@@ -2,9 +2,7 @@ package com.javatemplate.api.user;
 
 import com.javatemplate.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +18,11 @@ public class UserController {
     @GetMapping
     public List<UserDTO> findAll() {
         return toUsersDTO(userService.findAll());
+    }
+
+    @PostMapping
+    public UserDTO createUser(final @RequestBody UserDTO userDTO) {
+
+        return null;
     }
 }

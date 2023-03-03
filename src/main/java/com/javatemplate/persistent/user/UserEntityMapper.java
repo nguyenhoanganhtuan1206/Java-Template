@@ -5,6 +5,9 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
+
 @UtilityClass
 public class UserEntityMapper {
 
@@ -17,13 +20,25 @@ public class UserEntityMapper {
                 .lastName(user.getLastName())
                 .avatar(user.getAvatar())
                 .enabled(user.getEnabled())
-                .role(user.getRole().getName())
+                .roleId(user.getRole().getId())
                 .build();
     }
 
     public static List<User> toUsers(final List<UserEntity> userEntities) {
-        return userEntities.stream()
+        return emptyIfNull(userEntities.stream()
                 .map(UserEntityMapper::toUser)
-                .toList();
+                .toList());
+    }
+
+    public static UserEntity toUserEntity(final User user) {
+        return UserEntity.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .avatar(user.getAvatar())
+                .enabled(user.getEnabled())
+                .build();
     }
 }

@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
 @UtilityClass
 public class UserDTOMapper {
 
@@ -17,13 +19,13 @@ public class UserDTOMapper {
                 .lastName(user.getLastName())
                 .avatar(user.getAvatar())
                 .enabled(user.getEnabled())
-                .role(user.getRole())
+                .roleId(user.getRoleId())
                 .build();
     }
 
     public static List<UserDTO> toUsersDTO(final List<User> users) {
-        return users.stream()
+        return emptyIfNull(users.stream()
                 .map(UserDTOMapper::toUserDTO)
-                .toList();
+                .toList());
     }
 }

@@ -17,6 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserEntity {
 
+    public static final String ID_FIELD = "id";
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

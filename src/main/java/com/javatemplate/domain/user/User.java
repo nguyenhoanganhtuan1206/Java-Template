@@ -23,5 +23,5 @@ public class User {
 
     private String avatar;
 
-    private String role;
+    private UUID roleId;
 }
