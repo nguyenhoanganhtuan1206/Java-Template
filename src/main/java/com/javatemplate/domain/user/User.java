@@ -1,0 +1,28 @@
+package com.javatemplate.domain.user;
+
+import com.javatemplate.persistent.role.RoleEntity;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.util.UUID;
+
+@Getter
+@Builder
+public class User {
+
+    private UUID id;
+
+    private String username;
+
+    private String password;
+
+    private String firstName;
+
+    private String lastName;
+
+    private Boolean enabled;
+
+    private String avatar;
+
+    private RoleEntity role;
+}
