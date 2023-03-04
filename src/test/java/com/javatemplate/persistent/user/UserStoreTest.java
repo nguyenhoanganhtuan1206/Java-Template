@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.javatemplate.fakes.UserFakes.buildUserEntity;
-import static com.javatemplate.fakes.UserFakes.builderUserEntities;
+import static com.javatemplate.fakes.UserFakes.*;
+import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,14 +85,19 @@ class UserStoreTest {
     }
 
     @Test
-    void createUser() {
+    void shouldCreateUser_Ok() {
+        final var userEntity = buildUserEntity();
+        final var user = buildUser();
+
+        assertEquals(userStore.createUser(user), toUser(userEntity));
+        verify(userRepository).save(userEntity);
     }
 
     @Test
-    void updateUser() {
+    void shouldUpdateUser_Ok() {
     }
 
     @Test
-    void deleteById() {
+    void shouldDeleteById_Ok() {
     }
 }
