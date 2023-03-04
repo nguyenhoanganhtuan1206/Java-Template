@@ -20,7 +20,6 @@ public class UserFakes {
                 .firstName(randomAlphabetic(3, 10))
                 .lastName(randomAlphabetic(3, 10))
                 .avatar(randomAlphabetic(3, 10))
-                .roleId(randomUUID())
                 .enabled(Boolean.TRUE)
                 .build();
     }

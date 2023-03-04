@@ -95,6 +95,23 @@ class UserStoreTest {
 
     @Test
     void shouldUpdateUser_Ok() {
+        final var user = buildUserEntity();
+        final var userUpdate = buildUserEntity();
+
+        when(userRepository.findById(user.getId()))
+                .thenReturn(Optional.of(user));
+        when(userRepository.save(user))
+                .thenReturn(user);
+
+        final var expected = userStore.updateUser(toUser(userUpdate));
+
+        assertEquals(expected.getUsername(), userUpdate.getUsername());
+        assertEquals(expected.getFirstName(), userUpdate.getFirstName());
+        assertEquals(expected.getLastName(), userUpdate.getLastName());
+        assertEquals(expected.getAvatar(), userUpdate.getAvatar());
+        assertEquals(expected.getEnabled(), userUpdate.getEnabled());
+
+        verify(userRepository).save(user);
     }
 
     @Test

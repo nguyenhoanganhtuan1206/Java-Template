@@ -119,7 +119,12 @@ class UserServiceTest {
 
         final var expected = userService.updateUser(user.getId(), userUpdate);
 
+        assertEquals(expected.getUsername(), userUpdate.getUsername());
+        assertEquals(expected.getFirstName(), userUpdate.getFirstName());
+        assertEquals(expected.getLastName(), userUpdate.getLastName());
+        assertEquals(expected.getAvatar(), userUpdate.getAvatar());
         assertEquals(expected.getEnabled(), userUpdate.getEnabled());
+
         verify(userStore).updateUser(user);
     }
 

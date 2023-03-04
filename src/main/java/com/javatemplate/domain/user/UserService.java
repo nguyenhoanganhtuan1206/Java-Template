@@ -43,7 +43,6 @@ public class UserService {
     public User updateUser(final UUID userId, final User userUpdate) {
         User user = findById(userId);
 
-        user.setId(userUpdate.getId());
         user.setUsername(userUpdate.getUsername());
         user.setFirstName(userUpdate.getFirstName());
         user.setLastName(userUpdate.getLastName());
