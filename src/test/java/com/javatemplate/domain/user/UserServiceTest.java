@@ -49,7 +49,16 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser() {
+    void shouldCreateUser_Ok() {
+        final var user = buildUser();
+
+        when(userStore.createUser(user))
+                .thenReturn(user);
+
+        final var userCreated = userService.createUser(user);
+
+        assertEquals(user, userCreated);
+        verify(userStore).createUser(user);
     }
 
     @Test
@@ -98,10 +107,27 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUser() {
+    void shouldUpdateUser_Ok() {
+        final var user = buildUser();
+        final var userUpdate = buildUser();
+
+        /* This method will perform findById */
+        when(userStore.findById(user.getId()))
+                .thenReturn(Optional.of(user));
+        when(userStore.updateUser(user))
+                .thenReturn(user);
+
+        final var expected = userService.updateUser(user.getId(), userUpdate);
+
+        assertEquals(expected.getEnabled(), userUpdate.getEnabled());
+        verify(userStore).updateUser(user);
     }
 
     @Test
-    void deleteById() {
+    void shouldDeleteById_Ok() {
+        final var user = buildUser();
+
+        userService.deleteById(user.getId());
+        verify(userStore).deleteById(user.getId());
     }
 }
