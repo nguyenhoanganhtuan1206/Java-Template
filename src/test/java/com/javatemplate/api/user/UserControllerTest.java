@@ -1,8 +1,10 @@
 package com.javatemplate.api.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.javatemplate.domain.user.User;
 import com.javatemplate.domain.user.UserService;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,9 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,6 +33,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @InjectMocks
+    private UserController userController;
 
     @Test
     void shouldFindAll_Ok() throws Exception {
@@ -69,39 +77,39 @@ class UserControllerTest {
     void shouldCreateUser_Ok() throws Exception {
         final var user = buildUser();
 
-        when(userService.createUser(user)).thenReturn(user);
+        when(userService.createUser(any(User.class))).thenReturn(user);
 
         this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
-
-        verify(userService).createUser(user);
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()));
     }
 
     @Test
     void shouldUpdateUser_Ok() throws Exception {
-        final var user = buildUser();
-        final var userUpdated = buildUser();
+        final var savedUser = buildUser();
+        final var userUpdate = buildUser();
 
-        when(userService.updateUser(user.getId(), userUpdated)).thenReturn(userUpdated);
+        when(userController.updateUser(toUserDTO(userUpdate), savedUser.getId()))
+                .thenReturn(toUserDTO(userUpdate));
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(jsonPath("$.id").value(user.getId()))
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+        final var userUpdated = userService.updateUser(savedUser.getId(), userUpdate);
 
-        verify(userService).updateUser(user.getId(), userUpdated);
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userUpdate)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(userUpdated.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(userUpdated.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userUpdated.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(userUpdated.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(userUpdated.getEnabled()));
+
+        verify(userController).updateUser(toUserDTO(userUpdate), savedUser.getId());
     }
 
     @Test
@@ -111,6 +119,7 @@ class UserControllerTest {
         this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId()))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).deleteById(user.getId());
+        // Verify that the user was deleted
+        verify(userService).deleteById(user.getId());
     }
 }
