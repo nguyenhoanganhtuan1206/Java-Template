@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,8 +43,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName()))
                 .andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName()))
                 .andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled()))
-                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()))
-                .andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId()));
+                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar())).andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId()));
 
         verify(userService).findAll();
     }
@@ -94,12 +92,25 @@ class UserControllerTest {
 
         when(userService.updateUser(user.getId(), userUpdated)).thenReturn(userUpdated);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(user))).andExpect(jsonPath("$.id").value(user.getId())).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar())).andExpect(jsonPath("$.enabled").value(user.getEnabled())).andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
 
         verify(userService).updateUser(user.getId(), userUpdated);
     }
 
     @Test
     void shouldDeleteById_Ok() throws Exception {
+        final var user = buildUser();
+
+        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId()))
+                .andExpect(status().isOk());
+
+        verify(userService, times(1)).deleteById(user.getId());
     }
 }
