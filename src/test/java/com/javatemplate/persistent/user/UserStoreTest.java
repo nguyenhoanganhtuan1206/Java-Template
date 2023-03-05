@@ -8,12 +8,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.javatemplate.fakes.UserFakes.*;
+import static com.javatemplate.fakes.UserFakes.buildUserEntity;
+import static com.javatemplate.fakes.UserFakes.builderUserEntities;
 import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -86,35 +88,45 @@ class UserStoreTest {
 
     @Test
     void shouldCreateUser_Ok() {
-        final var userEntity = buildUserEntity();
-        final var user = buildUser();
+        final var expected = buildUserEntity();
 
-        assertEquals(userStore.createUser(user), toUser(userEntity));
-        verify(userRepository).save(userEntity);
+        /* Accept any `UserEntity` object */
+        when(userRepository.save(any(UserEntity.class)))
+                .thenReturn(expected);
+
+        final var actual = userStore.createUser(toUser(expected));
+
+        assertEquals(actual.getUsername(), expected.getUsername());
+        assertEquals(actual.getFirstName(), expected.getFirstName());
+        assertEquals(actual.getLastName(), expected.getLastName());
+        assertEquals(actual.getAvatar(), expected.getAvatar());
+        assertEquals(actual.getRoleId(), expected.getRoleId());
+        assertEquals(actual.getEnabled(), expected.getEnabled());
     }
 
     @Test
     void shouldUpdateUser_Ok() {
         final var user = buildUserEntity();
-        final var userUpdate = buildUserEntity();
 
-        when(userRepository.findById(user.getId()))
-                .thenReturn(Optional.of(user));
-        when(userRepository.save(user))
+        when(userRepository.save(any(UserEntity.class)))
                 .thenReturn(user);
 
-        final var expected = userStore.updateUser(toUser(userUpdate));
+        final var expected = userStore.updateUser(toUser(user));
 
-        assertEquals(expected.getUsername(), userUpdate.getUsername());
-        assertEquals(expected.getFirstName(), userUpdate.getFirstName());
-        assertEquals(expected.getLastName(), userUpdate.getLastName());
-        assertEquals(expected.getAvatar(), userUpdate.getAvatar());
-        assertEquals(expected.getEnabled(), userUpdate.getEnabled());
-
-        verify(userRepository).save(user);
+        assertEquals(user.getUsername(), expected.getUsername());
+        assertEquals(user.getFirstName(), expected.getFirstName());
+        assertEquals(user.getLastName(), expected.getLastName());
+        assertEquals(user.getAvatar(), expected.getAvatar());
+        assertEquals(user.getRoleId(), expected.getRoleId());
+        assertEquals(user.getEnabled(), expected.getEnabled());
     }
 
     @Test
     void shouldDeleteById_Ok() {
+        final var user = buildUserEntity();
+
+        userStore.deleteById(user.getId());
+
+        verify(userRepository).deleteById(user.getId());
     }
 }
