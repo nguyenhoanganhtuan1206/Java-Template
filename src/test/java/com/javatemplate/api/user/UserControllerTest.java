@@ -57,8 +57,7 @@ class UserControllerTest {
         when(userService.findById(user.getId())).thenReturn(user);
 
         this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
@@ -95,21 +94,12 @@ class UserControllerTest {
 
         when(userService.updateUser(user.getId(), userUpdated)).thenReturn(userUpdated);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(user)))
-                .andExpect(jsonPath("$.id").value(user.getId()))
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(user.getEnabled()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + user.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(user))).andExpect(jsonPath("$.id").value(user.getId())).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar())).andExpect(jsonPath("$.enabled").value(user.getEnabled())).andExpect(jsonPath("$.roleId").value(user.getRoleId()));
 
         verify(userService).updateUser(user.getId(), userUpdated);
     }
 
     @Test
-    void shouldDeleteById_Ok() {
+    void shouldDeleteById_Ok() throws Exception {
     }
 }
