@@ -54,6 +54,8 @@ public class UserService {
     }
 
     public void deleteById(final UUID id) {
-        userStore.deleteById(id);
+        final User user = findById(id);
+
+        userStore.deleteById(user.getId());
     }
 }
