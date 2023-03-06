@@ -1,7 +1,7 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
-import com.javatemplate.error.UserExistedException;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,8 +52,7 @@ class UserServiceTest {
     void shouldCreateUser_Ok() {
         final var user = buildUser();
 
-        when(userStore.createUser(user))
-                .thenReturn(user);
+        when(userStore.createUser(user)).thenReturn(user);
 
         final var userCreated = userService.createUser(user);
 
@@ -62,13 +61,22 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldCreateUser_Existed() {
+        final var user = buildUser();
+
+        when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+
+        assertThrows(BadRequestException.class, () -> userService.createUser(user));
+        verify(userStore).findByUsername(user.getUsername());
+    }
+
+    @Test
     void shouldVerifyUserAvailable_Existed() {
         final var user = buildUser();
 
-        when(userStore.findByUsername(user.getUsername()))
-                .thenReturn(Optional.of(user));
+        when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        assertThrows(UserExistedException.class, () -> userService.verifyUserAvailable(user));
+        assertThrows(BadRequestException.class, () -> userService.verifyUserAvailable(user));
         verify(userStore).findByUsername(user.getUsername());
     }
 
@@ -77,8 +85,7 @@ class UserServiceTest {
         final var username = randomAlphabetic(3, 10);
         final User newUser = User.builder().username(username).build();
 
-        when(userStore.findByUsername(username))
-                .thenReturn(Optional.empty());
+        when(userStore.findByUsername(username)).thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> userService.verifyUserAvailable(newUser));
     }
@@ -87,8 +94,7 @@ class UserServiceTest {
     void shouldFindById_Ok() {
         final var expected = buildUser();
 
-        when(userStore.findById(expected.getId()))
-                .thenReturn(Optional.of(expected));
+        when(userStore.findById(expected.getId())).thenReturn(Optional.of(expected));
 
         assertEquals(expected, userService.findById(expected.getId()));
 
@@ -99,8 +105,7 @@ class UserServiceTest {
     void shouldFindById_Throw() {
         final var uuid = randomUUID();
 
-        when(userStore.findById(uuid))
-                .thenReturn(Optional.empty());
+        when(userStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> userService.findById(uuid));
         verify(userStore).findById(uuid);
@@ -114,10 +119,8 @@ class UserServiceTest {
         userUpdate.setRoleId(user.getRoleId());
 
         /* This method will perform findById */
-        when(userStore.findById(user.getId()))
-                .thenReturn(Optional.of(user));
-        when(userStore.updateUser(user))
-                .thenReturn(user);
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userStore.updateUser(user)).thenReturn(user);
 
         final var expected = userService.updateUser(user.getId(), userUpdate);
 

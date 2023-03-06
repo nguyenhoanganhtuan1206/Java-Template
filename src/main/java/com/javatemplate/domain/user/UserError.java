@@ -1,7 +1,7 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
-import com.javatemplate.error.UserExistedException;
 import lombok.experimental.UtilityClass;
 
 import java.util.UUID;
@@ -14,7 +14,7 @@ public class UserError {
         return () -> new NotFoundException("User with id %s not found", id);
     }
 
-    public static Supplier<UserExistedException> supplyUserExisted(final String username) {
-        return () -> new UserExistedException("User %s is already existing", username);
+    public static Supplier<BadRequestException> supplyUserExisted(final String username) {
+        return () -> new BadRequestException("User %s is already existing", username);
     }
 }

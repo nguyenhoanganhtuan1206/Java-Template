@@ -79,8 +79,7 @@ class UserStoreTest {
         final var username = randomAlphabetic(3, 10);
         final Optional<UserEntity> userOpt = Optional.empty();
 
-        when(userRepository.findByUsername(username))
-                .thenReturn(userOpt);
+        when(userRepository.findByUsername(username)).thenReturn(userOpt);
 
         assertFalse(userRepository.findByUsername(username).isPresent());
         verify(userRepository).findByUsername(username);
@@ -90,9 +89,7 @@ class UserStoreTest {
     void shouldCreateUser_Ok() {
         final var expected = buildUserEntity();
 
-        /* Accept any `UserEntity` object */
-        when(userRepository.save(any(UserEntity.class)))
-                .thenReturn(expected);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(expected);
 
         final var actual = userStore.createUser(toUser(expected));
 
@@ -109,8 +106,7 @@ class UserStoreTest {
     void shouldUpdateUser_Ok() {
         final var user = buildUserEntity();
 
-        when(userRepository.save(any(UserEntity.class)))
-                .thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
 
         final var expected = userStore.updateUser(toUser(user));
 

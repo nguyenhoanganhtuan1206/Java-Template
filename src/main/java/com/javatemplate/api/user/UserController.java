@@ -3,7 +3,6 @@ package com.javatemplate.api.user;
 import com.javatemplate.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,10 +45,8 @@ public class UserController {
     }
 
     @Operation(summary = "Delete user by Id")
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteById(final @PathVariable UUID userId) {
+    @DeleteMapping("/{userId}")
+    public void deleteById(final @PathVariable UUID userId) {
         userService.deleteById(userId);
-
-        return ResponseEntity.ok().build();
     }
 }

@@ -42,7 +42,6 @@ public class UserService {
 
     public User updateUser(final UUID userId, final User userUpdate) {
         final User user = findById(userId);
-        System.out.println("user" + user.getUsername());
 
         user.setUsername(userUpdate.getUsername());
         user.setFirstName(userUpdate.getFirstName());
