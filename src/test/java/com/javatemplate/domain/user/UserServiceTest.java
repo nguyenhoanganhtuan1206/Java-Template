@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import static com.javatemplate.fakes.UserFakes.buildUsers;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -187,5 +189,36 @@ class UserServiceTest {
 
         assertThrows(BadRequestException.class, () -> userService.findByName(username));
         verify(userStore).findByUsername(username);
+    }
+
+    @Test
+    void shouldFindByUsernameOrFirstNameOrLastName_Ok() {
+        final var user = buildUser();
+        final var expected = buildUsers();
+
+        when(userStore.findByUsernameOrFirstNameOrLastName(anyString()))
+                .thenReturn(expected);
+
+        final var actual = userService.findByUsernameOrFirstNameOrLastName(user.getUsername());
+
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected.get(0).getId(), actual.get(0).getId());
+        assertEquals(expected.get(0).getUsername(), actual.get(0).getUsername());
+        assertEquals(expected.get(0).getFirstName(), actual.get(0).getFirstName());
+        assertEquals(expected.get(0).getLastName(), actual.get(0).getLastName());
+        assertEquals(expected.get(0).getEnabled(), actual.get(0).getEnabled());
+        assertEquals(expected.get(0).getRoleId(), actual.get(0).getRoleId());
+        assertEquals(expected.get(0).getAvatar(), actual.get(0).getAvatar());
+    }
+
+    @Test
+    void shouldFindByUsernameOrFirstNameOrLastName_Thrown() {
+        final var username = randomAlphabetic(3, 10);
+
+        when(userStore.findByUsernameOrFirstNameOrLastName(username))
+                .thenReturn(Collections.emptyList());
+
+        assertThrows(NotFoundException.class, () -> userService.findByUsernameOrFirstNameOrLastName(username));
+        verify(userStore).findByUsernameOrFirstNameOrLastName(username);
     }
 }

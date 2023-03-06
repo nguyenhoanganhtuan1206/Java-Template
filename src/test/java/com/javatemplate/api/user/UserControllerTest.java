@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -73,21 +72,24 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldDeleteByName_Ok() throws Exception {
+    void shouldFindByName_Ok() throws Exception {
         final var user = buildUser();
+        final var expected = buildUsers();
 
-        when(userService.findByName(user.getUsername())).thenReturn(user);
+        when(userService.findByUsernameOrFirstNameOrLastName(anyString())).thenReturn(expected);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?username=" + user.getUsername()))
+        final var actual = userService.findByUsernameOrFirstNameOrLastName(user.getUsername());
+
+        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?name=" + user.getUsername()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId().toString()))
-                .andExpect(jsonPath("$.username").value(user.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
-
-        verify(userService).findByName(user.getUsername());
+                .andExpect(jsonPath("$.length()").value(actual.size()))
+                .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
+                .andExpect(jsonPath("$[0].username").value(actual.get(0).getUsername()))
+                .andExpect(jsonPath("$[0].firstName").value(actual.get(0).getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(actual.get(0).getLastName()))
+                .andExpect(jsonPath("$[0].enabled").value(actual.get(0).getEnabled()))
+                .andExpect(jsonPath("$[0].avatar").value(actual.get(0).getAvatar()))
+                .andExpect(jsonPath("$[0].roleId").value(actual.get(0).getRoleId().toString()));
     }
 
     @Test

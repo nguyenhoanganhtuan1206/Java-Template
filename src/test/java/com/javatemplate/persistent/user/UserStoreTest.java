@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.javatemplate.fakes.UserFakes.buildUserEntity;
@@ -13,9 +14,9 @@ import static com.javatemplate.fakes.UserFakes.builderUserEntities;
 import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -143,5 +144,34 @@ class UserStoreTest {
         userStore.deleteById(user.getId());
 
         verify(userRepository).deleteById(user.getId());
+    }
+
+    @Test
+    void shouldFindByUsernameOrFirstNameOrLastName_Ok() {
+        final var user = buildUserEntity();
+        final var expected = builderUserEntities();
+
+        when(userRepository.findByUsernameOrFirstNameOrLastName(anyString()))
+                .thenReturn(expected);
+
+        final var actual = userStore.findByUsernameOrFirstNameOrLastName(user.getUsername());
+
+        assertEquals(actual.size(), expected.size());
+
+        verify(userRepository).findByUsernameOrFirstNameOrLastName(user.getUsername());
+    }
+
+    @Test
+    void shouldFindByUsernameOrFirstNameOrLastName_Empty() {
+        final var username = randomAlphabetic(3, 10);
+
+        when(userRepository.findByUsernameOrFirstNameOrLastName(username))
+                .thenReturn(Collections.emptyList());
+
+        final var actual = userStore.findByUsernameOrFirstNameOrLastName(username);
+
+        assertTrue(actual.isEmpty());
+
+        verify(userRepository).findByUsernameOrFirstNameOrLastName(username);
     }
 }
