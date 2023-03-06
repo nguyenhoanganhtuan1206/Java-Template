@@ -39,6 +39,11 @@ class BookServiceTest {
         assertEquals(expected.size(), actual.size());
         assertEquals(expected.get(0).getId(), actual.get(0).getId());
         assertEquals(expected.get(0).getName(), actual.get(0).getName());
+        assertEquals(expected.get(0).getAuthor(), actual.get(0).getAuthor());
+        assertEquals(expected.get(0).getUserId(), actual.get(0).getUserId());
+        assertEquals(expected.get(0).getUpdatedAt(), actual.get(0).getUpdatedAt());
+        assertEquals(expected.get(0).getCreatedAt(), actual.get(0).getCreatedAt());
+        assertEquals(expected.get(0).getImage(), actual.get(0).getImage());
 
         verify(bookStore).findAll();
     }

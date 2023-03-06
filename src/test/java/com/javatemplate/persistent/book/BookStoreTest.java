@@ -6,8 +6,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static com.javatemplate.fakes.BookFakes.buildBookEntities;
+import static com.javatemplate.fakes.BookFakes.buildBookEntity;
+import static com.javatemplate.persistent.book.BookEntityMapper.toBook;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,5 +37,63 @@ class BookStoreTest {
         assertEquals(expected.size(), bookStore.findAll().size());
 
         verify(bookRepository).findAll();
+    }
+
+    @Test
+    void shouldSave_Ok() {
+        final var book = buildBookEntity();
+
+        when(bookRepository.save(any())).thenReturn(book);
+
+        final var expected = bookStore.save(toBook(book));
+
+        assertEquals(book.getId(), expected.getId());
+        assertEquals(book.getName(), expected.getName());
+        assertEquals(book.getAuthor(), expected.getAuthor());
+        assertEquals(book.getUpdatedAt(), expected.getUpdatedAt());
+        assertEquals(book.getCreatedAt(), expected.getCreatedAt());
+        assertEquals(book.getDescription(), expected.getDescription());
+        assertEquals(book.getImage(), expected.getImage());
+    }
+
+    @Test
+    void shouldDeleteById_Ok() {
+        final var book = buildBookEntity();
+
+        bookStore.deleteById(book.getId());
+
+        verify(bookRepository).deleteById(book.getId());
+    }
+
+    @Test
+    void shouldFindById_Ok() {
+        final var book = buildBookEntity();
+        final var bookOpt = Optional.of(book);
+
+        when(bookRepository.findById(book.getId())).thenReturn(bookOpt);
+
+        final var actual = bookStore.findById(book.getId()).get();
+        final var expected = bookOpt.get();
+
+
+        assertEquals(actual.getId(), expected.getId());
+        assertEquals(actual.getName(), expected.getName());
+        assertEquals(actual.getAuthor(), expected.getAuthor());
+        assertEquals(actual.getUpdatedAt(), expected.getUpdatedAt());
+        assertEquals(actual.getCreatedAt(), expected.getCreatedAt());
+        assertEquals(actual.getDescription(), expected.getDescription());
+        assertEquals(actual.getImage(), expected.getImage());
+
+        verify(bookRepository).findById(book.getId());
+    }
+
+    @Test
+    void shouldFindById_Empty() {
+        final var uuid = randomUUID();
+
+        when(bookRepository.findById(uuid)).thenReturn(Optional.empty());
+
+        assertFalse(bookStore.findById(uuid).isPresent());
+        verify(bookRepository).findById(uuid);
     }
 }
