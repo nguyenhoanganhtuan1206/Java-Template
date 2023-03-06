@@ -26,6 +26,10 @@ public class UserStore {
                 .map(UserEntityMapper::toUser);
     }
 
+    public List<User> findByUsernameOrFirstNameOrLastName(final String name) {
+        return toUsers(userRepository.findByUsernameOrFirstNameOrLastName(name));
+    }
+
     public Optional<User> findByUsername(final String username) {
         return userRepository.findByUsername(username)
                 .map(UserEntityMapper::toUser);

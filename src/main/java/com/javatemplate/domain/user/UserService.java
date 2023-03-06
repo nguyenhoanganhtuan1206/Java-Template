@@ -27,6 +27,16 @@ public class UserService {
         return userStore.createUser(user);
     }
 
+    public List<User> findByUsernameOrFirstNameOrLastName(final String name) {
+        final List<User> users = userStore.findByUsernameOrFirstNameOrLastName(name);
+
+        if (users.size() == 0) {
+            throw supplyUserNotFound(name).get();
+        }
+
+        return userStore.findByUsernameOrFirstNameOrLastName(name);
+    }
+
     public void verifyUserAvailable(final User user) {
         final Optional<User> userOptional = userStore.findByUsername(user.getUsername());
 

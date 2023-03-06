@@ -33,8 +33,8 @@ public class UserController {
 
     @Operation(summary = "Find user by name")
     @GetMapping("/search")
-    public UserDTO findByName(final @RequestParam String username) {
-        return toUserDTO(userService.findByName(username));
+    public List<UserDTO> findByName(final @RequestParam String name) {
+        return toUsersDTO(userService.findByUsernameOrFirstNameOrLastName(name));
     }
 
     @Operation(summary = "Create user")
@@ -45,8 +45,7 @@ public class UserController {
 
     @Operation(summary = "Update user")
     @PatchMapping("/{userId}")
-    public UserDTO update(final @RequestBody UserDTO userDTO,
-                          final @PathVariable UUID userId) {
+    public UserDTO update(final @RequestBody UserDTO userDTO, final @PathVariable UUID userId) {
         return toUserDTO(userService.updateUser(userId, toUser(userDTO)));
     }
 
