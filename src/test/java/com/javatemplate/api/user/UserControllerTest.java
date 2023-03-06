@@ -73,12 +73,30 @@ class UserControllerTest {
     }
 
     @Test
+    void shouldDeleteByName_Ok() throws Exception {
+        final var user = buildUser();
+
+        when(userService.findByName(user.getUsername())).thenReturn(user);
+
+        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?username=" + user.getUsername()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
+
+        verify(userService).findByName(user.getUsername());
+    }
+
+    @Test
     void shouldCreateUser_Ok() throws Exception {
         final var user = buildUser();
 
         when(userService.createUser(any(User.class))).thenReturn(user);
 
-        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
@@ -100,7 +118,7 @@ class UserControllerTest {
         when(userService.updateUser(eq(userToUpdate.getId()), any(User.class)))
                 .thenReturn(userUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId())
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + userToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
                 .andExpect(status().isOk())
@@ -117,7 +135,7 @@ class UserControllerTest {
     void shouldDeleteById_Ok() throws Exception {
         final var user = buildUser();
 
-        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId()))
+        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + user.getId()))
                 .andExpect(status().isOk());
 
         verify(userService).deleteById(user.getId());
