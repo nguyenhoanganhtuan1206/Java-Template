@@ -100,8 +100,7 @@ class BookControllerTest {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(bookToUpdate.getId());
-        bookUpdate.setUserId(bookToUpdate.getUserId());
-
+        
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 

@@ -77,20 +77,42 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldCreate_Thrown() {
+    void shouldUpdate_Ok() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+
+        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
+        when(bookStore.save(book)).thenReturn(book);
+
+        final var expected = bookService.update(book.getId(), bookUpdate);
+
+        assertEquals(expected.getId(), bookUpdate.getId());
+        assertEquals(expected.getName(), bookUpdate.getName());
+        assertEquals(expected.getAuthor(), bookUpdate.getAuthor());
+        assertEquals(expected.getImage(), bookUpdate.getImage());
+        assertEquals(expected.getCreatedAt(), bookUpdate.getCreatedAt());
+        assertEquals(expected.getDescription(), bookUpdate.getDescription());
+        assertEquals(expected.getUserId(), bookUpdate.getUserId());
+    }
+
+    @Test
+    void shouldDeleteId_Ok() {
         final var book = buildBook();
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
 
-//        assertThrows(book, bookService.create(book));
-        verify(bookStore).save(book);
+        assertEquals(book, bookService.findById(book.getId()));
+        verify(bookStore).findById(book.getId());
     }
 
     @Test
-    void update() {
-    }
+    void shouldDeleteId_Thrown() {
+        final var uuid = randomUUID();
 
-    @Test
-    void deleteById() {
+        when(bookStore.findById(uuid)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.findById(uuid));
+        verify(bookStore).findById(uuid);
     }
 }

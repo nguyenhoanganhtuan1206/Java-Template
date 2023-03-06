@@ -37,6 +37,7 @@ public class BookService {
         book.setImage(bookUpdate.getImage());
         book.setDescription(bookUpdate.getDescription());
         book.setUpdatedAt(Instant.now());
+        book.setUserId(bookUpdate.getUserId());
 
         return bookStore.save(book);
     }
