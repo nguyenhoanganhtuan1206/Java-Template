@@ -40,4 +40,10 @@ public class BookService {
 
         return bookStore.save(book);
     }
+
+    public void deleteById(final UUID uuid) {
+        final Book book = findById(uuid);
+
+        bookStore.deleteById(book.getId());
+    }
 }

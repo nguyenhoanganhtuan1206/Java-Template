@@ -41,4 +41,10 @@ public class BookController {
                           final @PathVariable UUID bookId) {
         return toBookDTO(bookService.update(bookId, toBook(bookDTO)));
     }
+
+    @Operation(summary = "Delete book by id")
+    @DeleteMapping("/{bookId}")
+    public void deleteById(final @PathVariable UUID bookId) {
+        bookService.deleteById(bookId);
+    }
 }

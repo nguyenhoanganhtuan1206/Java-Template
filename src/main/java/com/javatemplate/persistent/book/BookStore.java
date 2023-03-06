@@ -29,4 +29,8 @@ public class BookStore {
     public Book save(final Book book) {
         return toBook(bookRepository.save(toBookEntity(book)));
     }
+
+    public void deleteById(final UUID uuid) {
+        bookRepository.deleteById(uuid);
+    }
 }
