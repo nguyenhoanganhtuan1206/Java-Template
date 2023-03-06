@@ -24,15 +24,15 @@ public class BookEntity {
     @Id
     private UUID id;
 
-    private String title;
+    private String name;
 
     private String author;
 
     private String description;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     private String image;
 

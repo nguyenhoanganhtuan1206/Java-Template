@@ -13,11 +13,11 @@ public class BookDTOMapper {
     public static BookDTO toBookDTO(final Book book) {
         return BookDTO.builder()
                 .id(book.getId())
-                .title(book.getTitle())
+                .name(book.getName())
                 .author(book.getAuthor())
                 .description(book.getDescription())
-                .createAt(book.getCreateAt())
-                .updateAt(book.getUpdateAt())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
                 .image(book.getImage())
                 .userId(book.getUserId())
                 .build();

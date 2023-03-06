@@ -14,6 +14,12 @@ public class BookEntityMapper {
         return Book.builder()
                 .id(bookEntity.getId())
                 .name(bookEntity.getName())
+                .author(bookEntity.getAuthor())
+                .description(bookEntity.getDescription())
+                .image(bookEntity.getImage())
+                .userId(bookEntity.getUserId())
+                .createdAt(bookEntity.getCreatedAt())
+                .updatedAt(bookEntity.getUpdatedAt())
                 .build();
     }
 
