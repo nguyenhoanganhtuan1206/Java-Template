@@ -113,7 +113,6 @@ class UserStoreTest {
                 .thenReturn(user);
 
         final var expected = userStore.updateUser(toUser(user));
-        expected.setId(user.getId());
 
         assertEquals(user.getId(), expected.getId());
         assertEquals(user.getUsername(), expected.getUsername());
