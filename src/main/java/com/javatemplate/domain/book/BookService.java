@@ -4,6 +4,7 @@ import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,5 +23,21 @@ public class BookService {
     public Book findById(final UUID bookId) {
         return bookStore.findById(bookId)
                 .orElseThrow(supplyUBookNotFound(bookId));
+    }
+
+    public Book create(final Book book) {
+        return bookStore.save(book);
+    }
+
+    public Book update(final UUID bookId, final Book bookUpdate) {
+        final Book book = findById(bookId);
+
+        book.setName(bookUpdate.getName());
+        book.setAuthor(bookUpdate.getAuthor());
+        book.setImage(bookUpdate.getImage());
+        book.setDescription(bookUpdate.getDescription());
+        book.setUpdatedAt(LocalDateTime.now());
+
+        return bookStore.save(book);
     }
 }

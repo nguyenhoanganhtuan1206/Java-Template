@@ -3,16 +3,12 @@ package com.javatemplate.api.book;
 import com.javatemplate.domain.book.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.javatemplate.api.book.BookDTOMapper.toBookDTO;
-import static com.javatemplate.api.book.BookDTOMapper.toBookDTOs;
+import static com.javatemplate.api.book.BookDTOMapper.*;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -28,8 +24,21 @@ public class BookController {
     }
 
     @Operation(summary = "Find by id")
-    @GetMapping("{bookId}")
+    @GetMapping("/{bookId}")
     public BookDTO findById(final @PathVariable UUID bookId) {
         return toBookDTO(bookService.findById(bookId));
+    }
+
+    @Operation(summary = "Create book")
+    @PostMapping
+    public BookDTO create(final @RequestBody BookDTO bookDTO) {
+        return toBookDTO(bookService.create(toBook(bookDTO)));
+    }
+
+    @Operation(summary = "Update book")
+    @PatchMapping("/{bookId}")
+    public BookDTO update(final @RequestBody BookDTO bookDTO,
+                          final @PathVariable UUID bookId) {
+        return toBookDTO(bookService.update(bookId, toBook(bookDTO)));
     }
 }

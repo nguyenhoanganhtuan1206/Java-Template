@@ -2,12 +2,14 @@ package com.javatemplate.domain.book;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
 @Getter
+@Setter
 public class Book {
 
     private UUID id;

@@ -28,4 +28,17 @@ public class BookDTOMapper {
                 .map(BookDTOMapper::toBookDTO)
                 .toList();
     }
+
+    public static Book toBook(final BookDTO bookDTO) {
+        return Book.builder()
+                .id(bookDTO.getId())
+                .name(bookDTO.getName())
+                .author(bookDTO.getAuthor())
+                .description(bookDTO.getDescription())
+                .createdAt(bookDTO.getCreatedAt())
+                .updatedAt(bookDTO.getUpdatedAt())
+                .image(bookDTO.getImage())
+                .userId(bookDTO.getUserId())
+                .build();
+    }
 }

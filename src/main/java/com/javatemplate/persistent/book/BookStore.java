@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.javatemplate.persistent.book.BookEntityMapper.toBooks;
+import static com.javatemplate.persistent.book.BookEntityMapper.*;
 import static org.apache.commons.collections4.IterableUtils.toList;
 
 @Repository
@@ -24,5 +24,9 @@ public class BookStore {
     public Optional<Book> findById(final UUID bookId) {
         return bookRepository.findById(bookId)
                 .map(BookEntityMapper::toBook);
+    }
+
+    public Book save(final Book book) {
+        return toBook(bookRepository.save(toBookEntity(book)));
     }
 }

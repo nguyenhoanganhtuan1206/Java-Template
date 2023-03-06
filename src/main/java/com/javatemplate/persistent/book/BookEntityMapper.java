@@ -28,4 +28,17 @@ public class BookEntityMapper {
                 .map(BookEntityMapper::toBook)
                 .toList();
     }
+
+    public static BookEntity toBookEntity(final Book book) {
+        return BookEntity.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .image(book.getImage())
+                .userId(book.getUserId())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
+                .build();
+    }
 }
