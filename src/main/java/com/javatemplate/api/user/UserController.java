@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @Operation(summary = "Create user")
-    @PostMapping("/create")
+    @PostMapping
     public UserDTO createUser(final @RequestBody UserDTO userDTO) {
         return toUserDTO(userService.createUser(toUser(userDTO)));
     }

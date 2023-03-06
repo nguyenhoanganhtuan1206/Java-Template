@@ -42,8 +42,6 @@ class UserStoreTest {
     @Test
     void shouldFindById_Ok() {
         final var user = buildUserEntity();
-        /* This line mean that `userOpt` will Optional of `user`
-         * `userOpt` -> Optional<UserEntity> */
         final var userOpt = Optional.of(user);
 
         when(userRepository.findById(user.getId())).thenReturn(userOpt);
@@ -55,9 +53,8 @@ class UserStoreTest {
     @Test
     void shouldFindById_Empty() {
         final var id = randomUUID();
-        final Optional<UserEntity> userOpt = Optional.empty();
 
-        when(userRepository.findById(id)).thenReturn(userOpt);
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         assertFalse(userRepository.findById(id).isPresent());
         verify(userRepository).findById(id);

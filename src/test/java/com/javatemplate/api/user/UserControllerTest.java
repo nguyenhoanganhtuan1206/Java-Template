@@ -100,7 +100,9 @@ class UserControllerTest {
         when(userService.updateUser(eq(userToUpdate.getId()), any(User.class)))
                 .thenReturn(userUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userUpdate.getId().toString()))
                 .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
@@ -118,7 +120,6 @@ class UserControllerTest {
         this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId()))
                 .andExpect(status().isOk());
 
-        // Verify that the user was deleted
         verify(userService).deleteById(user.getId());
     }
 }

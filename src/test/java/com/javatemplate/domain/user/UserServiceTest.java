@@ -136,6 +136,17 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldUpdateUser_NotFound() {
+        final var userUpdate = buildUser();
+        final var uuid = randomUUID();
+
+        when(userStore.findById(uuid)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> userService.updateUser(uuid, userUpdate));
+        verify(userStore).findById(uuid);
+    }
+
+    @Test
     void shouldDeleteById_Ok() {
         final var user = buildUser();
 
