@@ -4,6 +4,7 @@ import com.javatemplate.domain.book.Book;
 import com.javatemplate.persistent.book.BookEntity;
 import lombok.experimental.UtilityClass;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -17,6 +18,12 @@ public class BookFakes {
         return Book.builder()
                 .id(randomUUID())
                 .name(randomAlphabetic(3, 10))
+                .author(randomAlphabetic(3, 10))
+                .description(randomAlphabetic(3, 10))
+                .createdAt(Instant.EPOCH)
+                .updatedAt(Instant.EPOCH)
+                .image(randomAlphabetic(3, 10))
+                .userId(randomUUID())
                 .build();
     }
 
@@ -30,6 +37,12 @@ public class BookFakes {
         return BookEntity.builder()
                 .id(randomUUID())
                 .name(randomAlphabetic(3, 10))
+                .author(randomAlphabetic(3, 10))
+                .description(randomAlphabetic(3, 10))
+                .createdAt(Instant.EPOCH)
+                .updatedAt(Instant.EPOCH)
+                .image(randomAlphabetic(3, 10))
+                .userId(randomUUID())
                 .build();
     }
 
