@@ -40,6 +40,11 @@ public class UserService {
                 .orElseThrow(supplyUserNotFound(userId));
     }
 
+    public User findByName(final String username) {
+        return userStore.findByUsername(username)
+                .orElseThrow(supplyUserExisted(username));
+    }
+
     public User updateUser(final UUID userId, final User userUpdate) {
         final User user = findById(userId);
 

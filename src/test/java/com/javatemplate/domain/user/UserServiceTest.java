@@ -153,4 +153,26 @@ class UserServiceTest {
         userService.deleteById(user.getId());
         verify(userStore).deleteById(user.getId());
     }
+
+    @Test
+    void shouldFindByName_Ok() {
+        final var user = buildUser();
+
+        when(userStore.findByUsername(user.getUsername()))
+                .thenReturn(Optional.of(user));
+
+        assertEquals(user, userService.findByName(user.getUsername()));
+        verify(userStore).findByUsername(user.getUsername());
+    }
+
+    @Test
+    void shouldFindByName_Thrown() {
+        final var username = randomAlphabetic(3, 10);
+
+        when(userStore.findByUsername(username))
+                .thenReturn(Optional.empty());
+
+        assertThrows(BadRequestException.class, () -> userService.findByName(username));
+        verify(userStore).findByUsername(username);
+    }
 }

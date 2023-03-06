@@ -31,6 +31,12 @@ public class UserController {
         return toUserDTO(userService.findById(userId));
     }
 
+    @Operation(summary = "Find user by name")
+    @GetMapping("/search")
+    public UserDTO findByName(final @RequestParam String username) {
+        return toUserDTO(userService.findByName(username));
+    }
+
     @Operation(summary = "Create user")
     @PostMapping
     public UserDTO createUser(final @RequestBody UserDTO userDTO) {
