@@ -17,6 +17,7 @@ import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -91,25 +92,24 @@ class UserControllerTest {
 
     @Test
     void shouldUpdateUser_Ok() throws Exception {
-        final var savedUser = buildUser();
+        final var userToUpdate = buildUser();
         final var userUpdate = buildUser();
+        userUpdate.setId(userToUpdate.getId());
 
-        when(userController.updateUser(toUserDTO(userUpdate), savedUser.getId()))
-                .thenReturn(toUserDTO(userUpdate));
+        when(userService.updateUser(eq(userToUpdate.getId()), any(User.class)))
+                .thenReturn(userUpdate);
 
-        final var userUpdated = userService.updateUser(savedUser.getId(), userUpdate);
-
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + savedUser.getId())
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(userUpdate)))
+                        .content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(userUpdated.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(userUpdated.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userUpdated.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(userUpdated.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(userUpdated.getEnabled()));
-
-        verify(userController).updateUser(toUserDTO(userUpdate), savedUser.getId());
+                .andExpect(jsonPath("$.id").value(userUpdate.getId().toString()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userUpdate.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()))
+                .andExpect(jsonPath("$.roleId").value(userUpdate.getRoleId().toString()));
     }
 
     @Test
