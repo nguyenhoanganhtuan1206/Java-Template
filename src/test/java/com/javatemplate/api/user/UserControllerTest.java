@@ -64,12 +64,13 @@ class UserControllerTest {
         when(userService.findById(user.getId())).thenReturn(user);
 
         this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId()))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId()));
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
 
         verify(userService).findById(user.getId());
     }
