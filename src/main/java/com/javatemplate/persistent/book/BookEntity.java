@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -23,5 +24,17 @@ public class BookEntity {
     @Id
     private UUID id;
 
-    private String name;
+    private String title;
+
+    private String author;
+
+    private String description;
+
+    private LocalDateTime createAt;
+
+    private LocalDateTime updateAt;
+
+    private String image;
+
+    private UUID userId;
 }
