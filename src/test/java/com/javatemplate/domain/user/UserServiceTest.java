@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
@@ -150,8 +151,20 @@ class UserServiceTest {
     void shouldDeleteById_Ok() {
         final var user = buildUser();
 
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+
         userService.deleteById(user.getId());
         verify(userStore).deleteById(user.getId());
+    }
+
+    @Test
+    void shouldDeleteById_NotFound() {
+        final var uuid = UUID.randomUUID();
+
+        when(userStore.findById(uuid)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> userService.findById(uuid));
+        verify(userStore).findById(uuid);
     }
 
     @Test
