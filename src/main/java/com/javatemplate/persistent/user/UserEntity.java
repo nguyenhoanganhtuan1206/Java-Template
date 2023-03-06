@@ -1,11 +1,9 @@
 package com.javatemplate.persistent.user;
 
-import com.javatemplate.persistent.role.RoleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
@@ -13,7 +11,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Getter
-@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
