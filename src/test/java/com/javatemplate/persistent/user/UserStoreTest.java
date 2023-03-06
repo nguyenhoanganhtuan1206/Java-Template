@@ -46,7 +46,17 @@ class UserStoreTest {
 
         when(userRepository.findById(user.getId())).thenReturn(userOpt);
 
-        assertEquals(userOpt, userRepository.findById(user.getId()));
+        final var actual = userStore.findById(user.getId()).get();
+        final var expected = userOpt.get();
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getAvatar(), actual.getAvatar());
+        assertEquals(expected.getEnabled(), actual.getEnabled());
+        assertEquals(expected.getRoleId(), actual.getRoleId());
+
         verify(userRepository).findById(user.getId());
     }
 
@@ -67,7 +77,17 @@ class UserStoreTest {
 
         when(userRepository.findByUsername(user.getUsername())).thenReturn(userOpt);
 
-        assertEquals(userOpt, userRepository.findByUsername(user.getUsername()));
+        final var actual = userStore.findByUsername(user.getUsername()).get();
+        final var expected = userOpt.get();
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getAvatar(), actual.getAvatar());
+        assertEquals(expected.getEnabled(), actual.getEnabled());
+        assertEquals(expected.getRoleId(), actual.getRoleId());
+
         verify(userRepository).findByUsername(user.getUsername());
     }
 
