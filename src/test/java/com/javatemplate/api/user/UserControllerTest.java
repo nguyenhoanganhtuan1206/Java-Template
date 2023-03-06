@@ -40,7 +40,16 @@ class UserControllerTest {
 
         when(userService.findAll()).thenReturn(users);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(users.size())).andExpect(jsonPath("$[0].id").value(users.get(0).getId().toString())).andExpect(jsonPath("$[0].username").value(users.get(0).getUsername())).andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName())).andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName())).andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled())).andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar())).andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId().toString()));
+        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(users.size()))
+                .andExpect(jsonPath("$[0].id").value(users.get(0).getId().toString()))
+                .andExpect(jsonPath("$[0].username").value(users.get(0).getUsername()))
+                .andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName()))
+                .andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled()))
+                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()))
+                .andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId().toString()));
 
         verify(userService).findAll();
     }
@@ -51,7 +60,14 @@ class UserControllerTest {
 
         when(userService.findById(user.getId())).thenReturn(user);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId())).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(user.getId().toString())).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar())).andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
+        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
 
         verify(userService).findById(user.getId());
     }
@@ -62,7 +78,16 @@ class UserControllerTest {
 
         when(userService.createUser(any(User.class))).thenReturn(user);
 
-        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create").contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(user))).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar())).andExpect(jsonPath("$.enabled").value(user.getEnabled()));
+        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()))
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()));
     }
 
     @Test
@@ -71,16 +96,27 @@ class UserControllerTest {
         final var userUpdate = buildUser();
         userUpdate.setId(userToUpdate.getId());
 
-        when(userService.updateUser(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
+        /* Use specific value for an argument */
+        when(userService.updateUser(eq(userToUpdate.getId()), any(User.class)))
+                .thenReturn(userUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate)))).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(userUpdate.getId().toString())).andExpect(jsonPath("$.username").value(userUpdate.getUsername())).andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName())).andExpect(jsonPath("$.lastName").value(userUpdate.getLastName())).andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar())).andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled())).andExpect(jsonPath("$.roleId").value(userUpdate.getRoleId().toString()));
+        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/update/" + userToUpdate.getId()).contentType(MediaType.APPLICATION_JSON).content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userUpdate.getId().toString()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userUpdate.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()))
+                .andExpect(jsonPath("$.roleId").value(userUpdate.getRoleId().toString()));
     }
 
     @Test
     void shouldDeleteById_Ok() throws Exception {
         final var user = buildUser();
 
-        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId())).andExpect(status().isOk());
+        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/delete/" + user.getId()))
+                .andExpect(status().isOk());
 
         // Verify that the user was deleted
         verify(userService).deleteById(user.getId());

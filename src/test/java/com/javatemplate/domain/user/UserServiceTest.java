@@ -110,6 +110,8 @@ class UserServiceTest {
     void shouldUpdateUser_Ok() {
         final var user = buildUser();
         final var userUpdate = buildUser();
+        userUpdate.setId(user.getId());
+        userUpdate.setRoleId(user.getRoleId());
 
         /* This method will perform findById */
         when(userStore.findById(user.getId()))
@@ -119,10 +121,12 @@ class UserServiceTest {
 
         final var expected = userService.updateUser(user.getId(), userUpdate);
 
+        assertEquals(expected.getId().toString(), userUpdate.getId().toString());
         assertEquals(expected.getUsername(), userUpdate.getUsername());
         assertEquals(expected.getFirstName(), userUpdate.getFirstName());
         assertEquals(expected.getLastName(), userUpdate.getLastName());
         assertEquals(expected.getAvatar(), userUpdate.getAvatar());
+        assertEquals(expected.getRoleId().toString(), userUpdate.getRoleId().toString());
         assertEquals(expected.getEnabled(), userUpdate.getEnabled());
 
         verify(userStore).updateUser(user);

@@ -37,6 +37,7 @@ public class UserEntityMapper {
                 .lastName(user.getLastName())
                 .avatar(user.getAvatar())
                 .enabled(user.getEnabled())
+                .roleId(user.getRoleId())
                 .build();
     }
 }
