@@ -3,8 +3,6 @@ package com.javatemplate.domain.user;
 import com.javatemplate.api.user.UserDTO;
 import lombok.experimental.UtilityClass;
 
-import java.util.UUID;
-
 @UtilityClass
 public class UserMapper {
 
@@ -16,7 +14,7 @@ public class UserMapper {
                 .lastName(userDTO.getLastName())
                 .avatar(userDTO.getAvatar())
                 .enabled(userDTO.getEnabled())
-                .roleId(UUID.fromString(userDTO.getRoleId()))
+                .roleId(userDTO.getRoleId())
                 .build();
     }
 }

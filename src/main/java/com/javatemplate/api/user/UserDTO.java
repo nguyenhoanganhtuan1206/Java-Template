@@ -21,5 +21,5 @@ public class UserDTO {
 
     private String avatar;
 
-    private String roleId;
+    private UUID roleId;
 }
