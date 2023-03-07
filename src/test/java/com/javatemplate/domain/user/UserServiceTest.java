@@ -77,9 +77,7 @@ class UserServiceTest {
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        final var userExisted = userService.findByName(user.getUsername());
-
-        assertThrows(BadRequestException.class, () -> userService.createUser(userExisted));
+        assertThrows(BadRequestException.class, () -> userService.createUser(user));
         verify(userStore).findByUsername(user.getUsername());
     }
 
@@ -133,7 +131,7 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setPassword(null);
 
-        assertThrows(BadRequestException.class, () -> userService.updateUser(user.getId(), userUpdate));
+        assertThrows(NotFoundException.class, () -> userService.updateUser(user.getId(), userUpdate));
     }
 
     @Test
