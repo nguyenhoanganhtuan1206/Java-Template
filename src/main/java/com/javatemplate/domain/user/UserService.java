@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.javatemplate.domain.user.UserError.*;
+import static com.javatemplate.domain.user.UserError.supplyUserExisted;
+import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
+import static com.javatemplate.error.CommonError.supplyValidationError;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class UserService {
 
     public User createUser(final User user) {
         if (user.getUsername() == null || user.getPassword() == null) {
-            throw supplyInputsDataFailed().get();
+            throw supplyValidationError("Sign up failed. Please check again your inputs").get();
         }
 
         verifyUserAvailable(user);
@@ -31,21 +33,7 @@ public class UserService {
     }
 
     public List<User> findUsersByName(final String name) {
-        final List<User> users = userStore.findUsersByName(name);
-
-        if (users.size() == 0) {
-            throw supplyUserNotFound(name).get();
-        }
-
         return userStore.findUsersByName(name);
-    }
-
-    public void verifyUserAvailable(final User user) {
-        final Optional<User> userOptional = userStore.findByUsername(user.getUsername());
-
-        if (userOptional.isPresent()) {
-            throw supplyUserExisted(user.getUsername()).get();
-        }
     }
 
     public User findById(final UUID userId) {
@@ -57,10 +45,6 @@ public class UserService {
     }
 
     public User updateUser(final UUID userId, final User userUpdate) {
-        if (userUpdate.getUsername() == null || userUpdate.getPassword() == null) {
-            throw supplyInputsDataFailed().get();
-        }
-
         final User user = findById(userId);
 
         user.setUsername(userUpdate.getUsername());
@@ -76,5 +60,13 @@ public class UserService {
         final User user = findById(id);
 
         userStore.deleteById(user.getId());
+    }
+
+    private void verifyUserAvailable(final User user) {
+        final Optional<User> userOptional = userStore.findByUsername(user.getUsername());
+
+        if (userOptional.isPresent()) {
+            throw supplyUserExisted(user.getUsername()).get();
+        }
     }
 }

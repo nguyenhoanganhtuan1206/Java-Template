@@ -77,28 +77,10 @@ class UserServiceTest {
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        assertThrows(BadRequestException.class, () -> userService.createUser(user));
+        final var userExisted = userService.findByName(user.getUsername());
+
+        assertThrows(BadRequestException.class, () -> userService.createUser(userExisted));
         verify(userStore).findByUsername(user.getUsername());
-    }
-
-    @Test
-    void shouldVerifyUserAvailable_Existed() {
-        final var user = buildUser();
-
-        when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
-
-        assertThrows(BadRequestException.class, () -> userService.verifyUserAvailable(user));
-        verify(userStore).findByUsername(user.getUsername());
-    }
-
-    @Test
-    void shouldVerifyUserAvailable_NotExisted() {
-        final var username = randomAlphabetic(3, 10);
-        final User newUser = User.builder().username(username).build();
-
-        when(userStore.findByUsername(username)).thenReturn(Optional.empty());
-
-        assertDoesNotThrow(() -> userService.verifyUserAvailable(newUser));
     }
 
     @Test
@@ -129,7 +111,6 @@ class UserServiceTest {
         userUpdate.setId(user.getId());
         userUpdate.setRoleId(user.getRoleId());
 
-        /* This method will perform findById */
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
 
@@ -231,7 +212,9 @@ class UserServiceTest {
 
         when(userStore.findUsersByName(username)).thenReturn(Collections.emptyList());
 
-        assertThrows(NotFoundException.class, () -> userService.findUsersByName(username));
+        final var actual = userService.findUsersByName(username);
+
+        assertTrue(actual.isEmpty());
         verify(userStore).findUsersByName(username);
     }
 }
