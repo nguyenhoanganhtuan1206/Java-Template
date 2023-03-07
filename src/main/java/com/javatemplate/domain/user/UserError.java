@@ -10,10 +10,10 @@ import java.util.function.Supplier;
 public class UserError {
 
     public static <T> Supplier<NotFoundException> supplyUserNotFound(final T input) {
-        return () -> new NotFoundException("User %s doesn't existing!", input);
+        return () -> new NotFoundException("Username %s could not be found", input);
     }
 
     public static Supplier<BadRequestException> supplyUserExisted(final String username) {
-        return () -> new BadRequestException("User %s is already existing", username);
+        return () -> new BadRequestException("Username %s has been taken", username);
     }
 }

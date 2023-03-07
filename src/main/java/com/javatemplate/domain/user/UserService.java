@@ -23,9 +23,9 @@ public class UserService {
     }
 
     public User createUser(final User user) {
-        verifyData(user, "Sign up failed. Please check again your inputs");
+        validateUser(user);
 
-        verifyUserAvailable(user);
+        verifyUserAvailable(user.getUsername());
 
         return userStore.createUser(user);
     }
@@ -43,7 +43,9 @@ public class UserService {
     }
 
     public User updateUser(final UUID userId, final User userUpdate) {
-        verifyData(userUpdate, "Update failed. Please check again your inputs");
+        validateUser(userUpdate);
+
+        verifyUserAvailable(userUpdate.getUsername());
 
         final User user = findById(userId);
 
@@ -62,17 +64,17 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-    private void verifyData(final User user, final String message) {
+    private void validateUser(final User user) {
         if (user.getUsername() == null || user.getPassword() == null) {
-            throw supplyValidationError(message).get();
+            throw supplyValidationError("Request failed. Please check your inputs again").get();
         }
     }
 
-    private void verifyUserAvailable(final User user) {
-        final Optional<User> userOptional = userStore.findByUsername(user.getUsername());
+    private void verifyUserAvailable(final String username) {
+        final Optional<User> userOptional = userStore.findByUsername(username);
 
         if (userOptional.isPresent()) {
-            throw supplyUserExisted(user.getUsername()).get();
+            throw supplyUserExisted(username).get();
         }
     }
 }
