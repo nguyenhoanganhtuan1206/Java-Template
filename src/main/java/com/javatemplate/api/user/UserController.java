@@ -21,31 +21,31 @@ public class UserController {
 
     @Operation(summary = "Find all available users")
     @GetMapping
-    public List<UserDTO> findAll() {
+    public List<UserDTOResponse> findAll() {
         return toUsersDTO(userService.findAll());
     }
 
     @Operation(summary = "Find user by id")
     @GetMapping("/{userId}")
-    public UserDTO findById(final @PathVariable UUID userId) {
+    public UserDTOResponse findById(final @PathVariable UUID userId) {
         return toUserDTO(userService.findById(userId));
     }
 
     @Operation(summary = "Find user by name")
     @GetMapping("/search")
-    public List<UserDTO> findByName(final @RequestParam String name) {
+    public List<UserDTOResponse> findByName(final @RequestParam String name) {
         return toUsersDTO(userService.findUsersByName(name));
     }
 
     @Operation(summary = "Create user")
     @PostMapping
-    public UserDTO createUser(final @RequestBody UserDTO userDTO) {
+    public UserDTOResponse createUser(final @RequestBody UserDTORequest userDTO) {
         return toUserDTO(userService.create(toUser(userDTO)));
     }
 
     @Operation(summary = "Update user")
     @PatchMapping("/{userId}")
-    public UserDTO update(final @RequestBody UserDTO userDTO, final @PathVariable UUID userId) {
+    public UserDTOResponse update(final @RequestBody UserDTORequest userDTO, final @PathVariable UUID userId) {
         return toUserDTO(userService.update(userId, toUser(userDTO)));
     }
 

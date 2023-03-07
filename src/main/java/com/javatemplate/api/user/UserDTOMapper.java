@@ -10,8 +10,8 @@ import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 @UtilityClass
 public class UserDTOMapper {
 
-    public static UserDTO toUserDTO(final User user) {
-        return UserDTO.builder()
+    public static UserDTOResponse toUserDTO(final User user) {
+        return UserDTOResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
@@ -22,7 +22,7 @@ public class UserDTOMapper {
                 .build();
     }
 
-    public static List<UserDTO> toUsersDTO(final List<User> users) {
+    public static List<UserDTOResponse> toUsersDTO(final List<User> users) {
         return emptyIfNull(users.stream()
                 .map(UserDTOMapper::toUserDTO)
                 .toList());

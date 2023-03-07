@@ -71,6 +71,12 @@ public class UserService {
         }
     }
 
+    private void validateUserUpdate(final User user) {
+        if (user.getUsername() == null || user.getPassword() == null) {
+            throw supplyValidationError("Request failed. Please check your inputs again").get();
+        }
+    }
+
     private void verifyUserAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
 
