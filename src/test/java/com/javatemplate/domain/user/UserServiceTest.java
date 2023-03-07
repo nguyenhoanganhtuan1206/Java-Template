@@ -32,7 +32,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    void shouldFindAll_Ok() {
+    void shouldFindAll_OK() {
         final var expected = buildUsers();
 
         when(userStore.findAll()).thenReturn(expected);
@@ -52,7 +52,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldCreateUser_Ok() {
+    void shouldCreateUser_OK() {
         final var user = buildUser();
 
         when(userStore.createUser(user)).thenReturn(user);
@@ -64,7 +64,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldCreateUser_Thrown() {
+    void shouldCreateUser_ThrownBadRequest() {
         final var user = buildUser();
         user.setPassword(null);
 
@@ -82,18 +82,20 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldFindById_Ok() {
+    void shouldFindById_OK() {
         final var expected = buildUser();
 
         when(userStore.findById(expected.getId())).thenReturn(Optional.of(expected));
 
-        assertEquals(expected, userService.findById(expected.getId()));
+        final var actual = userService.findById(expected.getId());
+
+        assertEquals(expected, actual);
 
         verify(userStore).findById(expected.getId());
     }
 
     @Test
-    void shouldFindById_Throw() {
+    void shouldFindById_ThrowNotFoundException() {
         final var uuid = randomUUID();
 
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
@@ -103,7 +105,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldUpdateUser_Ok() {
+    void shouldUpdateUser_OK() {
         final var user = buildUser();
         final var userUpdate = buildUser();
         userUpdate.setId(user.getId());
@@ -126,7 +128,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldUpdateUser_Thrown() {
+    void shouldUpdateUser_ThrownBadRequest() {
         final var user = buildUser();
         final var userUpdate = buildUser();
         userUpdate.setPassword(null);
@@ -146,7 +148,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldDeleteById_Ok() {
+    void shouldDeleteById_OK() {
         final var user = buildUser();
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
@@ -166,27 +168,29 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldFindByName_Ok() {
+    void shouldFindByName_OK() {
         final var user = buildUser();
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        assertEquals(user, userService.findByName(user.getUsername()));
+        final var actual = userService.findByName(user.getUsername());
+
+        assertEquals(user, actual);
         verify(userStore).findByUsername(user.getUsername());
     }
 
     @Test
-    void shouldFindByName_Thrown() {
+    void shouldFindByName_ThrownNotFoundException() {
         final var username = randomAlphabetic(3, 10);
 
         when(userStore.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThrows(BadRequestException.class, () -> userService.findByName(username));
+        assertThrows(NotFoundException.class, () -> userService.findByName(username));
         verify(userStore).findByUsername(username);
     }
 
     @Test
-    void shouldFindByUsernameOrFirstNameOrLastName_Ok() {
+    void shouldFindByUsernameOrFirstNameOrLastName_OK() {
         final var user = buildUser();
         final var expected = buildUsers();
 
@@ -205,7 +209,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldFindByUsernameOrFirstNameOrLastName_Thrown() {
+    void shouldFindByUsernameOrFirstNameOrLastName_Empty() {
         final var username = randomAlphabetic(3, 10);
 
         when(userStore.findUsersByName(username)).thenReturn(Collections.emptyList());

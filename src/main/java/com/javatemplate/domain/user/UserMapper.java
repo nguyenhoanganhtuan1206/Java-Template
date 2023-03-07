@@ -1,12 +1,12 @@
 package com.javatemplate.domain.user;
 
-import com.javatemplate.api.user.UserDTORequest;
+import com.javatemplate.api.user.UserRequestDTO;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class UserMapper {
 
-    public static User toUser(final UserDTORequest userDTO) {
+    public static User toUser(final UserRequestDTO userDTO) {
         return User.builder()
                 .id(userDTO.getId())
                 .username(userDTO.getUsername())

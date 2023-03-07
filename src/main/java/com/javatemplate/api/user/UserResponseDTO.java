@@ -7,13 +7,11 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class UserDTORequest {
+public class UserResponseDTO {
 
     private UUID id;
 
     private String username;
-
-    private String password;
 
     private String firstName;
 

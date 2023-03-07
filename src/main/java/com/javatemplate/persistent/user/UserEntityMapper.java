@@ -7,7 +7,6 @@ import java.util.List;
 
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
-
 @UtilityClass
 public class UserEntityMapper {
 

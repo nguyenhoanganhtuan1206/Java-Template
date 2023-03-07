@@ -34,7 +34,7 @@ class UserControllerTest {
     private UserService userService;
 
     @Test
-    void shouldFindAll_Ok() throws Exception {
+    void shouldFindAll_OK() throws Exception {
         final var users = buildUsers();
 
         when(userService.findAll()).thenReturn(users);
@@ -72,7 +72,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldFindUsersByName_Ok() throws Exception {
+    void shouldFindUsersByName_OK() throws Exception {
         final var user = buildUser();
         final var expected = buildUsers();
 
@@ -93,7 +93,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldCreateUser_Ok() throws Exception {
+    void shouldCreateUser_OK() throws Exception {
         final var user = buildUser();
 
         when(userService.create(any(User.class))).thenReturn(user);
@@ -111,7 +111,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldUpdateUser_Ok() throws Exception {
+    void shouldUpdateUser_OK() throws Exception {
         final var userToUpdate = buildUser();
         final var userUpdate = buildUser();
         userUpdate.setId(userToUpdate.getId());
@@ -134,7 +134,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldDeleteById_Ok() throws Exception {
+    void shouldDeleteById_OK() throws Exception {
         final var user = buildUser();
 
         this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + user.getId()))
