@@ -68,7 +68,7 @@ class UserServiceTest {
         final var user = buildUser();
         user.setPassword(null);
 
-        assertThrows(BadRequestException.class, () -> userService.createUser(user));
+        assertThrows(BadRequestException.class, () -> userService.create(user));
     }
 
     @Test
@@ -77,7 +77,7 @@ class UserServiceTest {
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        assertThrows(BadRequestException.class, () -> userService.createUser(user));
+        assertThrows(BadRequestException.class, () -> userService.create(user));
         verify(userStore).findByUsername(user.getUsername());
     }
 
