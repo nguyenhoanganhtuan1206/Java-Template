@@ -35,7 +35,7 @@ class BookControllerTest {
     private BookService bookService;
 
     @Test
-    void shouldFindAll_Ok() throws Exception {
+    void shouldFindAll_OK() throws Exception {
         final var books = buildBooks();
 
         when(bookService.findAll()).thenReturn(books);
@@ -56,7 +56,7 @@ class BookControllerTest {
     }
 
     @Test
-    void shouldFindById_Ok() throws Exception {
+    void shouldFindById_OK() throws Exception {
         final var book = buildBook();
 
         when(bookService.findById(book.getId())).thenReturn(book);
@@ -76,7 +76,7 @@ class BookControllerTest {
     }
 
     @Test
-    void shouldCreate_Ok() throws Exception {
+    void shouldCreate_OK() throws Exception {
         final var book = buildBook();
 
         when(bookService.create(any(Book.class))).thenReturn(book);
@@ -96,11 +96,11 @@ class BookControllerTest {
     }
 
     @Test
-    void shouldUpdate_Ok() throws Exception {
+    void shouldUpdate_OK() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(bookToUpdate.getId());
-        
+
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 
@@ -119,7 +119,7 @@ class BookControllerTest {
     }
 
     @Test
-    void shouldDeleteById_Ok() throws Exception {
+    void shouldDeleteById_OK() throws Exception {
         final var book = buildBook();
 
         this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + book.getId()))

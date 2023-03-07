@@ -49,7 +49,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldFindById_Ok() {
+    void shouldFindById_OK() {
         final var book = buildBook();
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
@@ -59,7 +59,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldFindById_Thrown() {
+    void shouldFindById_ThrownNotFound() {
         final var uuid = randomUUID();
 
         when(bookStore.findById(uuid)).thenReturn(Optional.empty());
@@ -70,7 +70,7 @@ class BookServiceTest {
 
 
     @Test
-    void shouldCreate_Ok() {
+    void shouldCreate_OK() {
         final var book = buildBook();
 
         when(bookStore.save(book)).thenReturn(book);
@@ -80,7 +80,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldCreate_Thrown() {
+    void shouldCreate_ThrownBadRequest() {
         final var book = buildBook();
         book.setName(null);
 
@@ -89,7 +89,7 @@ class BookServiceTest {
 
 
     @Test
-    void shouldUpdate_Ok() {
+    void shouldUpdate_OK() {
         final var book = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(book.getId());
@@ -111,7 +111,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldUpdate_Thrown() {
+    void shouldUpdate_ThrownBadRequest() {
         final var book = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(book.getId());
@@ -132,7 +132,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldDeleteId_Ok() {
+    void shouldDeleteId_OK() {
         final var book = buildBook();
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
@@ -142,7 +142,7 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldDeleteId_Thrown() {
+    void shouldDeleteId_ThrownNotFound() {
         final var uuid = randomUUID();
 
         when(bookStore.findById(uuid)).thenReturn(Optional.empty());

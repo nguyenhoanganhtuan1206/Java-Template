@@ -34,13 +34,15 @@ class BookStoreTest {
         when(bookRepository.findAll())
                 .thenReturn(expected);
 
-        assertEquals(expected.size(), bookStore.findAll().size());
+        final var actual = bookStore.findAll();
+
+        assertEquals(expected.size(), actual.size());
 
         verify(bookRepository).findAll();
     }
 
     @Test
-    void shouldSave_Ok() {
+    void shouldSave_OK() {
         final var book = buildBookEntity();
 
         when(bookRepository.save(any())).thenReturn(book);
@@ -57,7 +59,7 @@ class BookStoreTest {
     }
 
     @Test
-    void shouldDeleteById_Ok() {
+    void shouldDeleteById_OK() {
         final var book = buildBookEntity();
 
         bookStore.deleteById(book.getId());
@@ -66,7 +68,7 @@ class BookStoreTest {
     }
 
     @Test
-    void shouldFindById_Ok() {
+    void shouldFindById_OK() {
         final var book = buildBookEntity();
         final var bookOpt = Optional.of(book);
 
