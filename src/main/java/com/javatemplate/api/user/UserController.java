@@ -34,7 +34,7 @@ public class UserController {
     @Operation(summary = "Find user by name")
     @GetMapping("/search")
     public List<UserDTO> findByName(final @RequestParam String name) {
-        return toUsersDTO(userService.findByUsernameOrFirstNameOrLastName(name));
+        return toUsersDTO(userService.findUsersByName(name));
     }
 
     @Operation(summary = "Create user")

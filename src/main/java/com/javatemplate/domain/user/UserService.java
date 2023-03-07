@@ -27,14 +27,14 @@ public class UserService {
         return userStore.createUser(user);
     }
 
-    public List<User> findByUsernameOrFirstNameOrLastName(final String name) {
-        final List<User> users = userStore.findByUsernameOrFirstNameOrLastName(name);
+    public List<User> findUsersByName(final String name) {
+        final List<User> users = userStore.findUsersByName(name);
 
         if (users.size() == 0) {
             throw supplyUserNotFound(name).get();
         }
 
-        return userStore.findByUsernameOrFirstNameOrLastName(name);
+        return userStore.findUsersByName(name);
     }
 
     public void verifyUserAvailable(final User user) {

@@ -72,13 +72,13 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldFindByName_Ok() throws Exception {
+    void shouldFindUsersByName_Ok() throws Exception {
         final var user = buildUser();
         final var expected = buildUsers();
 
-        when(userService.findByUsernameOrFirstNameOrLastName(anyString())).thenReturn(expected);
+        when(userService.findUsersByName(anyString())).thenReturn(expected);
 
-        final var actual = userService.findByUsernameOrFirstNameOrLastName(user.getUsername());
+        final var actual = userService.findUsersByName(user.getUsername());
 
         this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?name=" + user.getUsername()))
                 .andExpect(status().isOk())

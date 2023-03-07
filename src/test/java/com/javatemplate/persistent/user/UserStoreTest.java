@@ -154,7 +154,7 @@ class UserStoreTest {
         when(userRepository.findByUsernameOrFirstNameOrLastName(anyString()))
                 .thenReturn(expected);
 
-        final var actual = userStore.findByUsernameOrFirstNameOrLastName(user.getUsername());
+        final var actual = userStore.findUsersByName(user.getUsername());
 
         assertEquals(actual.size(), expected.size());
 
@@ -168,7 +168,7 @@ class UserStoreTest {
         when(userRepository.findByUsernameOrFirstNameOrLastName(username))
                 .thenReturn(Collections.emptyList());
 
-        final var actual = userStore.findByUsernameOrFirstNameOrLastName(username);
+        final var actual = userStore.findUsersByName(username);
 
         assertTrue(actual.isEmpty());
 
