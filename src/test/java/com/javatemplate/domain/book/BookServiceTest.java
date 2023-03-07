@@ -9,13 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -149,5 +151,32 @@ class BookServiceTest {
 
         assertThrows(NotFoundException.class, () -> bookService.deleteById(uuid));
         verify(bookStore).findById(uuid);
+    }
+
+    @Test
+    void shouldFindBooksByName_OK() {
+        final var book = buildBook();
+        final var expected = buildBooks();
+
+        when(bookStore.findBooksByName(anyString())).thenReturn(expected);
+
+        final var actual = bookService.findBooksByName(book.getName());
+
+        assertEquals(actual.size(), expected.size());
+
+        verify(bookStore).findBooksByName(book.getName());
+    }
+
+    @Test
+    void shouldFindBooksByName_Empty() {
+        final var bookName = randomAlphabetic(3, 10);
+
+        when(bookStore.findBooksByName(bookName)).thenReturn(Collections.emptyList());
+
+        final var actual = bookService.findBooksByName(bookName);
+
+        assertTrue(actual.isEmpty());
+
+        verify(bookStore).findBooksByName(bookName);
     }
 }

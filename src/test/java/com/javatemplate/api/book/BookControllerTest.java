@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -126,5 +125,27 @@ class BookControllerTest {
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(book.getId());
+    }
+
+    @Test
+    void shouldFindByName_Ok() throws Exception {
+        final var book = buildBook();
+        final var expected = buildBooks();
+
+        when(bookService.findBooksByName(anyString())).thenReturn(expected);
+
+        final var actual = bookService.findBooksByName(book.getName());
+
+        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?bookName=" + book.getName()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(actual.size()))
+                .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
+                .andExpect(jsonPath("$[0].name").value(actual.get(0).getName()))
+                .andExpect(jsonPath("$[0].author").value(actual.get(0).getAuthor()))
+                .andExpect(jsonPath("$[0].description").value(actual.get(0).getDescription()))
+                .andExpect(jsonPath("$[0].createdAt").value(actual.get(0).getCreatedAt().toString()))
+                .andExpect(jsonPath("$[0].updatedAt").value(actual.get(0).getUpdatedAt().toString()))
+                .andExpect(jsonPath("$[0].userId").value(actual.get(0).getUserId().toString()))
+                .andExpect(jsonPath("$[0].image").value(actual.get(0).getImage()));
     }
 }

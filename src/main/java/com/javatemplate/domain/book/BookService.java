@@ -26,6 +26,10 @@ public class BookService {
                 .orElseThrow(supplyBookNotFound(bookId));
     }
 
+    public List<Book> findBooksByName(final String bookName) {
+        return bookStore.findBooksByName(bookName);
+    }
+
     public Book create(final Book book) {
         verifyData(book, "Create book failed. Please check your inputs");
 

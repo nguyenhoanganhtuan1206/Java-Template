@@ -29,6 +29,12 @@ public class BookController {
         return toBookDTO(bookService.findById(bookId));
     }
 
+    @Operation(summary = "Find books by name")
+    @GetMapping("/search")
+    public List<BookDTO> findBooksByName(final @RequestParam String bookName) {
+        return toBookDTOs(bookService.findBooksByName(bookName));
+    }
+
     @Operation(summary = "Create book")
     @PostMapping
     public BookDTO create(final @RequestBody BookDTO bookDTO) {

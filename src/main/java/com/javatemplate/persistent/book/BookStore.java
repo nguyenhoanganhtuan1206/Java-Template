@@ -26,6 +26,10 @@ public class BookStore {
                 .map(BookEntityMapper::toBook);
     }
 
+    public List<Book> findBooksByName(final String bookName) {
+        return toBooks(bookRepository.findBooksByName(bookName));
+    }
+
     public Book save(final Book book) {
         return toBook(bookRepository.save(toBookEntity(book)));
     }

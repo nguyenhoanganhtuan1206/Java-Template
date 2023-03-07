@@ -6,15 +6,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.javatemplate.fakes.BookFakes.buildBookEntities;
 import static com.javatemplate.fakes.BookFakes.buildBookEntity;
 import static com.javatemplate.persistent.book.BookEntityMapper.toBook;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -97,5 +99,32 @@ class BookStoreTest {
 
         assertFalse(bookStore.findById(uuid).isPresent());
         verify(bookRepository).findById(uuid);
+    }
+
+    @Test
+    void shouldBooksFindByName_OK() {
+        final var book = buildBookEntity();
+        final var expected = buildBookEntities();
+
+        when(bookRepository.findBooksByName(anyString())).thenReturn(expected);
+
+        final var actual = bookStore.findBooksByName(book.getName());
+
+        assertEquals(actual.size(), expected.size());
+
+        verify(bookRepository).findBooksByName(book.getName());
+    }
+
+    @Test
+    void shouldBooksFindByName_Empty() {
+        final var bookName = randomAlphabetic(3, 10);
+
+        when(bookRepository.findBooksByName(bookName)).thenReturn(Collections.emptyList());
+
+        final var actual = bookStore.findBooksByName(bookName);
+
+        assertTrue(actual.isEmpty());
+
+        verify(bookRepository).findBooksByName(bookName);
     }
 }
