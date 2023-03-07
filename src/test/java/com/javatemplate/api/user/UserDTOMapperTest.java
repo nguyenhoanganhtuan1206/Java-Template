@@ -17,6 +17,7 @@ class UserDTOMapperTest {
 
         assertEquals(user.getId(), userDTO.getId());
         assertEquals(user.getUsername(), userDTO.getUsername());
+        assertEquals(user.getPassword(), userDTO.getPassword());
         assertEquals(user.getFirstName(), userDTO.getFirstName());
         assertEquals(user.getLastName(), userDTO.getLastName());
         assertEquals(user.getAvatar(), userDTO.getAvatar());

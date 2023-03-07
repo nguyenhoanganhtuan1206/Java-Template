@@ -16,4 +16,8 @@ public class UserError {
     public static Supplier<BadRequestException> supplyUserExisted(final String username) {
         return () -> new BadRequestException("User %s is already existing", username);
     }
+
+    public static Supplier<BadRequestException> supplyInputsDataFailed() {
+        return () -> new BadRequestException("Request failed. Please check your data again");
+    }
 }

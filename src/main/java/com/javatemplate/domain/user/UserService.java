@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.javatemplate.domain.user.UserError.supplyUserExisted;
-import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
+import static com.javatemplate.domain.user.UserError.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +21,10 @@ public class UserService {
     }
 
     public User createUser(final User user) {
+        if (user.getUsername() == null || user.getPassword() == null) {
+            throw supplyInputsDataFailed().get();
+        }
+
         verifyUserAvailable(user);
 
         return userStore.createUser(user);
@@ -46,16 +49,18 @@ public class UserService {
     }
 
     public User findById(final UUID userId) {
-        return userStore.findById(userId)
-                .orElseThrow(supplyUserNotFound(userId));
+        return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
     }
 
     public User findByName(final String username) {
-        return userStore.findByUsername(username)
-                .orElseThrow(supplyUserExisted(username));
+        return userStore.findByUsername(username).orElseThrow(supplyUserExisted(username));
     }
 
     public User updateUser(final UUID userId, final User userUpdate) {
+        if (userUpdate.getUsername() == null || userUpdate.getPassword() == null) {
+            throw supplyInputsDataFailed().get();
+        }
+
         final User user = findById(userId);
 
         user.setUsername(userUpdate.getUsername());
