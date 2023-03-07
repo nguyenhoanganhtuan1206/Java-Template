@@ -64,6 +64,14 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldCreateUser_Thrown() {
+        final var user = buildUser();
+        user.setPassword(null);
+
+        assertThrows(BadRequestException.class, () -> userService.createUser(user));
+    }
+
+    @Test
     void shouldCreateUser_Existed() {
         final var user = buildUser();
 
@@ -139,6 +147,15 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldUpdateUser_Thrown() {
+        final var user = buildUser();
+        final var userUpdate = buildUser();
+        userUpdate.setPassword(null);
+
+        assertThrows(BadRequestException.class, () -> userService.updateUser(user.getId(), userUpdate));
+    }
+
+    @Test
     void shouldUpdateUser_NotFound() {
         final var userUpdate = buildUser();
         final var uuid = randomUUID();
@@ -173,8 +190,7 @@ class UserServiceTest {
     void shouldFindByName_Ok() {
         final var user = buildUser();
 
-        when(userStore.findByUsername(user.getUsername()))
-                .thenReturn(Optional.of(user));
+        when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
         assertEquals(user, userService.findByName(user.getUsername()));
         verify(userStore).findByUsername(user.getUsername());
@@ -184,8 +200,7 @@ class UserServiceTest {
     void shouldFindByName_Thrown() {
         final var username = randomAlphabetic(3, 10);
 
-        when(userStore.findByUsername(username))
-                .thenReturn(Optional.empty());
+        when(userStore.findByUsername(username)).thenReturn(Optional.empty());
 
         assertThrows(BadRequestException.class, () -> userService.findByName(username));
         verify(userStore).findByUsername(username);
@@ -196,8 +211,7 @@ class UserServiceTest {
         final var user = buildUser();
         final var expected = buildUsers();
 
-        when(userStore.findUsersByName(anyString()))
-                .thenReturn(expected);
+        when(userStore.findUsersByName(anyString())).thenReturn(expected);
 
         final var actual = userService.findUsersByName(user.getUsername());
 
@@ -215,8 +229,7 @@ class UserServiceTest {
     void shouldFindByUsernameOrFirstNameOrLastName_Thrown() {
         final var username = randomAlphabetic(3, 10);
 
-        when(userStore.findUsersByName(username))
-                .thenReturn(Collections.emptyList());
+        when(userStore.findUsersByName(username)).thenReturn(Collections.emptyList());
 
         assertThrows(NotFoundException.class, () -> userService.findUsersByName(username));
         verify(userStore).findUsersByName(username);
