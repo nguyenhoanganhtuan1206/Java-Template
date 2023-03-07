@@ -52,6 +52,7 @@ public class UserService {
         user.setUsername(userUpdate.getUsername());
         user.setFirstName(userUpdate.getFirstName());
         user.setLastName(userUpdate.getLastName());
+        user.setPassword(userUpdate.getPassword());
         user.setAvatar(userUpdate.getAvatar());
         user.setEnabled(userUpdate.getEnabled());
 
