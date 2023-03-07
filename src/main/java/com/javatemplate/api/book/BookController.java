@@ -24,7 +24,7 @@ public class BookController {
     }
 
     @Operation(summary = "Find by id")
-    @GetMapping("/{bookId}")
+    @GetMapping("{bookId}")
     public BookDTO findById(final @PathVariable UUID bookId) {
         return toBookDTO(bookService.findById(bookId));
     }
@@ -36,14 +36,14 @@ public class BookController {
     }
 
     @Operation(summary = "Update book")
-    @PatchMapping("/{bookId}")
+    @PatchMapping("{bookId}")
     public BookDTO update(final @RequestBody BookDTO bookDTO,
                           final @PathVariable UUID bookId) {
         return toBookDTO(bookService.update(bookId, toBook(bookDTO)));
     }
 
     @Operation(summary = "Delete book by id")
-    @DeleteMapping("/{bookId}")
+    @DeleteMapping("{bookId}")
     public void deleteById(final @PathVariable UUID bookId) {
         bookService.deleteById(bookId);
     }

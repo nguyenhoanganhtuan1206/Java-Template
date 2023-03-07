@@ -8,7 +8,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static com.javatemplate.domain.book.BookError.supplyUBookNotFound;
+import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class BookService {
 
     public Book findById(final UUID bookId) {
         return bookStore.findById(bookId)
-                .orElseThrow(supplyUBookNotFound(bookId));
+                .orElseThrow(supplyBookNotFound(bookId));
     }
 
     public Book create(final Book book) {

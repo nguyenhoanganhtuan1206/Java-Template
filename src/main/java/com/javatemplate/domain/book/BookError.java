@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 @UtilityClass
 public class BookError {
 
-    public static Supplier<NotFoundException> supplyUBookNotFound(final UUID bookId) {
+    public static Supplier<NotFoundException> supplyBookNotFound(final UUID bookId) {
         return () -> new NotFoundException("Book with id %s not found", bookId);
     }
 }
