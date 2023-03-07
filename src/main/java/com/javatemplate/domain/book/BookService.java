@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
+import static com.javatemplate.error.CommonError.supplyValidationError;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +27,14 @@ public class BookService {
     }
 
     public Book create(final Book book) {
+        verifyData(book, "Create book failed. Please check your inputs");
+
         return bookStore.save(book);
     }
 
     public Book update(final UUID bookId, final Book bookUpdate) {
+        verifyData(bookUpdate, "Update book failed. Please check your inputs");
+
         final Book book = findById(bookId);
 
         book.setName(bookUpdate.getName());
@@ -46,5 +51,11 @@ public class BookService {
         final Book book = findById(uuid);
 
         bookStore.deleteById(book.getId());
+    }
+
+    private void verifyData(final Book book, final String message) {
+        if (book.getAuthor() == null || book.getName() == null) {
+            throw supplyValidationError(message).get();
+        }
     }
 }

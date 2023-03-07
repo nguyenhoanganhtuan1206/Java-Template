@@ -1,5 +1,6 @@
 package com.javatemplate.domain.book;
 
+import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.book.BookStore;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,7 @@ class BookServiceTest {
     void shouldFindAll_OK() {
         final var expected = buildBooks();
 
-        when(bookStore.findAll())
-                .thenReturn(expected);
+        when(bookStore.findAll()).thenReturn(expected);
 
         final var actual = bookService.findAll();
 
@@ -52,8 +52,7 @@ class BookServiceTest {
     void shouldFindById_Ok() {
         final var book = buildBook();
 
-        when(bookStore.findById(book.getId()))
-                .thenReturn(Optional.of(book));
+        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
 
         assertEquals(book, bookService.findById(book.getId()));
         verify(bookStore).findById(book.getId());
@@ -63,8 +62,7 @@ class BookServiceTest {
     void shouldFindById_Thrown() {
         final var uuid = randomUUID();
 
-        when(bookStore.findById(uuid))
-                .thenReturn(Optional.empty());
+        when(bookStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookService.findById(uuid));
         verify(bookStore).findById(uuid);
@@ -80,6 +78,15 @@ class BookServiceTest {
         assertEquals(book, bookService.create(book));
         verify(bookStore).save(book);
     }
+
+    @Test
+    void shouldCreate_Thrown() {
+        final var book = buildBook();
+        book.setName(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.create(book));
+    }
+
 
     @Test
     void shouldUpdate_Ok() {
@@ -99,6 +106,29 @@ class BookServiceTest {
         assertEquals(expected.getCreatedAt(), bookUpdate.getCreatedAt());
         assertEquals(expected.getDescription(), bookUpdate.getDescription());
         assertEquals(expected.getUserId(), bookUpdate.getUserId());
+
+        verify(bookStore).findById(book.getId());
+    }
+
+    @Test
+    void shouldUpdate_Thrown() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+        bookUpdate.setName(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
+    }
+
+    @Test
+    void shouldUpdate_NotFound() {
+        final var bookId = randomUUID();
+        final var bookUpdate = buildBook();
+
+        when(bookStore.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
+        verify(bookStore).findById(bookId);
     }
 
     @Test
