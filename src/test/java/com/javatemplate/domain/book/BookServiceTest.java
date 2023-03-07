@@ -137,7 +137,7 @@ class BookServiceTest {
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
 
-        assertEquals(book, bookService.findById(book.getId()));
+        bookService.deleteById(book.getId());
         verify(bookStore).findById(book.getId());
     }
 
@@ -147,7 +147,7 @@ class BookServiceTest {
 
         when(bookStore.findById(uuid)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> bookService.findById(uuid));
+        assertThrows(NotFoundException.class, () -> bookService.deleteById(uuid));
         verify(bookStore).findById(uuid);
     }
 }
