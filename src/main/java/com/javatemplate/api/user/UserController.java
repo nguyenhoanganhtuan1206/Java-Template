@@ -40,13 +40,13 @@ public class UserController {
     @Operation(summary = "Create user")
     @PostMapping
     public UserDTO createUser(final @RequestBody UserDTO userDTO) {
-        return toUserDTO(userService.createUser(toUser(userDTO)));
+        return toUserDTO(userService.create(toUser(userDTO)));
     }
 
     @Operation(summary = "Update user")
     @PatchMapping("/{userId}")
     public UserDTO update(final @RequestBody UserDTO userDTO, final @PathVariable UUID userId) {
-        return toUserDTO(userService.updateUser(userId, toUser(userDTO)));
+        return toUserDTO(userService.update(userId, toUser(userDTO)));
     }
 
     @Operation(summary = "Delete user by Id")

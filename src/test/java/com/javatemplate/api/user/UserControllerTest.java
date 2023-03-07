@@ -96,7 +96,7 @@ class UserControllerTest {
     void shouldCreateUser_Ok() throws Exception {
         final var user = buildUser();
 
-        when(userService.createUser(any(User.class))).thenReturn(user);
+        when(userService.create(any(User.class))).thenReturn(user);
 
         this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +117,7 @@ class UserControllerTest {
         userUpdate.setId(userToUpdate.getId());
 
         /* Use specific value for an argument */
-        when(userService.updateUser(eq(userToUpdate.getId()), any(User.class)))
+        when(userService.update(eq(userToUpdate.getId()), any(User.class)))
                 .thenReturn(userUpdate);
 
         this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + userToUpdate.getId())

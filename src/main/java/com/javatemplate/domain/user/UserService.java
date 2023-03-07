@@ -22,7 +22,7 @@ public class UserService {
         return userStore.findAll();
     }
 
-    public User createUser(final User user) {
+    public User create(final User user) {
         validateUser(user);
 
         verifyUserAvailable(user.getUsername());
@@ -42,7 +42,7 @@ public class UserService {
         return userStore.findByUsername(username).orElseThrow(supplyUserExisted(username));
     }
 
-    public User updateUser(final UUID userId, final User userUpdate) {
+    public User update(final UUID userId, final User userUpdate) {
         validateUser(userUpdate);
 
         verifyUserAvailable(userUpdate.getUsername());

@@ -57,7 +57,7 @@ class UserServiceTest {
 
         when(userStore.createUser(user)).thenReturn(user);
 
-        final var userCreated = userService.createUser(user);
+        final var userCreated = userService.create(user);
 
         assertEquals(user, userCreated);
         verify(userStore).createUser(user);
@@ -112,7 +112,7 @@ class UserServiceTest {
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
 
-        final var expected = userService.updateUser(user.getId(), userUpdate);
+        final var expected = userService.update(user.getId(), userUpdate);
 
         assertEquals(expected.getId().toString(), userUpdate.getId().toString());
         assertEquals(expected.getUsername(), userUpdate.getUsername());
@@ -131,7 +131,7 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setPassword(null);
 
-        assertThrows(BadRequestException.class, () -> userService.updateUser(user.getId(), userUpdate));
+        assertThrows(BadRequestException.class, () -> userService.update(user.getId(), userUpdate));
     }
 
     @Test
@@ -141,7 +141,7 @@ class UserServiceTest {
 
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> userService.updateUser(uuid, userUpdate));
+        assertThrows(NotFoundException.class, () -> userService.update(uuid, userUpdate));
         verify(userStore).findById(uuid);
     }
 
