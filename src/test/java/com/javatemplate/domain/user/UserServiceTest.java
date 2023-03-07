@@ -131,7 +131,7 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setPassword(null);
 
-        assertThrows(NotFoundException.class, () -> userService.updateUser(user.getId(), userUpdate));
+        assertThrows(BadRequestException.class, () -> userService.updateUser(user.getId(), userUpdate));
     }
 
     @Test

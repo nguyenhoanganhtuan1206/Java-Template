@@ -23,9 +23,7 @@ public class UserService {
     }
 
     public User createUser(final User user) {
-        if (user.getUsername() == null || user.getPassword() == null) {
-            throw supplyValidationError("Sign up failed. Please check again your inputs").get();
-        }
+        validateData(user);
 
         verifyUserAvailable(user);
 
@@ -45,6 +43,8 @@ public class UserService {
     }
 
     public User updateUser(final UUID userId, final User userUpdate) {
+        validateData(userUpdate);
+
         final User user = findById(userId);
 
         user.setUsername(userUpdate.getUsername());
@@ -60,6 +60,12 @@ public class UserService {
         final User user = findById(id);
 
         userStore.deleteById(user.getId());
+    }
+
+    private void validateData(final User user) {
+        if (user.getUsername() == null || user.getPassword() == null) {
+            throw supplyValidationError("Sign up failed. Please check again your inputs").get();
+        }
     }
 
     private void verifyUserAvailable(final User user) {
