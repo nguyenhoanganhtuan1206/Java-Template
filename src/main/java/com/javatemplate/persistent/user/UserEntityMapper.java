@@ -15,6 +15,7 @@ public class UserEntityMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
+                .password(user.getPassword())
                 .lastName(user.getLastName())
                 .avatar(user.getAvatar())
                 .enabled(user.getEnabled())

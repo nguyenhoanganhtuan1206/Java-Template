@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.javatemplate.api.user.UserValidation.validateUserCreate;
+import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
 import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
-import static com.javatemplate.error.CommonError.supplyValidationError;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class UserService {
     }
 
     public User create(final User user) {
-        validateUser(user);
+        validateUserCreate(user);
 
         verifyUserAvailable(user.getUsername());
 
@@ -43,16 +45,17 @@ public class UserService {
     }
 
     public User update(final UUID userId, final User userUpdate) {
-        validateUser(userUpdate);
-
-        verifyUserAvailable(userUpdate.getUsername());
-
         final User user = findById(userId);
+        validateUserUpdate(userUpdate);
 
-        user.setUsername(userUpdate.getUsername());
+        verifyUserAvailableUpdate(user, userUpdate.getUsername());
+
+        if (isNotBlank(userUpdate.getPassword())) {
+            user.setPassword(userUpdate.getPassword());
+        }
+
         user.setFirstName(userUpdate.getFirstName());
         user.setLastName(userUpdate.getLastName());
-        user.setPassword(userUpdate.getPassword());
         user.setAvatar(userUpdate.getAvatar());
         user.setEnabled(userUpdate.getEnabled());
 
@@ -65,9 +68,11 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-    private void validateUser(final User user) {
-        if (user.getUsername() == null || user.getPassword() == null) {
-            throw supplyValidationError("Request failed. Please check your inputs again").get();
+    private void verifyUserAvailableUpdate(final User user, final String username) {
+        if (!username.isEmpty() && !username.equals(user.getUsername())) {
+            verifyUserAvailable(username);
+
+            user.setUsername(username);
         }
     }
 

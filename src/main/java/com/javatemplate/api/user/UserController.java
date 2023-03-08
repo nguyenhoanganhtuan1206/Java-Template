@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @Operation(summary = "Update user")
-    @PatchMapping("/{userId}")
+    @PutMapping("/{userId}")
     public UserResponseDTO update(final @RequestBody UserRequestDTO userDTO, final @PathVariable UUID userId) {
         return toUserDTO(userService.update(userId, toUser(userDTO)));
     }
