@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static com.javatemplate.api.user.UserValidation.validateUserCreate;
 import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
 import static com.javatemplate.fakes.UserFakes.buildUser;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserValidationTest {
@@ -34,8 +35,14 @@ class UserValidationTest {
 
     @Test
     void shouldValidateUserUpdate_ThrownValidationError() {
-        final var user = buildUser();
-        user.setUsername(null);
+        final var user = buildUser().withUsername(null);
+
+        assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
+    }
+
+    @Test
+    void shouldValidateUserUpdate_ThrownLengthPassword() {
+        final var user = buildUser().withPassword(randomAlphabetic(3, 5));
 
         assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
     }

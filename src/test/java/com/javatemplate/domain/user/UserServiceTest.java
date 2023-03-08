@@ -19,8 +19,7 @@ import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -107,9 +106,10 @@ class UserServiceTest {
     @Test
     void shouldUpdateUser_OK() {
         final var user = buildUser();
-        final var userUpdate = buildUser();
-        userUpdate.setId(user.getId());
-        userUpdate.setRoleId(user.getRoleId());
+        final var userUpdate = buildUser()
+                .withId(user.getId())
+                .withRoleId(user.getRoleId())
+                .withPassword(randomAlphabetic(6, 10));
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
@@ -128,12 +128,15 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldUpdateUser_ThrownBadRequest() {
+    void shouldUpdateUser_ThrownLengthPasswordException() {
         final var user = buildUser();
-        final var userUpdate = buildUser();
-        userUpdate.setPassword(null);
+        final var userUpdate = buildUser().withPassword(randomAlphabetic(3, 5));
+
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> userService.update(user.getId(), userUpdate));
+
+        verify(userStore).findById(user.getId());
     }
 
     @Test
@@ -145,6 +148,21 @@ class UserServiceTest {
 
         assertThrows(NotFoundException.class, () -> userService.update(uuid, userUpdate));
         verify(userStore).findById(uuid);
+    }
+
+    @Test
+    void shouldUpdateUser_UsernameExisted() {
+        final var userToUpdate = buildUser();
+        final var userExisted = buildUser();
+        final var userUpdate = buildUser().withUsername(userExisted.getUsername());
+
+        when(userStore.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
+        when(userStore.findByUsername(userUpdate.getUsername())).thenReturn(Optional.of(userUpdate));
+
+        assertThrows(BadRequestException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
+
+        // Verify that the user not saved in the store
+        verify(userStore, never()).updateUser(userUpdate);
     }
 
     @Test
