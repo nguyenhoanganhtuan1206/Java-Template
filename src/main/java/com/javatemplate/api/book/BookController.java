@@ -43,8 +43,7 @@ public class BookController {
 
     @Operation(summary = "Update book")
     @PatchMapping("{bookId}")
-    public BookDTO update(final @RequestBody BookDTO bookDTO,
-                          final @PathVariable UUID bookId) {
+    public BookDTO update(final @PathVariable UUID bookId, final @RequestBody BookDTO bookDTO) {
         return toBookDTO(bookService.update(bookId, toBook(bookDTO)));
     }
 

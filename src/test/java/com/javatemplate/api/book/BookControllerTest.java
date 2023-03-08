@@ -39,7 +39,7 @@ class BookControllerTest {
 
         when(bookService.findAll()).thenReturn(books);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(books.size()))
                 .andExpect(jsonPath("$[0].id").value(books.get(0).getId().toString()))
@@ -60,7 +60,7 @@ class BookControllerTest {
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + book.getId()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + book.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -80,7 +80,7 @@ class BookControllerTest {
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
-        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(book)))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ class BookControllerTest {
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + bookToUpdate.getId())
+        mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + bookToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(bookUpdate)))
                 .andExpect(status().isOk())
@@ -121,7 +121,7 @@ class BookControllerTest {
     void shouldDeleteById_OK() throws Exception {
         final var book = buildBook();
 
-        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + book.getId()))
+        mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + book.getId()))
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(book.getId());
@@ -136,7 +136,7 @@ class BookControllerTest {
 
         final var actual = bookService.findBooksByName(book.getName());
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?bookName=" + book.getName()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?bookName=" + book.getName()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))

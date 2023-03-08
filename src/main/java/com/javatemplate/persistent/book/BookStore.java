@@ -27,7 +27,7 @@ public class BookStore {
     }
 
     public List<Book> findBooksByName(final String bookName) {
-        return toBooks(bookRepository.findBooksByName(bookName));
+        return toBooks(bookRepository.findByNameContainingIgnoreCase(bookName));
     }
 
     public Book save(final Book book) {

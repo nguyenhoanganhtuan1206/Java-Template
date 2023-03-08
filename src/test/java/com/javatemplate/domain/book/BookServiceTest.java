@@ -9,13 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -171,7 +171,7 @@ class BookServiceTest {
     void shouldFindBooksByName_Empty() {
         final var bookName = randomAlphabetic(3, 10);
 
-        when(bookStore.findBooksByName(bookName)).thenReturn(Collections.emptyList());
+        when(bookStore.findBooksByName(bookName)).thenReturn(emptyList());
 
         final var actual = bookService.findBooksByName(bookName);
 
