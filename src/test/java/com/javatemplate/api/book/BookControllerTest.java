@@ -80,9 +80,12 @@ class BookControllerTest {
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
+        final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        final String requestBody = mapper.writeValueAsString(book);
+
         mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(book)))
+                        .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -98,14 +101,18 @@ class BookControllerTest {
     void shouldUpdate_OK() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
+
         bookUpdate.setId(bookToUpdate.getId());
 
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 
+        final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        final String requestBody = mapper.writeValueAsString(bookUpdate);
+
         mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + bookToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(bookUpdate)))
+                        .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookUpdate.getId().toString()))
                 .andExpect(jsonPath("$.name").value(bookUpdate.getName()))
