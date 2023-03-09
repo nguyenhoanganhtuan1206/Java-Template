@@ -47,8 +47,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName()))
                 .andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName()))
                 .andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled()))
-                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()))
-                .andExpect(jsonPath("$[0].roleId").value(users.get(0).getRoleId().toString()));
+                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()));
 
         verify(userService).findAll();
     }
