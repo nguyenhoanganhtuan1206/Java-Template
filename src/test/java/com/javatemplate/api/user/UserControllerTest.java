@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -113,14 +114,14 @@ class UserControllerTest {
     @Test
     void shouldUpdateUser_OK() throws Exception {
         final var userToUpdate = buildUser();
-        final var userUpdate = buildUser();
-        userUpdate.setId(userToUpdate.getId());
+        final var userUpdate = buildUser()
+                .withPassword(randomAlphabetic(6, 10))
+                .withId(userToUpdate.getId());
 
         /* Use specific value for an argument */
-        when(userService.update(eq(userToUpdate.getId()), any(User.class)))
-                .thenReturn(userUpdate);
+        when(userService.update(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + userToUpdate.getId())
+        this.mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + userToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
                 .andExpect(status().isOk())
