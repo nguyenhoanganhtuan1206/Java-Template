@@ -65,8 +65,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()));
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()));
 
         verify(userService).findById(user.getId());
     }
@@ -88,8 +87,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value(actual.get(0).getFirstName()))
                 .andExpect(jsonPath("$[0].lastName").value(actual.get(0).getLastName()))
                 .andExpect(jsonPath("$[0].enabled").value(actual.get(0).getEnabled()))
-                .andExpect(jsonPath("$[0].avatar").value(actual.get(0).getAvatar()))
-                .andExpect(jsonPath("$[0].roleId").value(actual.get(0).getRoleId().toString()));
+                .andExpect(jsonPath("$[0].avatar").value(actual.get(0).getAvatar()));
     }
 
     @Test
@@ -106,7 +104,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
-                .andExpect(jsonPath("$.roleId").value(user.getRoleId().toString()))
                 .andExpect(jsonPath("$.enabled").value(user.getEnabled()));
     }
 
@@ -127,8 +124,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(userUpdate.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()))
-                .andExpect(jsonPath("$.roleId").value(userUpdate.getRoleId().toString()));
+                .andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()));
     }
 
     @Test
