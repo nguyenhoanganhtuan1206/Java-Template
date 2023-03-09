@@ -112,7 +112,6 @@ class UserControllerTest {
         final var userToUpdate = buildUser();
         final var userUpdate = buildUser().withId(userToUpdate.getId());
 
-        /* Use specific value for an argument */
         when(userService.update(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
 
         this.mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + userToUpdate.getId())
