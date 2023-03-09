@@ -106,9 +106,9 @@ class UserServiceTest {
     @Test
     void shouldUpdateUser_OK() {
         final var user = buildUser();
-        final var userUpdate = buildUser()
-                .withId(user.getId())
-                .withRoleId(user.getRoleId());
+        final var userUpdate = buildUser();
+        userUpdate.setId(user.getId());
+        userUpdate.setRoleId(user.getRoleId());
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
@@ -129,7 +129,8 @@ class UserServiceTest {
     @Test
     void shouldUpdateUser_ThrownLengthPasswordException() {
         final var user = buildUser();
-        final var userUpdate = buildUser().withPassword(randomAlphabetic(3, 5));
+        final var userUpdate = buildUser();
+        userUpdate.setPassword(randomAlphabetic(3, 5));
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
@@ -153,7 +154,8 @@ class UserServiceTest {
     void shouldUpdateUser_UsernameExisted() {
         final var userToUpdate = buildUser();
         final var userExisted = buildUser();
-        final var userUpdate = buildUser().withUsername(userExisted.getUsername());
+        final var userUpdate = buildUser();
+        userUpdate.setUsername(userExisted.getUsername());
 
         when(userStore.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
         when(userStore.findByUsername(userUpdate.getUsername())).thenReturn(Optional.of(userUpdate));

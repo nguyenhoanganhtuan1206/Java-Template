@@ -35,14 +35,16 @@ class UserValidationTest {
 
     @Test
     void shouldValidateUserUpdate_ThrownValidationError() {
-        final var user = buildUser().withUsername(null);
+        final var user = buildUser();
+        user.setUsername(null);
 
         assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
     }
 
     @Test
     void shouldValidateUserUpdate_ThrownLengthPassword() {
-        final var user = buildUser().withPassword(randomAlphabetic(3, 5));
+        final var user = buildUser();
+        user.setPassword(randomAlphabetic(3, 5));
 
         assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
     }

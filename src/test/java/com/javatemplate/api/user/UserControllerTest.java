@@ -109,7 +109,8 @@ class UserControllerTest {
     @Test
     void shouldUpdateUser_OK() throws Exception {
         final var userToUpdate = buildUser();
-        final var userUpdate = buildUser().withId(userToUpdate.getId());
+        final var userUpdate = buildUser();
+        userUpdate.setId(userToUpdate.getId());
 
         when(userService.update(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
 
