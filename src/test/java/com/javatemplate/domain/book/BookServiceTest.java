@@ -99,15 +99,15 @@ class BookServiceTest {
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
         when(bookStore.save(book)).thenReturn(book);
 
-        final var expected = bookService.update(book.getId(), bookUpdate);
+        final var actual = bookService.update(book.getId(), bookUpdate);
 
-        assertEquals(expected.getId(), bookUpdate.getId());
-        assertEquals(expected.getName(), bookUpdate.getName());
-        assertEquals(expected.getAuthor(), bookUpdate.getAuthor());
-        assertEquals(expected.getImage(), bookUpdate.getImage());
-        assertEquals(expected.getCreatedAt(), bookUpdate.getCreatedAt());
-        assertEquals(expected.getDescription(), bookUpdate.getDescription());
-        assertEquals(expected.getUserId(), bookUpdate.getUserId());
+        assertEquals(actual.getId(), bookUpdate.getId());
+        assertEquals(actual.getName(), bookUpdate.getName());
+        assertEquals(actual.getAuthor(), bookUpdate.getAuthor());
+        assertEquals(actual.getImage(), bookUpdate.getImage());
+        assertEquals(actual.getCreatedAt(), bookUpdate.getCreatedAt());
+        assertEquals(actual.getDescription(), bookUpdate.getDescription());
+        assertEquals(actual.getUserId(), bookUpdate.getUserId());
 
         verify(bookStore).findById(book.getId());
     }
@@ -158,25 +158,25 @@ class BookServiceTest {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookStore.findBooksByName(anyString())).thenReturn(expected);
+        when(bookStore.findBooksByNameOrAuthor(anyString())).thenReturn(expected);
 
-        final var actual = bookService.findBooksByName(book.getName());
+        final var actual = bookService.findBooksByNameOrAuthor(book.getName());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(bookStore).findBooksByName(book.getName());
+        verify(bookStore).findBooksByNameOrAuthor(book.getName());
     }
 
     @Test
     void shouldFindBooksByName_Empty() {
-        final var bookName = randomAlphabetic(3, 10);
+        final var input = randomAlphabetic(3, 10);
 
-        when(bookStore.findBooksByName(bookName)).thenReturn(emptyList());
+        when(bookStore.findBooksByNameOrAuthor(input)).thenReturn(emptyList());
 
-        final var actual = bookService.findBooksByName(bookName);
+        final var actual = bookService.findBooksByNameOrAuthor(input);
 
         assertTrue(actual.isEmpty());
 
-        verify(bookStore).findBooksByName(bookName);
+        verify(bookStore).findBooksByNameOrAuthor(input);
     }
 }

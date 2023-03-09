@@ -49,15 +49,15 @@ class BookStoreTest {
 
         when(bookRepository.save(any())).thenReturn(book);
 
-        final var expected = bookStore.save(toBook(book));
+        final var actual = bookStore.save(toBook(book));
 
-        assertEquals(book.getId(), expected.getId());
-        assertEquals(book.getName(), expected.getName());
-        assertEquals(book.getAuthor(), expected.getAuthor());
-        assertEquals(book.getUpdatedAt(), expected.getUpdatedAt());
-        assertEquals(book.getCreatedAt(), expected.getCreatedAt());
-        assertEquals(book.getDescription(), expected.getDescription());
-        assertEquals(book.getImage(), expected.getImage());
+        assertEquals(book.getId(), actual.getId());
+        assertEquals(book.getName(), actual.getName());
+        assertEquals(book.getAuthor(), actual.getAuthor());
+        assertEquals(book.getUpdatedAt(), actual.getUpdatedAt());
+        assertEquals(book.getCreatedAt(), actual.getCreatedAt());
+        assertEquals(book.getDescription(), actual.getDescription());
+        assertEquals(book.getImage(), actual.getImage());
     }
 
     @Test
@@ -72,12 +72,12 @@ class BookStoreTest {
     @Test
     void shouldFindById_OK() {
         final var book = buildBookEntity();
-        final var bookOpt = Optional.of(book);
+        final var bookOptional = Optional.of(book);
 
-        when(bookRepository.findById(book.getId())).thenReturn(bookOpt);
+        when(bookRepository.findById(book.getId())).thenReturn(bookOptional);
 
         final var actual = bookStore.findById(book.getId()).get();
-        final var expected = bookOpt.get();
+        final var expected = bookOptional.get();
 
 
         assertEquals(actual.getId(), expected.getId());
@@ -106,25 +106,25 @@ class BookStoreTest {
         final var book = buildBookEntity();
         final var expected = buildBookEntities();
 
-        when(bookRepository.findByNameContainingIgnoreCase(anyString())).thenReturn(expected);
+        when(bookRepository.findByNameOrAuthor(anyString())).thenReturn(expected);
 
-        final var actual = bookStore.findBooksByName(book.getName());
+        final var actual = bookStore.findBooksByNameOrAuthor(book.getName());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(bookRepository).findByNameContainingIgnoreCase(book.getName());
+        verify(bookRepository).findByNameOrAuthor(book.getName());
     }
 
     @Test
     void shouldBooksFindByName_Empty() {
         final var bookName = randomAlphabetic(3, 10);
 
-        when(bookRepository.findByNameContainingIgnoreCase(bookName)).thenReturn(emptyList());
+        when(bookRepository.findByNameOrAuthor(bookName)).thenReturn(emptyList());
 
-        final var actual = bookStore.findBooksByName(bookName);
+        final var actual = bookStore.findBooksByNameOrAuthor(bookName);
 
         assertTrue(actual.isEmpty());
 
-        verify(bookRepository).findByNameContainingIgnoreCase(bookName);
+        verify(bookRepository).findByNameOrAuthor(bookName);
     }
 }

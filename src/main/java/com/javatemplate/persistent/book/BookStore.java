@@ -26,8 +26,8 @@ public class BookStore {
                 .map(BookEntityMapper::toBook);
     }
 
-    public List<Book> findBooksByName(final String bookName) {
-        return toBooks(bookRepository.findByNameContainingIgnoreCase(bookName));
+    public List<Book> findBooksByNameOrAuthor(final String input) {
+        return toBooks(bookRepository.findByNameOrAuthor(input));
     }
 
     public Book save(final Book book) {
