@@ -27,7 +27,7 @@ public class UserService {
     public User create(final User user) {
         validateUserCreate(user);
 
-        verifyUserAvailable(user.getUsername());
+        checkIfUsernameAvailable(user.getUsername());
 
         return userStore.createUser(user);
     }
@@ -70,13 +70,13 @@ public class UserService {
 
     private void updateUserIfNotAvailable(final User user, final String username) {
         if (!username.isEmpty() && !username.equals(user.getUsername())) {
-            verifyUserAvailable(username);
+            checkIfUsernameAvailable(username);
 
             user.setUsername(username);
         }
     }
 
-    private void verifyUserAvailable(final String username) {
+    private void checkIfUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
 
         if (userOptional.isPresent()) {
