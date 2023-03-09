@@ -48,7 +48,7 @@ public class UserService {
         final User user = findById(userId);
         validateUserUpdate(userUpdate);
 
-        verifyUserAvailableUpdate(user, userUpdate.getUsername());
+        updateUserIfNotAvailable(user, userUpdate.getUsername());
 
         if (isNotBlank(userUpdate.getPassword())) {
             user.setPassword(userUpdate.getPassword());
@@ -68,7 +68,7 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-    private void verifyUserAvailableUpdate(final User user, final String username) {
+    private void updateUserIfNotAvailable(final User user, final String username) {
         if (!username.isEmpty() && !username.equals(user.getUsername())) {
             verifyUserAvailable(username);
 

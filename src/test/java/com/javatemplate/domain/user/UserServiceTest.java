@@ -71,7 +71,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldCreateUser_Existed() {
+    void shouldCreateUser_ExistedWithUsername() {
         final var user = buildUser();
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
@@ -108,8 +108,7 @@ class UserServiceTest {
         final var user = buildUser();
         final var userUpdate = buildUser()
                 .withId(user.getId())
-                .withRoleId(user.getRoleId())
-                .withPassword(randomAlphabetic(6, 10));
+                .withRoleId(user.getRoleId());
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
