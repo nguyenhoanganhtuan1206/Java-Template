@@ -139,11 +139,11 @@ class BookControllerTest {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookService.findBooksByNameOrAuthor(anyString())).thenReturn(expected);
+        when(bookService.findByNameAuthorDesc(anyString())).thenReturn(expected);
 
-        final var actual = bookService.findBooksByNameOrAuthor(book.getName());
+        final var actual = bookService.findByNameAuthorDesc(book.getName());
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?input=" + book.getName()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?q=" + book.getName()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))

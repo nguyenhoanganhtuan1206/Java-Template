@@ -26,12 +26,8 @@ public class BookStore {
                 .map(BookEntityMapper::toBook);
     }
 
-    public Optional<Book> findByUserId(final UUID userId) {
-        return bookRepository.findByUserId(userId).map(BookEntityMapper::toBook);
-    }
-
-    public List<Book> findBooksByNameOrAuthor(final String input) {
-        return toBooks(bookRepository.findByNameOrAuthor(input));
+    public List<Book> findByNameAuthorDesc(final String searchTerm) {
+        return toBooks(bookRepository.findByNameAuthorDesc(searchTerm));
     }
 
     public Book save(final Book book) {

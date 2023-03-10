@@ -169,25 +169,25 @@ class BookServiceTest {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookStore.findBooksByNameOrAuthor(anyString())).thenReturn(expected);
+        when(bookStore.findByNameAuthorDesc(anyString())).thenReturn(expected);
 
-        final var actual = bookService.findBooksByNameOrAuthor(book.getName());
+        final var actual = bookService.findByNameAuthorDesc(book.getName());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(bookStore).findBooksByNameOrAuthor(book.getName());
+        verify(bookStore).findByNameAuthorDesc(book.getName());
     }
 
     @Test
     void shouldFindBooksByName_Empty() {
         final var input = randomAlphabetic(3, 10);
 
-        when(bookStore.findBooksByNameOrAuthor(input)).thenReturn(emptyList());
+        when(bookStore.findByNameAuthorDesc(input)).thenReturn(emptyList());
 
-        final var actual = bookService.findBooksByNameOrAuthor(input);
+        final var actual = bookService.findByNameAuthorDesc(input);
 
         assertTrue(actual.isEmpty());
 
-        verify(bookStore).findBooksByNameOrAuthor(input);
+        verify(bookStore).findByNameAuthorDesc(input);
     }
 }

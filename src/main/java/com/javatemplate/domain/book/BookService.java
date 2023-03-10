@@ -26,8 +26,8 @@ public class BookService {
                 .orElseThrow(supplyBookNotFound(bookId));
     }
 
-    public List<Book> findBooksByNameOrAuthor(final String input) {
-        return bookStore.findBooksByNameOrAuthor(input);
+    public List<Book> findByNameAuthorDesc(final String input) {
+        return bookStore.findByNameAuthorDesc(input);
     }
 
     public Book create(final Book book) {
