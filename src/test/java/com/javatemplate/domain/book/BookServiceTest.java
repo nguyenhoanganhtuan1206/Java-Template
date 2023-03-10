@@ -95,6 +95,7 @@ class BookServiceTest {
         final var book = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(book.getId());
+        bookUpdate.setUserId(book.getUserId());
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
         when(bookStore.save(book)).thenReturn(book);
