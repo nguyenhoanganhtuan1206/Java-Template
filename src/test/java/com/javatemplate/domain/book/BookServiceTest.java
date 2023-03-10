@@ -134,6 +134,17 @@ class BookServiceTest {
     }
 
     @Test
+    void shouldUpdate_ThrownPermissionException() {
+        final var bookId = randomUUID();
+        final var bookUpdate = buildBook();
+
+        when(bookStore.findById(bookId)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
+        verify(bookStore).findById(bookId);
+    }
+
+    @Test
     void shouldDeleteId_OK() {
         final var book = buildBook();
 

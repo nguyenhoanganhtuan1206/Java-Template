@@ -110,7 +110,7 @@ class BookControllerTest {
         final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         final String requestBody = mapper.writeValueAsString(bookUpdate);
 
-        mvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/" + bookToUpdate.getId())
+        mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + bookToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk())
