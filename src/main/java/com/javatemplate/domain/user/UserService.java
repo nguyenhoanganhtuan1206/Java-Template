@@ -32,7 +32,7 @@ public class UserService {
         return userStore.create(user);
     }
 
-    public List<User> findUsersByName(final String name) {
+    public List<User> findByName(final String name) {
         return userStore.findByName(name);
     }
 
@@ -40,7 +40,7 @@ public class UserService {
         return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
     }
 
-    public User findByName(final String username) {
+    public User findByUsername(final String username) {
         return userStore.findByUsername(username).orElseThrow(supplyUserNotFound(username));
     }
 
