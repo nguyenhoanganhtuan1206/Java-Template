@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 
 import static com.javatemplate.error.CommonError.supplyValidationError;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @UtilityClass
 public class UserValidation {
@@ -29,7 +28,7 @@ public class UserValidation {
     }
 
     private static void validateLengthPassword(final String password) {
-        if (isNotBlank(password) && password.length() < 6) {
+        if (isBlank(password) || password.length() < 6) {
             throw supplyValidationError("Password must be at least 6 characters").get();
         }
     }
