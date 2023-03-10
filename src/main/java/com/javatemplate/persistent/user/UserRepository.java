@@ -14,6 +14,5 @@ public interface UserRepository extends CrudRepository<UserEntity, UUID> {
     @Query("SELECT u FROM UserEntity u WHERE CONCAT(u.username, u.firstName, u.lastName) LIKE %:name%")
     List<UserEntity> findByUsernameOrFirstNameOrLastName(final String name);
 
-    @Query("select u from UserEntity u where u.username = ?1")
     Optional<UserEntity> findByUsername(final String username);
 }

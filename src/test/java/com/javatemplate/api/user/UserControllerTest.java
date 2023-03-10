@@ -39,7 +39,7 @@ class UserControllerTest {
 
         when(userService.findAll()).thenReturn(users);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(users.size()))
                 .andExpect(jsonPath("$[0].id").value(users.get(0).getId().toString()))
@@ -58,7 +58,7 @@ class UserControllerTest {
 
         when(userService.findById(user.getId())).thenReturn(user);
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
@@ -78,7 +78,7 @@ class UserControllerTest {
 
         final var actual = userService.findUsersByName(user.getUsername());
 
-        this.mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?name=" + user.getUsername()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?name=" + user.getUsername()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
@@ -95,7 +95,7 @@ class UserControllerTest {
 
         when(userService.create(any(User.class))).thenReturn(user);
 
-        this.mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+        mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(user)))
                 .andExpect(jsonPath("$.id").value(user.getId().toString()))
@@ -114,7 +114,7 @@ class UserControllerTest {
 
         when(userService.update(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
 
-        this.mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + userToUpdate.getId())
+        mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + userToUpdate.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(toUserDTO(userUpdate))))
                 .andExpect(status().isOk())
@@ -130,7 +130,7 @@ class UserControllerTest {
     void shouldDeleteById_OK() throws Exception {
         final var user = buildUser();
 
-        this.mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + user.getId()))
+        mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + user.getId()))
                 .andExpect(status().isOk());
 
         verify(userService).deleteById(user.getId());
