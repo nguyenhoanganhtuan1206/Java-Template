@@ -102,7 +102,7 @@ class UserStoreTest {
 
         when(userRepository.save(any(UserEntity.class))).thenReturn(expected);
 
-        final var actual = userStore.createUser(toUser(expected));
+        final var actual = userStore.create(toUser(expected));
 
         assertEquals(actual.getId(), expected.getId());
         assertEquals(actual.getUsername(), expected.getUsername());
