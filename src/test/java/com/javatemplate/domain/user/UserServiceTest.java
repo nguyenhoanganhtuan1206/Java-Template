@@ -162,7 +162,6 @@ class UserServiceTest {
 
         assertThrows(BadRequestException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
-        // Verify that the user not saved in the store
         verify(userStore, never()).updateUser(userUpdate);
     }
 
