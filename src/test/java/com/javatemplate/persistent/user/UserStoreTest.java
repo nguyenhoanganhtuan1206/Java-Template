@@ -144,13 +144,13 @@ class UserStoreTest {
         final var user = buildUserEntity();
         final var expected = builderUserEntities();
 
-        when(userRepository.findByUsernameOrFirstNameOrLastName(anyString()))
+        when(userRepository.findByName(anyString()))
                 .thenReturn(expected);
 
-        final var actual = userStore.findUsersByName(user.getUsername());
+        final var actual = userStore.findByName(user.getUsername());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(userRepository).findByUsernameOrFirstNameOrLastName(user.getUsername());
+        verify(userRepository).findByName(user.getUsername());
     }
 }

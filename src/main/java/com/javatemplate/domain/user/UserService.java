@@ -27,13 +27,13 @@ public class UserService {
     public User create(final User user) {
         validateUserCreate(user);
 
-        checkIfUsernameAvailable(user.getUsername());
+        verifyUsernameAvailable(user.getUsername());
 
-        return userStore.createUser(user);
+        return userStore.create(user);
     }
 
     public List<User> findUsersByName(final String name) {
-        return userStore.findUsersByName(name);
+        return userStore.findByName(name);
     }
 
     public User findById(final UUID userId) {
@@ -48,7 +48,7 @@ public class UserService {
         final User user = findById(userId);
         validateUserUpdate(userUpdate);
 
-        updateUserIfNotAvailable(user, userUpdate.getUsername());
+        updateUsernameIfNotAvailable(user, userUpdate.getUsername());
 
         if (isNotBlank(userUpdate.getPassword())) {
             user.setPassword(userUpdate.getPassword());
@@ -68,15 +68,15 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-    private void updateUserIfNotAvailable(final User user, final String username) {
+    private void updateUsernameIfNotAvailable(final User user, final String username) {
         if (!username.isEmpty() && !username.equals(user.getUsername())) {
-            checkIfUsernameAvailable(username);
+            verifyUsernameAvailable(username);
 
             user.setUsername(username);
         }
     }
 
-    private void checkIfUsernameAvailable(final String username) {
+    private void verifyUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
 
         if (userOptional.isPresent()) {
