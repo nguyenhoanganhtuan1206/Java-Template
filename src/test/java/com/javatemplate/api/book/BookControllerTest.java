@@ -135,7 +135,7 @@ class BookControllerTest {
     }
 
     @Test
-    void shouldFindByName_Ok() throws Exception {
+    void shouldFindByNameAuthorDescription_Ok() throws Exception {
         final var book = buildBook();
         final var expected = buildBooks();
 
@@ -143,7 +143,7 @@ class BookControllerTest {
 
         final var actual = bookService.findByNameAuthorDescription(book.getName());
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?q=" + book.getName()))
+        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?searchTemp=" + book.getName()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
