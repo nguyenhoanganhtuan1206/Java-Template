@@ -31,13 +31,14 @@ public class BookService {
     }
 
     public Book create(final Book book) {
-        verifyData(book);
+        verifyBookInformation(book);
 
+        book.setCreatedAt(Instant.now());
         return bookStore.save(book);
     }
 
     public Book update(final UUID bookId, final Book bookUpdate) {
-        verifyData(bookUpdate);
+        verifyBookInformation(bookUpdate);
 
         final Book book = findById(bookId);
 
@@ -56,7 +57,7 @@ public class BookService {
         bookStore.deleteById(book.getId());
     }
 
-    private void verifyData(final Book book) {
+    private void verifyBookInformation(final Book book) {
         if (book.getAuthor() == null) {
             throw supplyValidationError("Author cannot be empty").get();
         }
