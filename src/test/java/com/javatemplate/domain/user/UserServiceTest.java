@@ -54,12 +54,12 @@ class UserServiceTest {
     void shouldCreateUser_OK() {
         final var user = buildUser();
 
-        when(userStore.createUser(user)).thenReturn(user);
+        when(userStore.create(user)).thenReturn(user);
 
         final var userCreated = userService.create(user);
 
         assertEquals(user, userCreated);
-        verify(userStore).createUser(user);
+        verify(userStore).create(user);
     }
 
     @Test
@@ -162,7 +162,6 @@ class UserServiceTest {
 
         assertThrows(BadRequestException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
-        // Verify that the user not saved in the store
         verify(userStore, never()).updateUser(userUpdate);
     }
 
@@ -187,24 +186,24 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldFindByName_OK() {
+    void shouldFindByUsername_OK() {
         final var user = buildUser();
 
         when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-        final var actual = userService.findByName(user.getUsername());
+        final var actual = userService.findByUsername(user.getUsername());
 
         assertEquals(user, actual);
         verify(userStore).findByUsername(user.getUsername());
     }
 
     @Test
-    void shouldFindByName_ThrownNotFoundException() {
+    void shouldFindByUsername_ThrownNotFoundException() {
         final var username = randomAlphabetic(3, 10);
 
         when(userStore.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> userService.findByName(username));
+        assertThrows(NotFoundException.class, () -> userService.findByUsername(username));
         verify(userStore).findByUsername(username);
     }
 
@@ -213,9 +212,9 @@ class UserServiceTest {
         final var user = buildUser();
         final var expected = buildUsers();
 
-        when(userStore.findUsersByName(anyString())).thenReturn(expected);
+        when(userStore.findByName(anyString())).thenReturn(expected);
 
-        final var actual = userService.findUsersByName(user.getUsername());
+        final var actual = userService.findByName(user.getUsername());
 
         assertEquals(expected.size(), actual.size());
         assertEquals(expected.get(0).getId(), actual.get(0).getId());
@@ -231,11 +230,11 @@ class UserServiceTest {
     void shouldFindByUsernameOrFirstNameOrLastName_Empty() {
         final var username = randomAlphabetic(3, 10);
 
-        when(userStore.findUsersByName(username)).thenReturn(Collections.emptyList());
+        when(userStore.findByName(username)).thenReturn(Collections.emptyList());
 
-        final var actual = userService.findUsersByName(username);
+        final var actual = userService.findByName(username);
 
         assertTrue(actual.isEmpty());
-        verify(userStore).findUsersByName(username);
+        verify(userStore).findByName(username);
     }
 }

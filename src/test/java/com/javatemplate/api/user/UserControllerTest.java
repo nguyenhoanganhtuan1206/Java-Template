@@ -74,9 +74,9 @@ class UserControllerTest {
         final var user = buildUser();
         final var expected = buildUsers();
 
-        when(userService.findUsersByName(anyString())).thenReturn(expected);
+        when(userService.findByName(anyString())).thenReturn(expected);
 
-        final var actual = userService.findUsersByName(user.getUsername());
+        final var actual = userService.findByName(user.getUsername());
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?name=" + user.getUsername()))
                 .andExpect(status().isOk())

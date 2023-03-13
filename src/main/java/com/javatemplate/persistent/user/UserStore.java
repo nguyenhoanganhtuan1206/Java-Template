@@ -26,8 +26,8 @@ public class UserStore {
                 .map(UserEntityMapper::toUser);
     }
 
-    public List<User> findUsersByName(final String name) {
-        return toUsers(userRepository.findByUsernameOrFirstNameOrLastName(name));
+    public List<User> findByName(final String name) {
+        return toUsers(userRepository.findByName(name));
     }
 
     public Optional<User> findByUsername(final String username) {
@@ -35,7 +35,7 @@ public class UserStore {
                 .map(UserEntityMapper::toUser);
     }
 
-    public User createUser(final User user) {
+    public User create(final User user) {
         return toUser(userRepository.save(toUserEntity(user)));
     }
 

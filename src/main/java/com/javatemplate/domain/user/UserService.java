@@ -27,20 +27,20 @@ public class UserService {
     public User create(final User user) {
         validateUserCreate(user);
 
-        checkIfUsernameAvailable(user.getUsername());
+        verifyUsernameAvailable(user.getUsername());
 
-        return userStore.createUser(user);
+        return userStore.create(user);
     }
 
-    public List<User> findUsersByName(final String name) {
-        return userStore.findUsersByName(name);
+    public List<User> findByName(final String name) {
+        return userStore.findByName(name);
     }
 
     public User findById(final UUID userId) {
         return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
     }
 
-    public User findByName(final String username) {
+    public User findByUsername(final String username) {
         return userStore.findByUsername(username).orElseThrow(supplyUserNotFound(username));
     }
 
@@ -48,7 +48,11 @@ public class UserService {
         final User user = findById(userId);
         validateUserUpdate(userUpdate);
 
-        updateUserIfNotAvailable(user, userUpdate.getUsername());
+        if (!(user.getUsername().equals(userUpdate.getUsername()))) {
+            verifyUsernameAvailable(userUpdate.getUsername());
+
+            user.setUsername(userUpdate.getUsername());
+        }
 
         if (isNotBlank(userUpdate.getPassword())) {
             user.setPassword(userUpdate.getPassword());
@@ -68,15 +72,7 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-    private void updateUserIfNotAvailable(final User user, final String username) {
-        if (!username.isEmpty() && !username.equals(user.getUsername())) {
-            checkIfUsernameAvailable(username);
-
-            user.setUsername(username);
-        }
-    }
-
-    private void checkIfUsernameAvailable(final String username) {
+    private void verifyUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
 
         if (userOptional.isPresent()) {
