@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @Operation(summary = "Find user by id")
-    @GetMapping("/{userId}")
+    @GetMapping("{userId}")
     public UserResponseDTO findById(final @PathVariable UUID userId) {
         return toUserDTO(userService.findById(userId));
     }
@@ -34,23 +34,23 @@ public class UserController {
     @Operation(summary = "Find user by name")
     @GetMapping("/search")
     public List<UserResponseDTO> findByName(final @RequestParam String name) {
-        return toUsersDTO(userService.findUsersByName(name));
+        return toUsersDTO(userService.findByName(name));
     }
 
     @Operation(summary = "Create user")
     @PostMapping
-    public UserResponseDTO createUser(final @RequestBody UserRequestDTO userDTO) {
+    public UserResponseDTO create(final @RequestBody UserRequestDTO userDTO) {
         return toUserDTO(userService.create(toUser(userDTO)));
     }
 
     @Operation(summary = "Update user")
-    @PutMapping("/{userId}")
+    @PutMapping("{userId}")
     public UserResponseDTO update(final @RequestBody UserRequestDTO userDTO, final @PathVariable UUID userId) {
         return toUserDTO(userService.update(userId, toUser(userDTO)));
     }
 
     @Operation(summary = "Delete user by Id")
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("{userId}")
     public void deleteById(final @PathVariable UUID userId) {
         userService.deleteById(userId);
     }

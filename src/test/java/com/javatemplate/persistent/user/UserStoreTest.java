@@ -102,7 +102,7 @@ class UserStoreTest {
 
         when(userRepository.save(any(UserEntity.class))).thenReturn(expected);
 
-        final var actual = userStore.createUser(toUser(expected));
+        final var actual = userStore.create(toUser(expected));
 
         assertEquals(actual.getId(), expected.getId());
         assertEquals(actual.getUsername(), expected.getUsername());
@@ -144,13 +144,13 @@ class UserStoreTest {
         final var user = buildUserEntity();
         final var expected = builderUserEntities();
 
-        when(userRepository.findByUsernameOrFirstNameOrLastName(anyString()))
+        when(userRepository.findByName(anyString()))
                 .thenReturn(expected);
 
-        final var actual = userStore.findUsersByName(user.getUsername());
+        final var actual = userStore.findByName(user.getUsername());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(userRepository).findByUsernameOrFirstNameOrLastName(user.getUsername());
+        verify(userRepository).findByName(user.getUsername());
     }
 }
