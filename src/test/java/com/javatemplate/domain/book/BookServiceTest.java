@@ -166,29 +166,29 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldFindBooksByName_OK() {
+    void shouldFindBooksByNameAuthorDescription_OK() {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookStore.findByNameAuthorDesc(anyString())).thenReturn(expected);
+        when(bookStore.findByNameAuthorDescription(anyString())).thenReturn(expected);
 
-        final var actual = bookService.findByNameAuthorDesc(book.getName());
+        final var actual = bookService.findByNameAuthorDescription(book.getName());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(bookStore).findByNameAuthorDesc(book.getName());
+        verify(bookStore).findByNameAuthorDescription(book.getName());
     }
 
     @Test
-    void shouldFindBooksByName_Empty() {
+    void shouldFindBooksByNameAuthorDescription_Empty() {
         final var input = randomAlphabetic(3, 10);
 
-        when(bookStore.findByNameAuthorDesc(input)).thenReturn(emptyList());
+        when(bookStore.findByNameAuthorDescription(input)).thenReturn(emptyList());
 
-        final var actual = bookService.findByNameAuthorDesc(input);
+        final var actual = bookService.findByNameAuthorDescription(input);
 
         assertTrue(actual.isEmpty());
 
-        verify(bookStore).findByNameAuthorDesc(input);
+        verify(bookStore).findByNameAuthorDescription(input);
     }
 }

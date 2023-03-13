@@ -26,8 +26,8 @@ public class BookStore {
                 .map(BookEntityMapper::toBook);
     }
 
-    public List<Book> findByNameAuthorDesc(final String searchTerm) {
-        return toBooks(bookRepository.findByNameAuthorDesc(searchTerm));
+    public List<Book> findByNameAuthorDescription(final String searchTerm) {
+        return toBooks(bookRepository.findByNameAuthorDescription(searchTerm));
     }
 
     public Book save(final Book book) {

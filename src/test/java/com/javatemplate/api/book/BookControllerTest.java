@@ -139,9 +139,9 @@ class BookControllerTest {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookService.findByNameAuthorDesc(anyString())).thenReturn(expected);
+        when(bookService.findByNameAuthorDescription(anyString())).thenReturn(expected);
 
-        final var actual = bookService.findByNameAuthorDesc(book.getName());
+        final var actual = bookService.findByNameAuthorDescription(book.getName());
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?q=" + book.getName()))
                 .andExpect(status().isOk())

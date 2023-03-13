@@ -106,25 +106,25 @@ class BookStoreTest {
         final var book = buildBookEntity();
         final var expected = buildBookEntities();
 
-        when(bookRepository.findByNameAuthorDesc(anyString())).thenReturn(expected);
+        when(bookRepository.findByNameAuthorDescription(anyString())).thenReturn(expected);
 
-        final var actual = bookStore.findByNameAuthorDesc(book.getName());
+        final var actual = bookStore.findByNameAuthorDescription(book.getName());
 
         assertEquals(actual.size(), expected.size());
 
-        verify(bookRepository).findByNameAuthorDesc(book.getName());
+        verify(bookRepository).findByNameAuthorDescription(book.getName());
     }
 
     @Test
     void shouldBooksFindByName_Empty() {
         final var bookName = randomAlphabetic(3, 10);
 
-        when(bookRepository.findByNameAuthorDesc(bookName)).thenReturn(emptyList());
+        when(bookRepository.findByNameAuthorDescription(bookName)).thenReturn(emptyList());
 
-        final var actual = bookStore.findByNameAuthorDesc(bookName);
+        final var actual = bookStore.findByNameAuthorDescription(bookName);
 
         assertTrue(actual.isEmpty());
 
-        verify(bookRepository).findByNameAuthorDesc(bookName);
+        verify(bookRepository).findByNameAuthorDescription(bookName);
     }
 }

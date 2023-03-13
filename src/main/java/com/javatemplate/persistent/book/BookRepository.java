@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface BookRepository extends CrudRepository<BookEntity, UUID> {
 
     @Query("SELECT b FROM BookEntity b WHERE CONCAT(b.name, b.author, b.description) like %:searchTerm%")
-    List<BookEntity> findByNameAuthorDesc(final String searchTerm);
+    List<BookEntity> findByNameAuthorDescription(final String searchTerm);
 }
