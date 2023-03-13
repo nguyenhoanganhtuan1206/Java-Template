@@ -16,7 +16,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -101,11 +100,11 @@ class BookStoreTest {
     }
 
     @Test
-    void shouldBooksFindByName_OK() {
+    void findByNameAuthorDescription_OK() {
         final var book = buildBookEntity();
         final var expected = buildBookEntities();
 
-        when(bookRepository.findByNameAuthorDescription(anyString())).thenReturn(expected);
+        when(bookRepository.findByNameAuthorDescription(book.getName())).thenReturn(expected);
 
         final var actual = bookStore.findByNameAuthorDescription(book.getName());
 
@@ -115,7 +114,7 @@ class BookStoreTest {
     }
 
     @Test
-    void shouldBooksFindByName_Empty() {
+    void findByNameAuthorDescription_Empty() {
         final var bookName = randomAlphabetic(3, 10);
 
         when(bookRepository.findByNameAuthorDescription(bookName)).thenReturn(emptyList());
