@@ -79,14 +79,13 @@ class BookStoreTest {
         final var actual = bookStore.findById(book.getId()).get();
         final var expected = bookOptional.get();
 
-
-        assertEquals(actual.getId(), expected.getId());
-        assertEquals(actual.getName(), expected.getName());
-        assertEquals(actual.getAuthor(), expected.getAuthor());
-        assertEquals(actual.getUpdatedAt(), expected.getUpdatedAt());
-        assertEquals(actual.getCreatedAt(), expected.getCreatedAt());
-        assertEquals(actual.getDescription(), expected.getDescription());
-        assertEquals(actual.getImage(), expected.getImage());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getUpdatedAt(), actual.getUpdatedAt());
+        assertEquals(expected.getCreatedAt(), actual.getCreatedAt());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getImage(), actual.getImage());
 
         verify(bookRepository).findById(book.getId());
     }
@@ -110,7 +109,7 @@ class BookStoreTest {
 
         final var actual = bookStore.findByNameAuthorDescription(book.getName());
 
-        assertEquals(actual.size(), expected.size());
+        assertEquals(expected.size(), actual.size());
 
         verify(bookRepository).findByNameAuthorDescription(book.getName());
     }

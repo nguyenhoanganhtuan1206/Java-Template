@@ -102,13 +102,13 @@ class BookServiceTest {
 
         final var actual = bookService.update(book.getId(), bookUpdate);
 
-        assertEquals(actual.getId(), bookUpdate.getId());
-        assertEquals(actual.getName(), bookUpdate.getName());
-        assertEquals(actual.getAuthor(), bookUpdate.getAuthor());
-        assertEquals(actual.getImage(), bookUpdate.getImage());
-        assertEquals(actual.getCreatedAt(), bookUpdate.getCreatedAt());
-        assertEquals(actual.getDescription(), bookUpdate.getDescription());
-        assertEquals(actual.getUserId(), bookUpdate.getUserId());
+        assertEquals(bookUpdate.getId(), actual.getId());
+        assertEquals(bookUpdate.getName(), actual.getName());
+        assertEquals(bookUpdate.getAuthor(), actual.getAuthor());
+        assertEquals(bookUpdate.getImage(), actual.getImage());
+        assertEquals(bookUpdate.getCreatedAt(), actual.getCreatedAt());
+        assertEquals(bookUpdate.getDescription(), actual.getDescription());
+        assertEquals(bookUpdate.getUserId(), actual.getUserId());
 
         verify(bookStore).findById(book.getId());
     }
@@ -174,7 +174,7 @@ class BookServiceTest {
 
         final var actual = bookService.findByNameAuthorDescription(book.getName());
 
-        assertEquals(actual.size(), expected.size());
+        assertEquals(expected.size(), actual.size());
 
         verify(bookStore).findByNameAuthorDescription(book.getName());
     }
