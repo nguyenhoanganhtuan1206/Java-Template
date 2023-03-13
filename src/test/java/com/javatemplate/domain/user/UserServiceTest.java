@@ -127,6 +127,31 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldUpdateUserCase2_OK() {
+        final var user = buildUser();
+        final var userUpdate = buildUser();
+        userUpdate.setId(user.getId());
+        userUpdate.setUsername(user.getUsername());
+        userUpdate.setPassword(null);
+        userUpdate.setRoleId(user.getRoleId());
+
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userStore.updateUser(user)).thenReturn(user);
+
+        final var expected = userService.update(user.getId(), userUpdate);
+
+        assertEquals(expected.getId().toString(), userUpdate.getId().toString());
+        assertEquals(expected.getUsername(), userUpdate.getUsername());
+        assertEquals(expected.getFirstName(), userUpdate.getFirstName());
+        assertEquals(expected.getLastName(), userUpdate.getLastName());
+        assertEquals(expected.getAvatar(), userUpdate.getAvatar());
+        assertEquals(expected.getRoleId().toString(), userUpdate.getRoleId().toString());
+        assertEquals(expected.getEnabled(), userUpdate.getEnabled());
+
+        verify(userStore).updateUser(user);
+    }
+
+    @Test
     void shouldUpdateUser_ThrownLengthPasswordException() {
         final var user = buildUser();
         final var userUpdate = buildUser();

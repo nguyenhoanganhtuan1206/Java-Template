@@ -48,12 +48,4 @@ class UserValidationTest {
 
         assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
     }
-
-    @Test
-    void shouldValidateUserUpdate_ThrownPasswordBlank() {
-        final var user = buildUser();
-        user.setPassword(null);
-
-        assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
-    }
 }
