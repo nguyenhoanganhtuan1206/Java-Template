@@ -2,10 +2,8 @@ package com.javatemplate.persistent.book;
 
 import org.junit.jupiter.api.Test;
 
-import static com.javatemplate.fakes.BookFakes.buildBookEntities;
-import static com.javatemplate.fakes.BookFakes.buildBookEntity;
-import static com.javatemplate.persistent.book.BookEntityMapper.toBook;
-import static com.javatemplate.persistent.book.BookEntityMapper.toBooks;
+import static com.javatemplate.fakes.BookFakes.*;
+import static com.javatemplate.persistent.book.BookEntityMapper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BookEntityMapperTest {
@@ -25,5 +23,14 @@ class BookEntityMapperTest {
         final var books = toBooks(bookEntities);
 
         assertEquals(bookEntities.size(), books.size());
+    }
+
+    @Test
+    void shouldToBookEntity_Ok() {
+        final var book = buildBook();
+        final var bookEntity = toBookEntity(book);
+
+        assertEquals(bookEntity.getId(), book.getId());
+        assertEquals(bookEntity.getName(), book.getName());
     }
 }

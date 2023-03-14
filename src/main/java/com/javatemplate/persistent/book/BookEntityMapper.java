@@ -17,6 +17,13 @@ public class BookEntityMapper {
                 .build();
     }
 
+    public static BookEntity toBookEntity(final Book book) {
+        return BookEntity.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .build();
+    }
+
     public static List<Book> toBooks(final List<BookEntity> bookEntities) {
         return emptyIfNull(bookEntities).stream()
                 .map(BookEntityMapper::toBook)
