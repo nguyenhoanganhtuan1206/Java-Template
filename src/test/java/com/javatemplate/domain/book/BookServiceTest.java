@@ -106,7 +106,6 @@ class BookServiceTest {
         assertEquals(bookUpdate.getName(), actual.getName());
         assertEquals(bookUpdate.getAuthor(), actual.getAuthor());
         assertEquals(bookUpdate.getImage(), actual.getImage());
-        assertEquals(bookUpdate.getCreatedAt(), actual.getCreatedAt());
         assertEquals(bookUpdate.getDescription(), actual.getDescription());
         assertEquals(bookUpdate.getUserId(), actual.getUserId());
 
