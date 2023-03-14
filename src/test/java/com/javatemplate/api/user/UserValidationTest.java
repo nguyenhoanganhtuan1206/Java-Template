@@ -22,6 +22,7 @@ class UserValidationTest {
     void shouldValidateUserCreate_ThrownValidationError() {
         final var user = buildUser();
         user.setUsername(null);
+        user.setPassword(null);
 
         assertThrows(BadRequestException.class, () -> validateUserCreate(user));
     }
@@ -37,6 +38,7 @@ class UserValidationTest {
     void shouldValidateUserUpdate_ThrownValidationError() {
         final var user = buildUser();
         user.setUsername(null);
+        user.setPassword(null);
 
         assertThrows(BadRequestException.class, () -> validateUserUpdate(user));
     }
