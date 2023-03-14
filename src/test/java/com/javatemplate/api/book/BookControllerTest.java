@@ -29,6 +29,10 @@ class BookControllerTest {
 
     private static final String BASE_URL = "/api/v1/books";
 
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
+    private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
     @Autowired
     private MockMvc mvc;
 
@@ -40,8 +44,6 @@ class BookControllerTest {
         final var books = buildBooks();
 
         when(bookService.findAll()).thenReturn(books);
-
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
                 .andExpect(status().isOk())
@@ -64,8 +66,6 @@ class BookControllerTest {
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
-
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + book.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
@@ -86,9 +86,6 @@ class BookControllerTest {
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
-
-        final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         final String requestBody = mapper.writeValueAsString(book);
 
         mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
@@ -114,8 +111,6 @@ class BookControllerTest {
 
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
-
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
 
         final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         final String requestBody = mapper.writeValueAsString(bookUpdate);
@@ -150,8 +145,6 @@ class BookControllerTest {
         final var expected = buildBooks();
 
         when(bookService.find(anyString())).thenReturn(expected);
-
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
 
         final var actual = bookService.find(book.getName());
 
