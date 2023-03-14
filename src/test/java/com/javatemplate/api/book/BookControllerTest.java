@@ -64,9 +64,9 @@ class BookControllerTest {
 
     @Test
     void shouldFindById_OK() throws Exception {
-        final var book = buildBook()
-                .withCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"))
-                .withUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        final var book = buildBook();
+        book.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        book.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
@@ -86,9 +86,9 @@ class BookControllerTest {
 
     @Test
     void shouldCreate_OK() throws Exception {
-        final var book = buildBook()
-                .withCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"))
-                .withUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        final var book = buildBook();
+        book.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        book.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
@@ -110,13 +110,13 @@ class BookControllerTest {
 
     @Test
     void shouldUpdate_OK() throws Exception {
-        final var bookToUpdate = buildBook()
-                .withCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"))
-                .withUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        final var bookToUpdate = buildBook();
+        bookToUpdate.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        bookToUpdate.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
-        final var bookUpdate = buildBook()
-                .withCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"))
-                .withUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        final var bookUpdate = buildBook();
+        bookUpdate.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
+        bookUpdate.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         bookUpdate.setId(bookToUpdate.getId());
 
