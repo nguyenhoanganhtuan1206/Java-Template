@@ -106,7 +106,7 @@ class BookStoreTest {
 
         when(bookRepository.findByNameAuthorDescription(book.getName())).thenReturn(expected);
 
-        final var actual = bookStore.findByNameAuthorDescription(book.getName());
+        final var actual = bookStore.find(book.getName());
 
         assertEquals(expected.size(), actual.size());
 
@@ -119,7 +119,7 @@ class BookStoreTest {
 
         when(bookRepository.findByNameAuthorDescription(bookName)).thenReturn(emptyList());
 
-        final var actual = bookStore.findByNameAuthorDescription(bookName);
+        final var actual = bookStore.find(bookName);
 
         assertTrue(actual.isEmpty());
 

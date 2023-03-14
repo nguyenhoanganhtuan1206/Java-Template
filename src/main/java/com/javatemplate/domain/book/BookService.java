@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
 import static com.javatemplate.error.CommonError.supplyValidationError;
+import static io.micrometer.common.util.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +23,11 @@ public class BookService {
     }
 
     public Book findById(final UUID bookId) {
-        return bookStore.findById(bookId)
-                .orElseThrow(supplyBookNotFound(bookId));
+        return bookStore.findById(bookId).orElseThrow(supplyBookNotFound(bookId));
     }
 
-    public List<Book> findByNameAuthorDescription(final String input) {
-        return bookStore.findByNameAuthorDescription(input);
+    public List<Book> find(final String input) {
+        return bookStore.find(input);
     }
 
     public Book create(final Book book) {
@@ -58,15 +58,15 @@ public class BookService {
     }
 
     private void verifyBookInformation(final Book book) {
-        if (book.getAuthor() == null) {
+        if (isBlank(book.getAuthor())) {
             throw supplyValidationError("Author cannot be empty").get();
         }
 
-        if (book.getUserId() == null) {
+        if (isBlank(book.getUserId().toString())) {
             throw supplyValidationError("User cannot be empty").get();
         }
 
-        if (book.getName() == null) {
+        if (isBlank(book.getName())) {
             throw supplyValidationError("Book name cannot be empty").get();
         }
     }

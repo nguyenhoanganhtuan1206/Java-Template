@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class BookDTO {
+public class BookResponseDTO {
 
     private UUID id;
 
