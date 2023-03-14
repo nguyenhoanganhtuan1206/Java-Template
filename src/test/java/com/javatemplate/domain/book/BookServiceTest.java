@@ -114,11 +114,31 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldUpdate_ThrownBadRequest() {
+    void shouldUpdate_WithNameEmpty() {
         final var book = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(book.getId());
         bookUpdate.setName(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
+    }
+
+    @Test
+    void shouldUpdate_WithUserIdEmpty() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+        bookUpdate.setUserId(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
+    }
+
+    @Test
+    void shouldUpdate_WithAuthorEmpty() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+        bookUpdate.setAuthor(null);
 
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
     }
