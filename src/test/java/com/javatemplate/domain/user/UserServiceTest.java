@@ -127,12 +127,11 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldUpdateUserCase2_OK() {
+    void shouldUpdateUserHaveSameUsername_OK() {
         final var user = buildUser();
         final var userUpdate = buildUser();
         userUpdate.setId(user.getId());
         userUpdate.setUsername(user.getUsername());
-        userUpdate.setPassword(null);
         userUpdate.setRoleId(user.getRoleId());
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
