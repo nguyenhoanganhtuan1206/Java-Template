@@ -9,8 +9,6 @@ import java.util.UUID;
 @Builder
 public class BookRequestDTO {
 
-    private UUID id;
-
     private String name;
 
     private String author;

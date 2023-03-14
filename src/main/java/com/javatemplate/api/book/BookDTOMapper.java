@@ -31,7 +31,6 @@ public class BookDTOMapper {
 
     public static Book toBook(final BookRequestDTO bookDTO) {
         return Book.builder()
-                .id(bookDTO.getId())
                 .name(bookDTO.getName())
                 .author(bookDTO.getAuthor())
                 .description(bookDTO.getDescription())
