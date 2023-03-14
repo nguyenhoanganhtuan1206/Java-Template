@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -29,9 +29,9 @@ public class BookEntity {
 
     private String description;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     private String image;
 

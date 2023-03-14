@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -20,9 +20,9 @@ public class Book {
 
     private String description;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     private String image;
 

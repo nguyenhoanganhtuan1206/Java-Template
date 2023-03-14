@@ -3,7 +3,7 @@ package com.javatemplate.api.book;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -18,9 +18,9 @@ public class BookResponseDTO {
 
     private String description;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    private Instant updatedAt;
+    private LocalDateTime updatedAt;
 
     private String image;
 

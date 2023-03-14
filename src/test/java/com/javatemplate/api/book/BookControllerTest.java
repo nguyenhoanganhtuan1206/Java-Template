@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.format.DateTimeFormatter;
+
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static org.mockito.ArgumentMatchers.*;
@@ -39,6 +41,8 @@ class BookControllerTest {
 
         when(bookService.findAll()).thenReturn(books);
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(books.size()))
@@ -46,8 +50,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$[0].name").value(books.get(0).getName()))
                 .andExpect(jsonPath("$[0].author").value(books.get(0).getAuthor()))
                 .andExpect(jsonPath("$[0].description").value(books.get(0).getDescription()))
-                .andExpect(jsonPath("$[0].createdAt").value(books.get(0).getCreatedAt().toString()))
-                .andExpect(jsonPath("$[0].updatedAt").value(books.get(0).getUpdatedAt().toString()))
+                .andExpect(jsonPath("$[0].createdAt").value(books.get(0).getCreatedAt().format(dateTimeFormatter)))
+                .andExpect(jsonPath("$[0].updatedAt").value(books.get(0).getUpdatedAt().format(dateTimeFormatter)))
                 .andExpect(jsonPath("$[0].userId").value(books.get(0).getUserId().toString()))
                 .andExpect(jsonPath("$[0].image").value(books.get(0).getImage()));
 
@@ -60,14 +64,16 @@ class BookControllerTest {
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + book.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
                 .andExpect(jsonPath("$.author").value(book.getAuthor()))
                 .andExpect(jsonPath("$.description").value(book.getDescription()))
-                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().format(dateTimeFormatter)))
+                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().format(dateTimeFormatter)))
                 .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
                 .andExpect(jsonPath("$.image").value(book.getImage()));
 
@@ -80,6 +86,8 @@ class BookControllerTest {
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
         final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         final String requestBody = mapper.writeValueAsString(book);
 
@@ -91,8 +99,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.name").value(book.getName()))
                 .andExpect(jsonPath("$.author").value(book.getAuthor()))
                 .andExpect(jsonPath("$.description").value(book.getDescription()))
-                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().format(dateTimeFormatter)))
+                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().format(dateTimeFormatter)))
                 .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
                 .andExpect(jsonPath("$.image").value(book.getImage()));
     }
@@ -107,6 +115,8 @@ class BookControllerTest {
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
         final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         final String requestBody = mapper.writeValueAsString(bookUpdate);
 
@@ -118,8 +128,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$.name").value(bookUpdate.getName()))
                 .andExpect(jsonPath("$.author").value(bookUpdate.getAuthor()))
                 .andExpect(jsonPath("$.description").value(bookUpdate.getDescription()))
-                .andExpect(jsonPath("$.createdAt").value(bookUpdate.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.updatedAt").value(bookUpdate.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.createdAt").value(bookUpdate.getCreatedAt().format(dateTimeFormatter)))
+                .andExpect(jsonPath("$.updatedAt").value(bookUpdate.getUpdatedAt().format(dateTimeFormatter)))
                 .andExpect(jsonPath("$.userId").value(bookUpdate.getUserId().toString()))
                 .andExpect(jsonPath("$.image").value(bookUpdate.getImage()));
     }
@@ -141,6 +151,8 @@ class BookControllerTest {
 
         when(bookService.find(anyString())).thenReturn(expected);
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
+
         final var actual = bookService.find(book.getName());
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?searchTerm=" + book.getName()))
@@ -150,8 +162,8 @@ class BookControllerTest {
                 .andExpect(jsonPath("$[0].name").value(actual.get(0).getName()))
                 .andExpect(jsonPath("$[0].author").value(actual.get(0).getAuthor()))
                 .andExpect(jsonPath("$[0].description").value(actual.get(0).getDescription()))
-                .andExpect(jsonPath("$[0].createdAt").value(actual.get(0).getCreatedAt().toString()))
-                .andExpect(jsonPath("$[0].updatedAt").value(actual.get(0).getUpdatedAt().toString()))
+                .andExpect(jsonPath("$[0].createdAt").value(actual.get(0).getCreatedAt().format(dateTimeFormatter)))
+                .andExpect(jsonPath("$[0].updatedAt").value(actual.get(0).getUpdatedAt().format(dateTimeFormatter)))
                 .andExpect(jsonPath("$[0].userId").value(actual.get(0).getUserId().toString()))
                 .andExpect(jsonPath("$[0].image").value(actual.get(0).getImage()));
     }
