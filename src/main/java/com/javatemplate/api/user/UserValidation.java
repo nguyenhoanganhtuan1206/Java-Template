@@ -5,7 +5,6 @@ import lombok.experimental.UtilityClass;
 
 import static com.javatemplate.error.CommonError.supplyValidationError;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @UtilityClass
 public class UserValidation {
@@ -20,9 +19,7 @@ public class UserValidation {
     public static void validateUserUpdate(final User user) {
         validateUserName(user.getUsername());
 
-        if (isNotBlank(user.getPassword())) {
-            validateLengthPassword(user.getPassword());
-        }
+        validateLengthPassword(user.getPassword());
     }
 
     private static void validateUserName(final String username) {
