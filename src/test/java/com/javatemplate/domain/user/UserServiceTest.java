@@ -127,6 +127,30 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldUpdateUserWithoutPassword_OK() {
+        final var user = buildUser();
+        final var userUpdate = buildUser();
+        userUpdate.setId(user.getId());
+        userUpdate.setPassword(null);
+        userUpdate.setRoleId(user.getRoleId());
+
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userStore.updateUser(user)).thenReturn(user);
+
+        final var actual = userService.update(user.getId(), userUpdate);
+
+        assertEquals(userUpdate.getId().toString(), actual.getId().toString());
+        assertEquals(userUpdate.getUsername(), actual.getUsername());
+        assertEquals(userUpdate.getFirstName(), actual.getFirstName());
+        assertEquals(userUpdate.getLastName(), actual.getLastName());
+        assertEquals(userUpdate.getAvatar(), actual.getAvatar());
+        assertEquals(userUpdate.getRoleId().toString(), actual.getRoleId().toString());
+        assertEquals(userUpdate.getEnabled(), actual.getEnabled());
+
+        verify(userStore).updateUser(user);
+    }
+
+    @Test
     void shouldUpdateUserHaveSameUsername_OK() {
         final var user = buildUser();
         final var userUpdate = buildUser();
