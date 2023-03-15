@@ -14,13 +14,12 @@ public class BookEntityMapper {
         return Book.builder()
                 .id(bookEntity.getId())
                 .name(bookEntity.getName())
-                .build();
-    }
-
-    public static BookEntity toBookEntity(final Book book) {
-        return BookEntity.builder()
-                .id(book.getId())
-                .name(book.getName())
+                .author(bookEntity.getAuthor())
+                .description(bookEntity.getDescription())
+                .image(bookEntity.getImage())
+                .userId(bookEntity.getUserId())
+                .createdAt(bookEntity.getCreatedAt())
+                .updatedAt(bookEntity.getUpdatedAt())
                 .build();
     }
 
@@ -28,5 +27,18 @@ public class BookEntityMapper {
         return emptyIfNull(bookEntities).stream()
                 .map(BookEntityMapper::toBook)
                 .toList();
+    }
+
+    public static BookEntity toBookEntity(final Book book) {
+        return BookEntity.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .author(book.getAuthor())
+                .description(book.getDescription())
+                .image(book.getImage())
+                .userId(book.getUserId())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
+                .build();
     }
 }

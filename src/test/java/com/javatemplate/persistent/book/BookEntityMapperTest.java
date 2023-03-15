@@ -15,6 +15,11 @@ class BookEntityMapperTest {
 
         assertEquals(bookEntity.getId(), book.getId());
         assertEquals(bookEntity.getName(), book.getName());
+        assertEquals(bookEntity.getAuthor(), book.getAuthor());
+        assertEquals(bookEntity.getUpdatedAt(), book.getUpdatedAt());
+        assertEquals(bookEntity.getCreatedAt(), book.getCreatedAt());
+        assertEquals(bookEntity.getDescription(), book.getDescription());
+        assertEquals(bookEntity.getImage(), book.getImage());
     }
 
     @Test
@@ -30,7 +35,7 @@ class BookEntityMapperTest {
         final var book = buildBook();
         final var bookEntity = toBookEntity(book);
 
-        assertEquals(bookEntity.getId(), book.getId());
-        assertEquals(bookEntity.getName(), book.getName());
+        assertEquals(book.getId(), bookEntity.getId());
+        assertEquals(book.getName(), bookEntity.getName());
     }
 }
