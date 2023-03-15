@@ -13,13 +13,13 @@ public class UserValidation {
         validateUserName(user.getUsername());
 
         validatePasswordNotEmpty(user.getPassword());
-        validateLengthPassword(user.getPassword());
+        validatePassword(user.getPassword());
     }
 
     public static void validateUserUpdate(final User user) {
         validateUserName(user.getUsername());
 
-        validateLengthPassword(user.getPassword());
+        validatePassword(user.getPassword());
     }
 
     private static void validateUserName(final String username) {
@@ -28,7 +28,7 @@ public class UserValidation {
         }
     }
 
-    private static void validateLengthPassword(final String password) {
+    private static void validatePassword(final String password) {
         if (isNotBlank(password) && length(password) < 6) {
             throw supplyValidationError("Password must be at least 6 characters").get();
         }

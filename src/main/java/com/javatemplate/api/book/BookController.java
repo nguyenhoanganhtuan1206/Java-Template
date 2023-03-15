@@ -20,31 +20,31 @@ public class BookController {
     @Operation(summary = "Find all available books")
     @GetMapping
     public List<BookResponseDTO> findAll() {
-        return toBookDTOs(bookService.findAll());
+        return toBookResponseDTOs(bookService.findAll());
     }
 
     @Operation(summary = "Find by id")
     @GetMapping("{bookId}")
     public BookResponseDTO findById(final @PathVariable UUID bookId) {
-        return toBookDTO(bookService.findById(bookId));
+        return toBookResponseDTO(bookService.findById(bookId));
     }
 
     @Operation(summary = "Find books by name, author and description")
     @GetMapping("search")
     public List<BookResponseDTO> search(final @RequestParam String searchTerm) {
-        return toBookDTOs(bookService.find(searchTerm));
+        return toBookResponseDTOs(bookService.find(searchTerm));
     }
 
     @Operation(summary = "Create book")
     @PostMapping
     public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {
-        return toBookDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
+        return toBookResponseDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
     }
 
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
     public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {
-        return toBookDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
+        return toBookResponseDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
     }
 
     @Operation(summary = "Delete book by id")
