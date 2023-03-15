@@ -29,7 +29,17 @@ public class BookDTOMapper {
                 .toList();
     }
 
-    public static Book toBook(final BookRequestDTO bookDTO) {
+    public static Book toBookCreateRequestDTO(final BookCreateRequestDTO bookDTO) {
+        return Book.builder()
+                .name(bookDTO.getName())
+                .author(bookDTO.getAuthor())
+                .description(bookDTO.getDescription())
+                .image(bookDTO.getImage())
+                .userId(bookDTO.getUserId())
+                .build();
+    }
+
+    public static Book toBookUpdateRequestDTO(final BookUpdateRequestDTO bookDTO) {
         return Book.builder()
                 .name(bookDTO.getName())
                 .author(bookDTO.getAuthor())

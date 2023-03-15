@@ -37,14 +37,14 @@ public class BookController {
 
     @Operation(summary = "Create book")
     @PostMapping
-    public BookResponseDTO create(final @RequestBody BookRequestDTO bookDTO) {
-        return toBookDTO(bookService.create(toBook(bookDTO)));
+    public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {
+        return toBookDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
     }
 
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
-    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookRequestDTO bookDTO) {
-        return toBookDTO(bookService.update(bookId, toBook(bookDTO)));
+    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {
+        return toBookDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
     }
 
     @Operation(summary = "Delete book by id")

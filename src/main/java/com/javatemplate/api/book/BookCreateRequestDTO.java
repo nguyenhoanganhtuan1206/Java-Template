@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
-public class BookRequestDTO {
+public class BookCreateRequestDTO {
 
     private String name;
 

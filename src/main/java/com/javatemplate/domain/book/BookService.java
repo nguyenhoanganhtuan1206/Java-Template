@@ -31,14 +31,14 @@ public class BookService {
     }
 
     public Book create(final Book book) {
-        verifyBookInformation(book);
+        validateBookCreateRequest(book);
 
         book.setCreatedAt(Instant.now());
         return bookStore.save(book);
     }
 
     public Book update(final UUID bookId, final Book bookUpdate) {
-        verifyBookInformation(bookUpdate);
+        validateBookUpdateRequest(bookUpdate);
 
         final Book book = findById(bookId);
 
@@ -57,7 +57,21 @@ public class BookService {
         bookStore.deleteById(book.getId());
     }
 
-    private void verifyBookInformation(final Book book) {
+    private void validateBookCreateRequest(final Book book) {
+        if (isBlank(book.getAuthor())) {
+            throw supplyValidationError("Author cannot be empty").get();
+        }
+
+        if (book.getUserId() == null) {
+            throw supplyValidationError("User cannot be empty").get();
+        }
+
+        if (isBlank(book.getName())) {
+            throw supplyValidationError("Book name cannot be empty").get();
+        }
+    }
+
+    private void validateBookUpdateRequest(final Book book) {
         if (isBlank(book.getAuthor())) {
             throw supplyValidationError("Author cannot be empty").get();
         }
