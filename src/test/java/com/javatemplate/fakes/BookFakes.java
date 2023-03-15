@@ -4,7 +4,7 @@ import com.javatemplate.domain.book.Book;
 import com.javatemplate.persistent.book.BookEntity;
 import lombok.experimental.UtilityClass;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -20,8 +20,8 @@ public class BookFakes {
                 .name(randomAlphabetic(3, 10))
                 .author(randomAlphabetic(3, 10))
                 .description(randomAlphabetic(3, 10))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .image(randomAlphabetic(3, 10))
                 .userId(randomUUID())
                 .build();
@@ -39,8 +39,8 @@ public class BookFakes {
                 .name(randomAlphabetic(3, 10))
                 .author(randomAlphabetic(3, 10))
                 .description(randomAlphabetic(3, 10))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .image(randomAlphabetic(3, 10))
                 .userId(randomUUID())
                 .build();

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -16,8 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class BookEntity {
-
-    public static final String ID_FIELD = "id";
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,9 +27,9 @@ public class BookEntity {
 
     private String description;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
     private String image;
 

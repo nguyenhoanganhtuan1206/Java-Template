@@ -13,9 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static org.mockito.ArgumentMatchers.*;
@@ -29,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookControllerTest {
 
     private static final String BASE_URL = "/api/v1/books";
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS");
     private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Autowired
@@ -41,9 +37,6 @@ class BookControllerTest {
     @Test
     void shouldFindAll_OK() throws Exception {
         final var books = buildBooks();
-
-        books.get(0).setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        books.get(0).setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         when(bookService.findAll()).thenReturn(books);
 
@@ -65,8 +58,6 @@ class BookControllerTest {
     @Test
     void shouldFindById_OK() throws Exception {
         final var book = buildBook();
-        book.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        book.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
@@ -87,8 +78,6 @@ class BookControllerTest {
     @Test
     void shouldCreate_OK() throws Exception {
         final var book = buildBook();
-        book.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        book.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
@@ -111,12 +100,7 @@ class BookControllerTest {
     @Test
     void shouldUpdate_OK() throws Exception {
         final var bookToUpdate = buildBook();
-        bookToUpdate.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        bookToUpdate.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-
         final var bookUpdate = buildBook();
-        bookUpdate.setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        bookUpdate.setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         bookUpdate.setId(bookToUpdate.getId());
 
@@ -158,9 +142,6 @@ class BookControllerTest {
         when(bookService.find(anyString())).thenReturn(expected);
 
         final var actual = bookService.find(book.getName());
-
-        actual.get(0).setCreatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
-        actual.get(0).setUpdatedAt(LocalDateTime.parse("2023-03-14T15:34:31.011423"));
 
         mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?searchTerm=" + book.getName()))
                 .andExpect(status().isOk())

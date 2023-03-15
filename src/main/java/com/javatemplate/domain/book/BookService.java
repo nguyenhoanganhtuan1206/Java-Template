@@ -4,7 +4,7 @@ import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public class BookService {
     public Book create(final Book book) {
         verifyBookInformation(book);
 
-        book.setCreatedAt(LocalDateTime.now());
+        book.setCreatedAt(Instant.now());
         return bookStore.save(book);
     }
 
@@ -46,7 +46,7 @@ public class BookService {
         book.setAuthor(bookUpdate.getAuthor());
         book.setImage(bookUpdate.getImage());
         book.setDescription(bookUpdate.getDescription());
-        book.setUpdatedAt(LocalDateTime.now());
+        book.setUpdatedAt(Instant.now());
 
         return bookStore.save(book);
     }
