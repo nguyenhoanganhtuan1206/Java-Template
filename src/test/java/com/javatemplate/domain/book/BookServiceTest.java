@@ -67,6 +67,7 @@ class BookServiceTest {
         when(bookStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookService.findById(uuid));
+
         verify(bookStore).findById(uuid);
     }
 
@@ -78,6 +79,7 @@ class BookServiceTest {
         when(bookStore.save(book)).thenReturn(book);
 
         assertEquals(book, bookService.create(book));
+
         verify(bookStore).save(book);
     }
 
@@ -150,6 +152,7 @@ class BookServiceTest {
         when(bookStore.findById(bookId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
+
         verify(bookStore).findById(bookId);
     }
 
@@ -161,6 +164,7 @@ class BookServiceTest {
         when(bookStore.findById(bookId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
+
         verify(bookStore).findById(bookId);
     }
 
@@ -171,6 +175,7 @@ class BookServiceTest {
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
 
         bookService.deleteById(book.getId());
+
         verify(bookStore).findById(book.getId());
     }
 
@@ -181,6 +186,7 @@ class BookServiceTest {
         when(bookStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookService.deleteById(uuid));
+
         verify(bookStore).findById(uuid);
     }
 

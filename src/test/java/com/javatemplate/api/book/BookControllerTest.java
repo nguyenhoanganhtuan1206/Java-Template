@@ -1,5 +1,6 @@
 package com.javatemplate.api.book;
 
+import com.javatemplate.api.AbstractControllerTest;
 import com.javatemplate.domain.book.Book;
 import com.javatemplate.domain.book.BookService;
 import org.junit.jupiter.api.Test;
