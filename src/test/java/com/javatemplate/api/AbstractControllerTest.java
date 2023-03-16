@@ -31,7 +31,7 @@ public abstract class AbstractControllerTest {
     public ResultActions post(final String url, final Object object) throws Exception {
         final String requestBody = mapper.writeValueAsString(object);
 
-        return perform(MockMvcRequestBuilders.put(url).content(requestBody));
+        return perform(MockMvcRequestBuilders.post(url).content(requestBody));
     }
 
     public ResultActions delete(final String url) throws Exception {
