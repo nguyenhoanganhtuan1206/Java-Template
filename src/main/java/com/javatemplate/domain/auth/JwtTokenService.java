@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static io.jsonwebtoken.lang.Strings.split;
-import static io.micrometer.common.util.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ public class JwtTokenService {
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_USER_ID = "userId";
 
-    private static JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
     public Authentication parse(final String token) {
 
@@ -37,7 +37,10 @@ public class JwtTokenService {
             return null;
         }
 
-        final Claims claims = Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token).getBody();
+        final Claims claims = Jwts.parser()
+                .setSigningKey(jwtProperties.getSecret())
+                .parseClaimsJws(token)
+                .getBody();
 
         if (isBlank(claims.getSubject())) {
             return null;
@@ -52,15 +55,31 @@ public class JwtTokenService {
             return null;
         }
 
-        return new UserAuthenticationToken(UUID.fromString(claims.get(CLAIM_USER_ID).toString()), claims.getSubject(), Arrays.stream(split(claimRoles, ",")).map(SimpleGrantedAuthority::new).toList());
+        return new UserAuthenticationToken(
+                UUID.fromString(claims.get(CLAIM_USER_ID).toString()),
+                claims.getSubject(),
+                Arrays.stream(split(claimRoles, ","))
+                        .map(SimpleGrantedAuthority::new)
+                        .toList()
+        );
     }
 
     public String generateToken(final JwtUserDetails userDetails) {
         final Date createdDate = clock.now();
         final Date expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
 
-        final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        final List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
-        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(createdDate).setExpiration(expirationDate).claim(CLAIM_ROLES, String.join(",", roles)).claim(CLAIM_USER_ID, userDetails.getUserId()).signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret()).compact();
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(createdDate)
+                .setExpiration(expirationDate)
+                .claim(CLAIM_ROLES, String.join(",", roles))
+                .claim(CLAIM_USER_ID, userDetails.getUserId())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
+                .compact();
     }
 }

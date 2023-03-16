@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -21,9 +22,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class JwtWebSecurityConfig {
 
-    private static final String[] SWAGGER_RESOURCES = {"/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"};
+    private static final String[] SWAGGER_RESOURCES = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
+    };
 
-    private static final String[] LOGIN_RESOURCE = {"/api/v1/auths"};
+    private static final String[] LOGIN_RESOURCE = {
+            "/api/v1/auths"
+    };
 
     private final JwtTokenAuthorizationFilter jwtTokenAuthorizationFilter;
 
@@ -31,7 +38,6 @@ public class JwtWebSecurityConfig {
     public PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -42,7 +48,10 @@ public class JwtWebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder, UserDetailsService userDetailService) throws Exception {
+    public AuthenticationManager authenticationManager(
+            HttpSecurity httpSecurity,
+            PasswordEncoder passwordEncoder,
+            UserDetailsService userDetailService) throws Exception {
         return httpSecurity
                 .getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailService)
@@ -53,6 +62,12 @@ public class JwtWebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.anonymous().and().csrf().disable().authorizeRequests().anyRequest().authenticated().and().addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).build();
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auths")).permitAll()
+                        .anyRequest().authenticated().and()
+                        .addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class))
+                .build();
+        return http.build();
     }
 }
