@@ -29,7 +29,7 @@ public class JwtTokenService {
     private static final String CLAIM_ROLES = "roles";
     private static final String CLAIM_USER_ID = "userId";
 
-    private JwtProperties jwtProperties;
+    private static JwtProperties jwtProperties;
 
     public Authentication parse(final String token) {
 
