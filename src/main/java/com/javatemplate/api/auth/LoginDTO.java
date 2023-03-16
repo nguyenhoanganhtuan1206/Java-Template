@@ -1,13 +1,16 @@
 package com.javatemplate.api.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
-@Builder
 @Getter
-public class UserAuthRequestDTO {
+@Setter
+@Builder
+@AllArgsConstructor
+public class LoginDTO {
 
     private String username;
-
     private String password;
 }
