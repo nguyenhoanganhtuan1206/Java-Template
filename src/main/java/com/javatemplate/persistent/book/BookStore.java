@@ -27,7 +27,7 @@ public class BookStore {
     }
 
     public List<Book> find(final String searchTerm) {
-        return toBooks(bookRepository.findByNameAuthorDescription(searchTerm));
+        return toBooks(bookRepository.find(searchTerm));
     }
 
     public Book save(final Book book) {

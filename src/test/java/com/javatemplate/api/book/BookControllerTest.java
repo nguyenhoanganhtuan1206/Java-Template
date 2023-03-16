@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.javatemplate.api.book.AbstractControllerTest.*;
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static org.mockito.ArgumentMatchers.*;
@@ -40,7 +40,7 @@ class BookControllerTest {
 
         when(bookService.findAll()).thenReturn(books);
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+        performGetRequest(mvc, BASE_URL)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(books.size()))
                 .andExpect(jsonPath("$[0].id").value(books.get(0).getId().toString()))
@@ -61,7 +61,7 @@ class BookControllerTest {
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + book.getId()))
+        performGetRequest(mvc, BASE_URL + "/" + book.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -83,9 +83,7 @@ class BookControllerTest {
 
         final String requestBody = mapper.writeValueAsString(book);
 
-        mvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+        performPostRequest(mvc, BASE_URL, requestBody)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -109,9 +107,7 @@ class BookControllerTest {
 
         final String requestBody = mapper.writeValueAsString(bookUpdate);
 
-        mvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + bookToUpdate.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
+        performPutRequest(mvc, BASE_URL + "/" + bookToUpdate.getId(), requestBody)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookUpdate.getId().toString()))
                 .andExpect(jsonPath("$.name").value(bookUpdate.getName()))

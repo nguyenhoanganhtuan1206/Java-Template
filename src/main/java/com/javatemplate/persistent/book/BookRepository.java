@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface BookRepository extends CrudRepository<BookEntity, UUID> {
 
     @Query("select b from BookEntity b where b.author like %:searchTerm% or b.description like %:searchTerm% or b.name like %:searchTerm%")
-    List<BookEntity> findByNameAuthorDescription(final String searchTerm);
+    List<BookEntity> find(final String searchTerm);
 }
