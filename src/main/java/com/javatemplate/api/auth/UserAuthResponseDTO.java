@@ -22,6 +22,4 @@ public class UserAuthResponseDTO {
     private String avatar;
 
     private UUID roleId;
-
-    private String token;
 }
