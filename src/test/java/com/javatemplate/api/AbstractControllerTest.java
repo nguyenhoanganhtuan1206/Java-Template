@@ -18,23 +18,23 @@ public abstract class AbstractControllerTest {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    public ResultActions get(final String url) throws Exception {
+    protected ResultActions get(final String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.get(url).contentType(MediaType.APPLICATION_JSON));
     }
 
-    public ResultActions put(final String url, final Object object) throws Exception {
+    protected ResultActions put(final String url, final Object object) throws Exception {
         final String requestBody = mapper.writeValueAsString(object);
 
         return perform(MockMvcRequestBuilders.put(url).content(requestBody));
     }
 
-    public ResultActions post(final String url, final Object object) throws Exception {
+    protected ResultActions post(final String url, final Object object) throws Exception {
         final String requestBody = mapper.writeValueAsString(object);
 
         return perform(MockMvcRequestBuilders.post(url).content(requestBody));
     }
 
-    public ResultActions delete(final String url) throws Exception {
+    protected ResultActions delete(final String url) throws Exception {
         return perform(MockMvcRequestBuilders.delete(url));
     }
 
