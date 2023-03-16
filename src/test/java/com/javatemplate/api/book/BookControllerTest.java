@@ -10,9 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.javatemplate.api.book.AbstractControllerTest.*;
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static org.mockito.ArgumentMatchers.*;
@@ -23,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookController.class)
 @AutoConfigureMockMvc
-class BookControllerTest {
+class BookControllerTest extends AbstractControllerTest {
 
     private static final String BASE_URL = "/api/v1/books";
     private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -123,7 +121,7 @@ class BookControllerTest {
     void shouldDeleteById_OK() throws Exception {
         final var book = buildBook();
 
-        mvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/" + book.getId()))
+        performDeleteRequest(mvc, BASE_URL + "/" + book.getId())
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(book.getId());
@@ -139,7 +137,7 @@ class BookControllerTest {
 
         final var actual = bookService.find(book.getName());
 
-        mvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search?searchTerm=" + book.getName()))
+        performGetRequest(mvc, BASE_URL + "/search?searchTerm=" + book.getName())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
