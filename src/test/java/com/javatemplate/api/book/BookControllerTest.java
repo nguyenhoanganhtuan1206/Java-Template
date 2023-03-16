@@ -1,15 +1,11 @@
 package com.javatemplate.api.book;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.javatemplate.domain.book.Book;
 import com.javatemplate.domain.book.BookService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
@@ -24,10 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BookControllerTest extends AbstractControllerTest {
 
     private static final String BASE_URL = "/api/v1/books";
-    private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-    @Autowired
-    private MockMvc mvc;
 
     @MockBean
     private BookService bookService;
@@ -38,7 +30,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         when(bookService.findAll()).thenReturn(books);
 
-        performGetRequest(mvc, BASE_URL)
+        get(BASE_URL)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(books.size()))
                 .andExpect(jsonPath("$[0].id").value(books.get(0).getId().toString()))
@@ -59,7 +51,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         when(bookService.findById(book.getId())).thenReturn(book);
 
-        performGetRequest(mvc, BASE_URL + "/" + book.getId())
+        get(BASE_URL + "/" + book.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -79,9 +71,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
-        final String requestBody = mapper.writeValueAsString(book);
-
-        performPostRequest(mvc, BASE_URL, requestBody)
+        post(BASE_URL, book)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(book.getId().toString()))
                 .andExpect(jsonPath("$.name").value(book.getName()))
@@ -103,9 +93,7 @@ class BookControllerTest extends AbstractControllerTest {
         when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
                 .thenReturn(bookUpdate);
 
-        final String requestBody = mapper.writeValueAsString(bookUpdate);
-
-        performPutRequest(mvc, BASE_URL + "/" + bookToUpdate.getId(), requestBody)
+        put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookUpdate.getId().toString()))
                 .andExpect(jsonPath("$.name").value(bookUpdate.getName()))
@@ -121,7 +109,7 @@ class BookControllerTest extends AbstractControllerTest {
     void shouldDeleteById_OK() throws Exception {
         final var book = buildBook();
 
-        performDeleteRequest(mvc, BASE_URL + "/" + book.getId())
+        delete(BASE_URL + "/" + book.getId())
                 .andExpect(status().isOk());
 
         verify(bookService).deleteById(book.getId());
@@ -137,7 +125,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         final var actual = bookService.find(book.getName());
 
-        performGetRequest(mvc, BASE_URL + "/search?searchTerm=" + book.getName())
+        get(BASE_URL + "/search?searchTerm=" + book.getName())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(actual.size()))
                 .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
