@@ -31,7 +31,15 @@ class UserControllerTest extends AbstractControllerTest {
 
         when(userService.findAll()).thenReturn(users);
 
-        get(BASE_URL).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(users.size())).andExpect(jsonPath("$[0].id").value(users.get(0).getId().toString())).andExpect(jsonPath("$[0].username").value(users.get(0).getUsername())).andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName())).andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName())).andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled())).andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()));
+        get(BASE_URL)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(users.size()))
+                .andExpect(jsonPath("$[0].id").value(users.get(0).getId().toString()))
+                .andExpect(jsonPath("$[0].username").value(users.get(0).getUsername()))
+                .andExpect(jsonPath("$[0].firstName").value(users.get(0).getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(users.get(0).getLastName()))
+                .andExpect(jsonPath("$[0].enabled").value(users.get(0).getEnabled()))
+                .andExpect(jsonPath("$[0].avatar").value(users.get(0).getAvatar()));
 
         verify(userService).findAll();
     }
@@ -42,7 +50,13 @@ class UserControllerTest extends AbstractControllerTest {
 
         when(userService.findById(user.getId())).thenReturn(user);
 
-        get(BASE_URL + "/" + user.getId()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(user.getId().toString())).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar()));
+        get(BASE_URL + "/" + user.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()));
 
         verify(userService).findById(user.getId());
     }
@@ -56,7 +70,15 @@ class UserControllerTest extends AbstractControllerTest {
 
         final var actual = userService.findByName(user.getUsername());
 
-        get(BASE_URL + "/search?name=" + user.getUsername()).andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(actual.size())).andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString())).andExpect(jsonPath("$[0].username").value(actual.get(0).getUsername())).andExpect(jsonPath("$[0].firstName").value(actual.get(0).getFirstName())).andExpect(jsonPath("$[0].lastName").value(actual.get(0).getLastName())).andExpect(jsonPath("$[0].enabled").value(actual.get(0).getEnabled())).andExpect(jsonPath("$[0].avatar").value(actual.get(0).getAvatar()));
+        get(BASE_URL + "/search?name=" + user.getUsername())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(actual.size()))
+                .andExpect(jsonPath("$[0].id").value(actual.get(0).getId().toString()))
+                .andExpect(jsonPath("$[0].username").value(actual.get(0).getUsername()))
+                .andExpect(jsonPath("$[0].firstName").value(actual.get(0).getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(actual.get(0).getLastName()))
+                .andExpect(jsonPath("$[0].enabled").value(actual.get(0).getEnabled()))
+                .andExpect(jsonPath("$[0].avatar").value(actual.get(0).getAvatar()));
     }
 
     @Test
@@ -65,7 +87,13 @@ class UserControllerTest extends AbstractControllerTest {
 
         when(userService.create(any(User.class))).thenReturn(user);
 
-        post(BASE_URL, user).andExpect(jsonPath("$.id").value(user.getId().toString())).andExpect(jsonPath("$.username").value(user.getUsername())).andExpect(jsonPath("$.firstName").value(user.getFirstName())).andExpect(jsonPath("$.lastName").value(user.getLastName())).andExpect(jsonPath("$.avatar").value(user.getAvatar())).andExpect(jsonPath("$.enabled").value(user.getEnabled()));
+        post(BASE_URL, user)
+                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(user.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(user.getEnabled()));
     }
 
     @Test
@@ -76,14 +104,22 @@ class UserControllerTest extends AbstractControllerTest {
 
         when(userService.update(eq(userToUpdate.getId()), any(User.class))).thenReturn(userUpdate);
 
-        put(BASE_URL + "/" + userToUpdate.getId(), userUpdate).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(userUpdate.getId().toString())).andExpect(jsonPath("$.username").value(userUpdate.getUsername())).andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName())).andExpect(jsonPath("$.lastName").value(userUpdate.getLastName())).andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar())).andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()));
+        put(BASE_URL + "/" + userToUpdate.getId(), userUpdate)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userUpdate.getId().toString()))
+                .andExpect(jsonPath("$.username").value(userUpdate.getUsername()))
+                .andExpect(jsonPath("$.firstName").value(userUpdate.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userUpdate.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(userUpdate.getAvatar()))
+                .andExpect(jsonPath("$.enabled").value(userUpdate.getEnabled()));
     }
 
     @Test
     void shouldDeleteById_OK() throws Exception {
         final var user = buildUser();
 
-        delete(BASE_URL + "/" + user.getId()).andExpect(status().isOk());
+        delete(BASE_URL + "/" + user.getId())
+                .andExpect(status().isOk());
 
         verify(userService).deleteById(user.getId());
     }
