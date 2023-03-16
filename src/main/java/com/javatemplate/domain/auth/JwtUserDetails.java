@@ -1,0 +1,19 @@
+package com.javatemplate.domain.auth;
+
+import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+
+import java.util.Collection;
+import java.util.UUID;
+
+@Getter
+public class JwtUserDetails extends User {
+
+    private final UUID userId;
+
+    public JwtUserDetails(final UUID userId, final String password, final String username, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
+        this.userId = userId;
+    }
+}
