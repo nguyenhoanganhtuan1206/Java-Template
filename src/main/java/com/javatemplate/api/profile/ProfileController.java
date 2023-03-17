@@ -14,7 +14,7 @@ import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.domain.user.UserMapper.toUser;
 
 @RestController
-@RequestMapping("api/v1/profiles")
+@RequestMapping("api/v1/profile")
 @RequiredArgsConstructor
 public class ProfileController {
 
@@ -28,8 +28,8 @@ public class ProfileController {
     }
 
     @PreAuthorize("hasAnyRole('CONTRIBUTOR','ADMIN')")
-    @Operation(summary = "Get the current user's information")
-    @GetMapping("{userId}")
+    @Operation(summary = "Update profile specific user")
+    @PutMapping("{userId}")
     public UserResponseDTO update(
             final @PathVariable UUID userId,
             final @RequestBody UserRequestDTO userRequestDTO

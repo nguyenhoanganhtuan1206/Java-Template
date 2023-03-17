@@ -47,6 +47,8 @@ public class UserService {
     }
 
     public User findById(final UUID userId) {
+        validateGetInfoUserPermissions(userId);
+
         return userStore.findById(userId)
                 .orElseThrow(supplyUserNotFound(userId));
     }
@@ -69,7 +71,7 @@ public class UserService {
         }
 
         if (isNotBlank(userUpdate.getPassword())) {
-            user.setPassword(userUpdate.getPassword());
+            user.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
         }
 
         user.setFirstName(userUpdate.getFirstName());
@@ -91,9 +93,19 @@ public class UserService {
 
         if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
                 && !userAuthenticationToken.getUserId().equals(userId)) {
-            throw supplyAccessDeniedError("You are not authorized to update this book").get();
+            throw supplyAccessDeniedError("You are not authorized to update this user").get();
         }
     }
+
+    private void validateGetInfoUserPermissions(final UUID userId) {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
+                && !userAuthenticationToken.getUserId().equals(userId)) {
+            throw supplyAccessDeniedError("You are not authorized to see information this user").get();
+        }
+    }
+
 
     private void verifyUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
