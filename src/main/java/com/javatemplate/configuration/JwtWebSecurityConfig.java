@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -43,8 +42,8 @@ public class JwtWebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web
                 .ignoring()
-                .requestMatchers(SWAGGER_RESOURCES)
-                .requestMatchers(LOGIN_RESOURCE);
+                .antMatchers(SWAGGER_RESOURCES)
+                .antMatchers(LOGIN_RESOURCE);
     }
 
     @Bean
@@ -62,12 +61,15 @@ public class JwtWebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auths")).permitAll()
-                        .anyRequest().authenticated().and()
-                        .addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class))
+        return http
+                .anonymous()
+                .and()
+                .csrf().disable()
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-        return http.build();
     }
 }
