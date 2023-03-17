@@ -12,7 +12,10 @@ public class JwtUserDetails extends User {
 
     private final UUID userId;
 
-    public JwtUserDetails(final UUID userId, final String username, final String password, final Collection<? extends GrantedAuthority> authorities) {
+    public JwtUserDetails(final UUID userId,
+                          final String username,
+                          final String password,
+                          final Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.userId = userId;
     }

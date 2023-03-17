@@ -2,6 +2,7 @@ package com.javatemplate.domain.user;
 
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class UserService {
 
     private final UserStore userStore;
 
+    private final PasswordEncoder passwordEncoder;
+
     public List<User> findAll() {
         return userStore.findAll();
     }
@@ -29,19 +32,10 @@ public class UserService {
 
         verifyUsernameAvailable(user.getUsername());
 
+        passwordEncoder.encode(user.getPassword());
+        
         return userStore.create(user);
     }
-
-//    public User login(final UserAuthRequestDTO userAuthRequestDTO) {
-//        validateLoginRequest(userAuthRequestDTO);
-//        final User user = findByUsername(userAuthRequestDTO.getUsername());
-//
-//        if (!user.getPassword().equals(userAuthRequestDTO.getPassword())) {
-//            throw supplyValidationError("Password is invalid, Please try again!").get();
-//        }
-//
-//        return user;
-//    }
 
     public List<User> findByName(final String name) {
         return userStore.findByName(name);

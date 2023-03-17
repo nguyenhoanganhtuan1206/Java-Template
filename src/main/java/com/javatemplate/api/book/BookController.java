@@ -3,6 +3,7 @@ package com.javatemplate.api.book;
 import com.javatemplate.domain.book.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    @PreAuthorize("hasRole('CONTRIBUTOR')")
     @Operation(summary = "Find all available books")
     @GetMapping
     public List<BookResponseDTO> findAll() {
@@ -41,6 +43,7 @@ public class BookController {
         return toBookResponseDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
     public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {

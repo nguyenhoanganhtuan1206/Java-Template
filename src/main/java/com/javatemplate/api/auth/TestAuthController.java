@@ -16,7 +16,7 @@ public class TestAuthController {
 
     private final AuthsProvider authsProvider;
 
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasRole('CONTRIBUTOR')")
     @GetMapping("users")
     public UserProfileDTO testUser() {
         return toUserProfileDTO(authsProvider.getCurrentAuthentication());

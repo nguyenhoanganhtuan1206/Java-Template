@@ -25,13 +25,13 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        return userStore.findByUsername(username)
-                .map(user -> buildUser(toUserEntity(user)))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return userStore.findByUsername(username).map(user -> buildUser(toUserEntity(user))).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
     private User buildUser(final UserEntity userEntity) {
-        return new JwtUserDetails(userEntity.getId(), userEntity.getPassword(), userEntity.getUsername(),
-                List.of(new SimpleGrantedAuthority(roleStore.findById(userEntity.getId()))));
+        return new JwtUserDetails(userEntity.getId(),
+                userEntity.getUsername(),
+                userEntity.getPassword(),
+                List.of(new SimpleGrantedAuthority(roleStore.findById(userEntity.getRoleId()).getName())));
     }
 }
