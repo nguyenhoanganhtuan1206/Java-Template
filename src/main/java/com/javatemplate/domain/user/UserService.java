@@ -1,5 +1,7 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.domain.auth.UserAuthenticationToken;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +15,7 @@ import static com.javatemplate.api.user.UserValidation.validateUserCreate;
 import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
 import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
+import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
@@ -20,6 +23,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class UserService {
 
     private final UserStore userStore;
+
+    private final AuthsProvider authsProvider;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -33,7 +38,7 @@ public class UserService {
         verifyUsernameAvailable(user.getUsername());
 
         passwordEncoder.encode(user.getPassword());
-        
+
         return userStore.create(user);
     }
 
@@ -54,6 +59,8 @@ public class UserService {
     public User update(final UUID userId, final User userUpdate) {
         final User user = findById(userId);
         validateUserUpdate(userUpdate);
+
+        validateUserUpdatePermissions(userId);
 
         if (!(user.getUsername().equals(userUpdate.getUsername()))) {
             verifyUsernameAvailable(userUpdate.getUsername());
@@ -79,15 +86,14 @@ public class UserService {
         userStore.deleteById(user.getId());
     }
 
-//    private void validateLoginRequest(final UserAuthRequestDTO userAuthRequestDTO) {
-//        if (isBlank(userAuthRequestDTO.getUsername())) {
-//            throw supplyValidationError("Username cannot be empty").get();
-//        }
-//
-//        if (isBlank(userAuthRequestDTO.getPassword())) {
-//            throw supplyValidationError("Password cannot be empty").get();
-//        }
-//    }
+    private void validateUserUpdatePermissions(final UUID userId) {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
+                && !userAuthenticationToken.getUserId().equals(userId)) {
+            throw supplyAccessDeniedError("You are not authorized to update this book").get();
+        }
+    }
 
     private void verifyUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);
