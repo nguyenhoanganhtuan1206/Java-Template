@@ -62,7 +62,7 @@ public class BookService {
 
     public void deleteById(final UUID uuid) {
         final Book book = findById(uuid);
-        validateBookDeletePermissions(uuid);
+        validateBookDeletePermissions(book.getUserId());
 
         bookStore.deleteById(book.getId());
     }
@@ -76,11 +76,11 @@ public class BookService {
         }
     }
 
-    private void validateBookDeletePermissions(final UUID bookId) {
+    private void validateBookDeletePermissions(final UUID userId) {
         final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
 
         if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
-                && !userAuthenticationToken.getUserId().equals(bookId)) {
+                && !userAuthenticationToken.getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to update this book").get();
         }
     }
