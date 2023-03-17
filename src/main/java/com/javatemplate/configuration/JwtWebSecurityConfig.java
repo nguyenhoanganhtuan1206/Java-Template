@@ -3,6 +3,7 @@ package com.javatemplate.configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -67,6 +68,8 @@ public class JwtWebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/v1/books")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

@@ -18,7 +18,6 @@ public class BookController {
 
     private final BookService bookService;
 
-    @PreAuthorize("hasRole('CONTRIBUTOR')")
     @Operation(summary = "Find all available books")
     @GetMapping
     public List<BookResponseDTO> findAll() {
@@ -37,6 +36,7 @@ public class BookController {
         return toBookResponseDTOs(bookService.find(searchTerm));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
     @Operation(summary = "Create book")
     @PostMapping
     public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {
@@ -50,6 +50,7 @@ public class BookController {
         return toBookResponseDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
     @Operation(summary = "Delete book by id")
     @DeleteMapping("{bookId}")
     public void deleteById(final @PathVariable UUID bookId) {

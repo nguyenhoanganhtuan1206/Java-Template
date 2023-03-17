@@ -1,5 +1,7 @@
 package com.javatemplate.domain.book;
 
+import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.domain.auth.UserAuthenticationToken;
 import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
+import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
 import static com.javatemplate.error.CommonError.supplyValidationError;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -17,6 +20,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class BookService {
 
     private final BookStore bookStore;
+
+    private final AuthsProvider authsProvider;
 
     public List<Book> findAll() {
         return bookStore.findAll();
@@ -31,14 +36,18 @@ public class BookService {
     }
 
     public Book create(final Book book) {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
         validateBookCreateRequest(book);
 
+        book.setUserId(userAuthenticationToken.getUserId());
         book.setCreatedAt(Instant.now());
+
         return bookStore.save(book);
     }
 
     public Book update(final UUID bookId, final Book bookUpdate) {
         validateBookUpdateRequest(bookUpdate);
+        validateBookUpdatePermissions(bookId);
 
         final Book book = findById(bookId);
 
@@ -53,8 +62,27 @@ public class BookService {
 
     public void deleteById(final UUID uuid) {
         final Book book = findById(uuid);
+        validateBookDeletePermissions(uuid);
 
         bookStore.deleteById(book.getId());
+    }
+
+    private void validateBookUpdatePermissions(final UUID bookId) {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
+                && !userAuthenticationToken.getUserId().equals(bookId)) {
+            throw supplyAccessDeniedError("You are not authorized to update this book").get();
+        }
+    }
+
+    private void validateBookDeletePermissions(final UUID bookId) {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
+                && !userAuthenticationToken.getUserId().equals(bookId)) {
+            throw supplyAccessDeniedError("You are not authorized to update this book").get();
+        }
     }
 
     private void validateBookCreateRequest(final Book book) {
