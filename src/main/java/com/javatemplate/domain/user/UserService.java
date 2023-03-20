@@ -28,6 +28,10 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    public UserAuthenticationToken getCurrentUserToken() {
+        return authsProvider.getCurrentAuthentication();
+    }
+
     public List<User> findAll() {
         return userStore.findAll();
     }
@@ -37,7 +41,7 @@ public class UserService {
 
         verifyUsernameAvailable(user.getUsername());
 
-        passwordEncoder.encode(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userStore.create(user);
     }
@@ -54,15 +58,14 @@ public class UserService {
     }
 
     public User findByUsername(final String username) {
-        return userStore.findByUsername(username).
-                orElseThrow(supplyUserNotFound(username));
+        return userStore.findByUsername(username).orElseThrow(supplyUserNotFound(username));
     }
 
     public User update(final UUID userId, final User userUpdate) {
-        final User user = findById(userId);
-        validateUserUpdate(userUpdate);
-
         validateUserUpdatePermissions(userId);
+        final User user = findById(userId);
+
+        validateUserUpdate(userUpdate);
 
         if (!(user.getUsername().equals(userUpdate.getUsername()))) {
             verifyUsernameAvailable(userUpdate.getUsername());
@@ -89,23 +92,19 @@ public class UserService {
     }
 
     private void validateUserUpdatePermissions(final UUID userId) {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
-
-        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
-                && !userAuthenticationToken.getUserId().equals(userId)) {
+        if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR") &&
+                !getCurrentUserToken().getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to update this user").get();
         }
     }
 
     private void validateGetInfoUserPermissions(final UUID userId) {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
-
-        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
-                && !userAuthenticationToken.getUserId().equals(userId)) {
+        System.out.println(getCurrentUserToken().getUserId().equals(userId));
+        if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR")
+                && !getCurrentUserToken().getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to see information this user").get();
         }
     }
-
 
     private void verifyUsernameAvailable(final String username) {
         final Optional<User> userOptional = userStore.findByUsername(username);

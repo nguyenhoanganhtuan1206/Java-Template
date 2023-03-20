@@ -27,6 +27,12 @@ public class BookService {
         return bookStore.findAll();
     }
 
+    public UserAuthenticationToken getCurrentUserToken() {
+        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        return userAuthenticationToken;
+    }
+
     public Book findById(final UUID bookId) {
         return bookStore.findById(bookId).orElseThrow(supplyBookNotFound(bookId));
     }
@@ -36,10 +42,9 @@ public class BookService {
     }
 
     public Book create(final Book book) {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
         validateBookCreateRequest(book);
 
-        book.setUserId(userAuthenticationToken.getUserId());
+        book.setUserId(getCurrentUserToken().getUserId());
         book.setCreatedAt(Instant.now());
 
         return bookStore.save(book);
@@ -68,19 +73,15 @@ public class BookService {
     }
 
     private void validateBookUpdatePermissions(final UUID userId) {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
-
-        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
-                && !userAuthenticationToken.getUserId().equals(userId)) {
+        if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR")
+                && !getCurrentUserToken().getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to update this book").get();
         }
     }
 
     private void validateBookDeletePermissions(final UUID userId) {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
-
-        if (userAuthenticationToken.getRole().equals("ROLE_CONTRIBUTOR")
-                && !userAuthenticationToken.getUserId().equals(userId)) {
+        if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR")
+                && !getCurrentUserToken().getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to delete this book").get();
         }
     }

@@ -22,7 +22,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping
-    public JwtTokenResponseDTO login(@RequestBody LoginDTO loginDTO) {
+    public JwtTokenResponseDTO login(final @RequestBody LoginDTO loginDTO) {
         final Authentication authentication = authenticationManager.authenticate(toAuthentication(loginDTO));
 
         return JwtTokenResponseDTO.builder()

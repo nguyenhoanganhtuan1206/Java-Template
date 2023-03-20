@@ -16,18 +16,17 @@ import static com.javatemplate.domain.user.UserMapper.toUser;
 @RestController
 @RequestMapping("api/v1/profile")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('CONTRIBUTOR','ADMIN')")
 public class ProfileController {
 
     private final UserService userService;
 
-    @PreAuthorize("hasAnyRole('CONTRIBUTOR','ADMIN')")
     @Operation(summary = "Get the current user's information")
     @GetMapping("{userId}")
     public UserResponseDTO findById(final @PathVariable UUID userId) {
         return toUserDTO(userService.findById(userId));
     }
 
-    @PreAuthorize("hasAnyRole('CONTRIBUTOR','ADMIN')")
     @Operation(summary = "Update profile specific user")
     @PutMapping("{userId}")
     public UserResponseDTO update(
