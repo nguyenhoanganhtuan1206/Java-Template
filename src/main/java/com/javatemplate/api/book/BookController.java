@@ -36,7 +36,7 @@ public class BookController {
         return toBookResponseDTOs(bookService.find(searchTerm));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Create book")
     @PostMapping
     public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {

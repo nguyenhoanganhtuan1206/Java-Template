@@ -90,8 +90,8 @@ public class BookService {
             throw supplyValidationError("Author cannot be empty").get();
         }
 
-        if (book.getUserId() == null) {
-            throw supplyValidationError("User cannot be empty").get();
+        if (isBlank(book.getDescription())) {
+            throw supplyValidationError("Description cannot be empty").get();
         }
 
         if (isBlank(book.getName())) {

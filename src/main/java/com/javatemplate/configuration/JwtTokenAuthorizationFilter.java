@@ -3,6 +3,7 @@ package com.javatemplate.configuration;
 import com.javatemplate.domain.auth.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 
 @Configuration
 @RequiredArgsConstructor
+@Profile("!TEST")
 public class JwtTokenAuthorizationFilter extends OncePerRequestFilter {
 
     private static final String TOKEN_PREFIX = "Bearer ";

@@ -1,12 +1,18 @@
 package com.javatemplate.api.book;
 
 import com.javatemplate.api.AbstractControllerTest;
+import com.javatemplate.api.WithMockAdmin;
+import com.javatemplate.api.WithMockContributor;
+import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.domain.book.Book;
 import com.javatemplate.domain.book.BookService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
@@ -18,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookController.class)
 @AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
 class BookControllerTest extends AbstractControllerTest {
 
     private static final String BASE_URL = "/api/v1/books";
@@ -25,7 +32,18 @@ class BookControllerTest extends AbstractControllerTest {
     @MockBean
     private BookService bookService;
 
+    @MockBean
+    private AuthsProvider authsProvider;
+
+    @BeforeEach
+    void init() {
+        when(authsProvider.getCurrentAuthentication())
+                .thenCallRealMethod();
+    }
+
     @Test
+    @WithMockContributor
+    @WithMockAdmin
     void shouldFindAll_OK() throws Exception {
         final var books = buildBooks();
 
@@ -47,6 +65,8 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockContributor
+    @WithMockAdmin
     void shouldFindById_OK() throws Exception {
         final var book = buildBook();
 
@@ -67,6 +87,7 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     void shouldCreate_OK() throws Exception {
         final var book = buildBook();
 
@@ -82,6 +103,8 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
                 .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
                 .andExpect(jsonPath("$.image").value(book.getImage()));
+
+        verify(bookService).create(any(Book.class));
     }
 
     @Test

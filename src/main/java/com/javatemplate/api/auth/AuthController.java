@@ -19,7 +19,7 @@ public class AuthController {
 
     private final JwtTokenService jwtTokenService;
 
-    public final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping
     public JwtTokenResponseDTO login(@RequestBody LoginDTO loginDTO) {
