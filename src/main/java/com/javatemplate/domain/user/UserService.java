@@ -99,7 +99,6 @@ public class UserService {
     }
 
     private void validateGetInfoUserPermissions(final UUID userId) {
-        System.out.println(getCurrentUserToken().getUserId().equals(userId));
         if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR")
                 && !getCurrentUserToken().getUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to see information this user").get();
