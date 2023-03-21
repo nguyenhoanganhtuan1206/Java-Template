@@ -6,6 +6,7 @@ import com.javatemplate.api.WithMockContributor;
 import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.domain.book.Book;
 import com.javatemplate.domain.book.BookService;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,15 +29,66 @@ class BookControllerTest extends AbstractControllerTest {
     private static final String BASE_URL = "/api/v1/books";
 
     @MockBean
-    private BookService bookService;
+    private AuthsProvider authsProvider;
 
     @MockBean
-    private AuthsProvider authsProvider;
+    private BookService bookService;
 
     @BeforeEach
     void init() {
-        when(authsProvider.getCurrentAuthentication())
-                .thenCallRealMethod();
+        when(authsProvider.getCurrentAuthentication()).thenCallRealMethod();
+    }
+
+    @Test
+    @WithMockAdmin
+    void shouldCreateWithRoleAdmin_OK() throws Exception {
+        final var book = buildBook();
+
+        when(bookService.create(any(Book.class))).thenReturn(book);
+
+        post(BASE_URL, book)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(book.getId().toString()))
+                .andExpect(jsonPath("$.name").value(book.getName()))
+                .andExpect(jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(jsonPath("$.description").value(book.getDescription()))
+                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
+                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
+                .andExpect(jsonPath("$.image").value(book.getImage()));
+
+        verify(bookService).create(argThat(b -> StringUtils.equals(b.getName(), book.getName())));
+    }
+
+    @Test
+    @WithMockContributor
+    void shouldCreateWithRoleContributor_OK() throws Exception {
+        final var book = buildBook();
+
+        when(bookService.create(any(Book.class))).thenReturn(book);
+
+        post(BASE_URL, book)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(book.getId().toString()))
+                .andExpect(jsonPath("$.name").value(book.getName()))
+                .andExpect(jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(jsonPath("$.description").value(book.getDescription()))
+                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
+                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
+                .andExpect(jsonPath("$.image").value(book.getImage()));
+
+        verify(bookService).create(argThat(b -> StringUtils.equals(b.getName(), book.getName())));
+    }
+
+    @Test
+    void shouldCreateWithoutRole_OK() throws Exception {
+        final var book = buildBook();
+
+        when(bookService.create(any(Book.class))).thenReturn(book);
+
+        post(BASE_URL, book)
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -86,34 +138,13 @@ class BookControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockAdmin
-    void shouldCreate_OK() throws Exception {
-        final var book = buildBook();
-
-        when(bookService.create(any(Book.class))).thenReturn(book);
-
-        post(BASE_URL, book)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(book.getId().toString()))
-                .andExpect(jsonPath("$.name").value(book.getName()))
-                .andExpect(jsonPath("$.author").value(book.getAuthor()))
-                .andExpect(jsonPath("$.description").value(book.getDescription()))
-                .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
-                .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
-                .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
-                .andExpect(jsonPath("$.image").value(book.getImage()));
-
-        verify(bookService).create(any(Book.class));
-    }
-
-    @Test
-    void shouldUpdate_OK() throws Exception {
+    void shouldUpdateWithAdmin_OK() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
-                .thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
@@ -128,7 +159,43 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldDeleteById_OK() throws Exception {
+    @WithMockContributor
+    void shouldUpdateWithContributor_OK() throws Exception {
+        final var bookToUpdate = buildBook();
+        final var bookUpdate = buildBook();
+
+        bookUpdate.setId(bookToUpdate.getId());
+
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
+
+        put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(bookUpdate.getId().toString()))
+                .andExpect(jsonPath("$.name").value(bookUpdate.getName()))
+                .andExpect(jsonPath("$.author").value(bookUpdate.getAuthor()))
+                .andExpect(jsonPath("$.description").value(bookUpdate.getDescription()))
+                .andExpect(jsonPath("$.createdAt").value(bookUpdate.getCreatedAt().toString()))
+                .andExpect(jsonPath("$.updatedAt").value(bookUpdate.getUpdatedAt().toString()))
+                .andExpect(jsonPath("$.userId").value(bookUpdate.getUserId().toString()))
+                .andExpect(jsonPath("$.image").value(bookUpdate.getImage()));
+    }
+
+    @Test
+    void shouldUpdateWithoutRole_ThrownUnauthorizedException() throws Exception {
+        final var bookToUpdate = buildBook();
+        final var bookUpdate = buildBook();
+
+        bookUpdate.setId(bookToUpdate.getId());
+
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
+
+        put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockContributor
+    void shouldDeleteByIdWithContributor_OK() throws Exception {
         final var book = buildBook();
 
         delete(BASE_URL + "/" + book.getId())
@@ -138,6 +205,27 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithMockAdmin
+    void shouldDeleteByIdWithAdmin_OK() throws Exception {
+        final var book = buildBook();
+
+        delete(BASE_URL + "/" + book.getId())
+                .andExpect(status().isOk());
+
+        verify(bookService).deleteById(book.getId());
+    }
+
+    @Test
+    void shouldDeleteByIdWithoutRole_OK() throws Exception {
+        final var book = buildBook();
+
+        delete(BASE_URL + "/" + book.getId())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockContributor
+    @WithMockAdmin
     void shouldFindByNameAuthorDescription_Ok() throws Exception {
         final var book = buildBook();
 

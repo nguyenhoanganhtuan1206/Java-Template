@@ -17,7 +17,7 @@ public class WithMockContributorSecurityContextFactory implements WithSecurityCo
         final var context = SecurityContextHolder.createEmptyContext();
 
         final Authentication auth = new UserAuthenticationToken(
-                UUID.fromString("660258cd-b624-4786-a720-a1cbcc255383"),
+                UUID.randomUUID(),
                 "user",
                 List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR"))
         );

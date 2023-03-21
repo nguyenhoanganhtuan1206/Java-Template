@@ -17,7 +17,7 @@ public class WithMockAdminSecurityContextFactory implements WithSecurityContextF
         final var context = SecurityContextHolder.createEmptyContext();
 
         final Authentication auth = new UserAuthenticationToken(
-                UUID.fromString("12345678-b624-4786-a720-a1cbcc255383"),
+                UUID.randomUUID(),
                 "admin",
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );

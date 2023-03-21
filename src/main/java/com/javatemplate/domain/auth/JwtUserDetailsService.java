@@ -1,5 +1,6 @@
 package com.javatemplate.domain.auth;
 
+import com.javatemplate.domain.role.Role;
 import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserEntity;
 import com.javatemplate.persistent.user.UserStore;
@@ -25,13 +26,17 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        return userStore.findByUsername(username).map(user -> buildUser(toUserEntity(user))).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return userStore.findByUsername(username)
+                .map(user -> buildUser(toUserEntity(user)))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
     private User buildUser(final UserEntity userEntity) {
+        final Role role = roleStore.findById(userEntity.getRoleId());
+
         return new JwtUserDetails(userEntity.getId(),
                 userEntity.getUsername(),
                 userEntity.getPassword(),
-                List.of(new SimpleGrantedAuthority(roleStore.findById(userEntity.getRoleId()).getName())));
+                List.of(new SimpleGrantedAuthority(role.getName())));
     }
 }

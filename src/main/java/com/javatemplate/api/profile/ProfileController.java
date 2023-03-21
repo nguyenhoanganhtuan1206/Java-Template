@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.domain.user.UserMapper.toUser;
 
@@ -22,17 +20,14 @@ public class ProfileController {
     private final UserService userService;
 
     @Operation(summary = "Get the current user's information")
-    @GetMapping("{userId}")
-    public UserResponseDTO findById(final @PathVariable UUID userId) {
-        return toUserDTO(userService.findById(userId));
+    @GetMapping
+    public UserResponseDTO getProfile() {
+        return toUserDTO(userService.findProfile());
     }
 
     @Operation(summary = "Update profile specific user")
-    @PutMapping("{userId}")
-    public UserResponseDTO update(
-            final @PathVariable UUID userId,
-            final @RequestBody UserRequestDTO userRequestDTO
-    ) {
-        return toUserDTO(userService.update(userId, toUser(userRequestDTO)));
+    @PutMapping
+    public UserResponseDTO update(final @RequestBody UserRequestDTO userRequestDTO) {
+        return toUserDTO(userService.updateProfile(toUser(userRequestDTO)));
     }
 }

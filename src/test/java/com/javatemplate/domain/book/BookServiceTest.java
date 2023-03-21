@@ -1,13 +1,17 @@
 package com.javatemplate.domain.book;
 
+import com.javatemplate.api.WithMockAdmin;
+import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.book.BookStore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
@@ -21,7 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class BookServiceTest {
 
     @Mock
@@ -29,6 +33,14 @@ class BookServiceTest {
 
     @InjectMocks
     private BookService bookService;
+
+    @Mock
+    private AuthsProvider authsProvider;
+
+    @BeforeEach
+    void init() {
+        when(authsProvider.getCurrentAuthentication()).thenCallRealMethod();
+    }
 
     @Test
     void shouldFindAll_OK() {
@@ -73,6 +85,7 @@ class BookServiceTest {
 
 
     @Test
+    @WithMockAdmin
     void shouldCreate_OK() {
         final var book = buildBook();
 
