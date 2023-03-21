@@ -28,9 +28,7 @@ public class BookService {
     }
 
     public UserAuthenticationToken getCurrentUserToken() {
-        final UserAuthenticationToken userAuthenticationToken = authsProvider.getCurrentAuthentication();
-
-        return userAuthenticationToken;
+        return authsProvider.getCurrentAuthentication();
     }
 
     public Book findById(final UUID bookId) {
