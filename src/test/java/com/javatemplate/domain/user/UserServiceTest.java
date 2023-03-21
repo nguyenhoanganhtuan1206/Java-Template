@@ -1,5 +1,7 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.error.AccessDeniedException;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.user.UserStore;
@@ -7,12 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
+import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildContributor;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
 import static java.util.UUID.randomUUID;
@@ -30,6 +36,12 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    @Mock
+    private AuthsProvider authsProvider;
+
+    @Spy
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void shouldFindAll_OK() {
         final var expected = buildUsers();
@@ -43,6 +55,7 @@ class UserServiceTest {
         assertEquals(expected.get(0).getUsername(), actual.get(0).getUsername());
         assertEquals(expected.get(0).getFirstName(), actual.get(0).getFirstName());
         assertEquals(expected.get(0).getLastName(), actual.get(0).getLastName());
+        assertEquals(passwordEncoder.encode(expected.get(0).getPassword()), passwordEncoder.encode(actual.get(0).getLastName()));
         assertEquals(expected.get(0).getEnabled(), actual.get(0).getEnabled());
         assertEquals(expected.get(0).getRoleId(), actual.get(0).getRoleId());
         assertEquals(expected.get(0).getAvatar(), actual.get(0).getAvatar());
@@ -112,6 +125,7 @@ class UserServiceTest {
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         final var actual = userService.update(user.getId(), userUpdate);
 
@@ -136,6 +150,7 @@ class UserServiceTest {
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         final var actual = userService.update(user.getId(), userUpdate);
 
@@ -160,6 +175,7 @@ class UserServiceTest {
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         final var actual = userService.update(user.getId(), userUpdate);
 
@@ -181,6 +197,7 @@ class UserServiceTest {
         userUpdate.setPassword(randomAlphabetic(3, 5));
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         assertThrows(BadRequestException.class, () -> userService.update(user.getId(), userUpdate));
 
@@ -193,6 +210,7 @@ class UserServiceTest {
         final var uuid = randomUUID();
 
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         assertThrows(NotFoundException.class, () -> userService.update(uuid, userUpdate));
         verify(userStore).findById(uuid);
@@ -207,8 +225,21 @@ class UserServiceTest {
 
         when(userStore.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
         when(userStore.findByUsername(userUpdate.getUsername())).thenReturn(Optional.of(userUpdate));
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildAdmin());
 
         assertThrows(BadRequestException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
+
+        verify(userStore, never()).updateUser(userUpdate);
+    }
+
+    @Test
+    void shouldUpdateUser_ThroughAccessDeniedException() {
+        final var userToUpdate = buildUser();
+        final var userUpdate = buildUser();
+
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildContributor());
+
+        assertThrows(AccessDeniedException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
         verify(userStore, never()).updateUser(userUpdate);
     }

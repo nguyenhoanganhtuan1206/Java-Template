@@ -144,7 +144,8 @@ class BookControllerTest extends AbstractControllerTest {
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
+                .thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
@@ -166,7 +167,8 @@ class BookControllerTest extends AbstractControllerTest {
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
+                .thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
@@ -187,7 +189,8 @@ class BookControllerTest extends AbstractControllerTest {
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
+                .thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isUnauthorized());
@@ -231,7 +234,8 @@ class BookControllerTest extends AbstractControllerTest {
 
         final var expected = buildBooks();
 
-        when(bookService.find(anyString())).thenReturn(expected);
+        when(bookService.find(anyString()))
+                .thenReturn(expected);
 
         final var actual = bookService.find(book.getName());
 

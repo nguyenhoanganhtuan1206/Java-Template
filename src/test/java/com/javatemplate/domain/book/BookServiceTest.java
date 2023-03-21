@@ -1,22 +1,22 @@
 package com.javatemplate.domain.book;
 
-import com.javatemplate.api.WithMockAdmin;
 import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.error.AccessDeniedException;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.book.BookStore;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
+import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
+import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildContributor;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.util.Lists.emptyList;
@@ -25,22 +25,17 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@ExtendWith({MockitoExtension.class})
 class BookServiceTest {
 
     @Mock
     private BookStore bookStore;
 
-    @InjectMocks
-    private BookService bookService;
-
     @Mock
     private AuthsProvider authsProvider;
 
-    @BeforeEach
-    void init() {
-        when(authsProvider.getCurrentAuthentication()).thenCallRealMethod();
-    }
+    @InjectMocks
+    private BookService bookService;
 
     @Test
     void shouldFindAll_OK() {
@@ -83,13 +78,12 @@ class BookServiceTest {
         verify(bookStore).findById(uuid);
     }
 
-
     @Test
-    @WithMockAdmin
-    void shouldCreate_OK() {
+    void shouldCreateWithContributor_OK() {
         final var book = buildBook();
 
         when(bookStore.save(book)).thenReturn(book);
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildContributor());
 
         assertEquals(book, bookService.create(book));
 
@@ -106,14 +100,22 @@ class BookServiceTest {
 
 
     @Test
-    void shouldUpdate_OK() {
+    void shouldUpdateWithContributor_OK() {
         final var book = buildBook();
         final var bookUpdate = buildBook();
         bookUpdate.setId(book.getId());
-        bookUpdate.setUserId(book.getUserId());
 
-        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
-        when(bookStore.save(book)).thenReturn(book);
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
+        when(bookStore.save(book))
+                .thenReturn(book);
+        when(authsProvider.getCurrentAuthentication())
+                .thenReturn(buildContributor());
+
+        final var userAuthenticationToken = authsProvider.getCurrentAuthentication();
+
+        bookUpdate.setUserId(userAuthenticationToken.getUserId());
+        book.setUserId(userAuthenticationToken.getUserId());
 
         final var actual = bookService.update(book.getId(), bookUpdate);
 
@@ -123,6 +125,43 @@ class BookServiceTest {
         assertEquals(bookUpdate.getImage(), actual.getImage());
         assertEquals(bookUpdate.getDescription(), actual.getDescription());
         assertEquals(bookUpdate.getUserId(), actual.getUserId());
+
+        verify(bookStore).findById(book.getId());
+    }
+
+    @Test
+    void shouldUpdateWithContributor_ThroughAccessDeniedException() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
+        when(authsProvider.getCurrentAuthentication())
+                .thenReturn(buildContributor());
+
+        assertThrows(AccessDeniedException.class, () -> bookService.update(book.getId(), bookUpdate));
+    }
+
+    @Test
+    void shouldUpdateWithAdmin_OK() {
+        final var book = buildBook();
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
+        when(bookStore.save(book))
+                .thenReturn(book);
+        when(authsProvider.getCurrentAuthentication())
+                .thenReturn(buildAdmin());
+
+        final var actual = bookService.update(book.getId(), bookUpdate);
+
+        assertEquals(bookUpdate.getId(), actual.getId());
+        assertEquals(bookUpdate.getName(), actual.getName());
+        assertEquals(bookUpdate.getAuthor(), actual.getAuthor());
+        assertEquals(bookUpdate.getImage(), actual.getImage());
+        assertEquals(bookUpdate.getDescription(), actual.getDescription());
 
         verify(bookStore).findById(book.getId());
     }
@@ -170,24 +209,26 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldUpdate_ThrownPermissionException() {
-        final var bookId = randomUUID();
-        final var bookUpdate = buildBook();
-
-        when(bookStore.findById(bookId)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
-
-        verify(bookStore).findById(bookId);
-    }
-
-    @Test
     void shouldDeleteId_OK() {
         final var book = buildBook();
 
         when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildContributor());
 
+        book.setUserId(authsProvider.getCurrentAuthentication().getUserId());
         bookService.deleteById(book.getId());
+
+        verify(bookStore).findById(book.getId());
+    }
+
+    @Test
+    void shouldDeleteId_ThroughAccessDeniedException() {
+        final var book = buildBook();
+
+        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
+        when(authsProvider.getCurrentAuthentication()).thenReturn(buildContributor());
+
+        assertThrows(AccessDeniedException.class, () -> bookService.deleteById(book.getId()));
 
         verify(bookStore).findById(book.getId());
     }
