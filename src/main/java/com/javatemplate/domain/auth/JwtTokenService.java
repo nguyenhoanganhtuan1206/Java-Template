@@ -63,7 +63,7 @@ public class JwtTokenService {
         return new UserAuthenticationToken(
                 UUID.fromString(claimUserId),
                 claims.getSubject(),
-                Arrays.stream(split(claims.get(CLAIM_ROLES).toString(), ","))
+                Arrays.stream(split(claimRoles, ","))
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                         .toList()
         );
