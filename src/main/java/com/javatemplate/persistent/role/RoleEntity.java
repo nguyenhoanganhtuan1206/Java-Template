@@ -1,16 +1,18 @@
 package com.javatemplate.persistent.role;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "roles")
+@Builder
 @Getter
-@Setter
+@Table(name = "roles")
+@AllArgsConstructor
 @NoArgsConstructor
 public class RoleEntity {
 
@@ -20,3 +22,4 @@ public class RoleEntity {
 
     private String name;
 }
+
