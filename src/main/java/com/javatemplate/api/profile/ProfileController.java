@@ -19,13 +19,13 @@ public class ProfileController {
 
     private final UserService userService;
 
-    @Operation(summary = "Update profile specific user")
+    @Operation(summary = "Update current user's profile")
     @PutMapping
     public UserResponseDTO update(final @RequestBody UserRequestDTO userRequestDTO) {
         return toUserDTO(userService.updateProfile(toUser(userRequestDTO)));
     }
 
-    @Operation(summary = "Get the current user's information")
+    @Operation(summary = "Get the current user's profile")
     @GetMapping
     public UserResponseDTO getProfile() {
         return toUserDTO(userService.findProfile());

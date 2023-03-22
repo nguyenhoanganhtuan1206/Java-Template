@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -86,11 +85,8 @@ class ProfileControllerTest extends AbstractControllerTest {
     void shouldUpdateWithContributor_OK() throws Exception {
         final var userToUpdate = buildUser();
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
-        
-        when(userService.findById(userIdToken))
-                .thenReturn(userToUpdate);
-        when(userService.update(eq(userIdToken), any(User.class)))
-                .thenReturn(userToUpdate);
+        userToUpdate.setId(userIdToken);
+
         when(userService.updateProfile(any(User.class)))
                 .thenReturn(userToUpdate);
 
@@ -109,17 +105,14 @@ class ProfileControllerTest extends AbstractControllerTest {
     void shouldUpdateWithAdmin_OK() throws Exception {
         final var userToUpdate = buildUser();
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
+        userToUpdate.setId(userIdToken);
 
-        when(userService.findById(userIdToken))
-                .thenReturn(userToUpdate);
-        when(userService.update(eq(userIdToken), any(User.class)))
-                .thenReturn(userToUpdate);
         when(userService.updateProfile(any(User.class)))
                 .thenReturn(userToUpdate);
 
         put(BASE_URL, userToUpdate)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userToUpdate.getId().toString()))
+                .andExpect(jsonPath("$.id").value(userIdToken.toString()))
                 .andExpect(jsonPath("$.username").value(userToUpdate.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(userToUpdate.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(userToUpdate.getLastName()))
