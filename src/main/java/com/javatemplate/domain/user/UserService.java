@@ -1,7 +1,6 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
-import com.javatemplate.domain.auth.UserAuthenticationToken;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,8 +27,12 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserAuthenticationToken getCurrentAuthentication() {
-        return authsProvider.getCurrentAuthentication();
+    private UUID getCurrentUserId() {
+        return authsProvider.getCurrentAuthentication().getUserId();
+    }
+
+    private String getCurrentRole() {
+        return authsProvider.getCurrentAuthentication().getRole();
     }
 
     public List<User> findAll() {
@@ -51,12 +54,11 @@ public class UserService {
     }
 
     public User findProfile() {
-        return findById(getCurrentAuthentication().getUserId());
+        return findById(getCurrentUserId());
     }
 
     public User findById(final UUID userId) {
-        return userStore.findById(userId)
-                .orElseThrow(supplyUserNotFound(userId));
+        return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
     }
 
     public User findByUsername(final String username) {
@@ -64,7 +66,7 @@ public class UserService {
     }
 
     public User updateProfile(final User userUpdate) {
-        return update(getCurrentAuthentication().getUserId(), userUpdate);
+        return update(getCurrentUserId(), userUpdate);
     }
 
     public User update(final UUID userId, final User userUpdate) {
@@ -98,8 +100,7 @@ public class UserService {
     }
 
     private void validateUserUpdatePermission(final UUID userId) {
-        if (getCurrentAuthentication().getRole().equals("ROLE_CONTRIBUTOR") &&
-                !getCurrentAuthentication().getUserId().equals(userId)) {
+        if (getCurrentRole().equals("ROLE_CONTRIBUTOR") && !getCurrentUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to update this user").get();
         }
     }

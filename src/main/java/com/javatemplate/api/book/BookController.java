@@ -43,14 +43,14 @@ public class BookController {
         return toBookResponseDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
     public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {
         return toBookResponseDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','CONTRIBUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Delete book by id")
     @DeleteMapping("{bookId}")
     public void deleteById(final @PathVariable UUID bookId) {

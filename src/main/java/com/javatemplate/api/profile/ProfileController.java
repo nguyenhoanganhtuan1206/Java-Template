@@ -14,7 +14,7 @@ import static com.javatemplate.domain.user.UserMapper.toUser;
 @RestController
 @RequestMapping("api/v1/profile")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('CONTRIBUTOR','ADMIN')")
+@PreAuthorize("hasAnyRole('CONTRIBUTOR', 'ADMIN')")
 public class ProfileController {
 
     private final UserService userService;

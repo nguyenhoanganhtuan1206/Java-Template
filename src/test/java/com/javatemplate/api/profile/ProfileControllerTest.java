@@ -41,15 +41,13 @@ class ProfileControllerTest extends AbstractControllerTest {
     void shouldGetProfile_OK() throws Exception {
         final var user = buildUser();
         final var userAuthenticationToken = authsProvider.getCurrentAuthentication();
+        user.setId(userAuthenticationToken.getUserId());
 
-        when(userService.findById(userAuthenticationToken.getUserId()))
-                .thenReturn(user);
-        when(userService.findProfile())
-                .thenReturn(user);
+        when(userService.findProfile()).thenReturn(user);
 
         get(BASE_URL)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId().toString()))
+                .andExpect(jsonPath("$.id").value(userAuthenticationToken.getUserId().toString()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
@@ -62,16 +60,11 @@ class ProfileControllerTest extends AbstractControllerTest {
     @WithMockAdmin
     void shouldGetProfileWithAdmin_OK() throws Exception {
         final var user = buildUser();
-        final var userAuthenticationToken = authsProvider.getCurrentAuthentication();
 
-        when(userService.findById(userAuthenticationToken.getUserId()))
-                .thenReturn(user);
-        when(userService.findProfile())
-                .thenReturn(user);
+        when(userService.findProfile()).thenReturn(user);
 
         get(BASE_URL)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId().toString()))
                 .andExpect(jsonPath("$.username").value(user.getUsername()))
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
@@ -87,8 +80,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
         userToUpdate.setId(userIdToken);
 
-        when(userService.updateProfile(any(User.class)))
-                .thenReturn(userToUpdate);
+        when(userService.updateProfile(any(User.class))).thenReturn(userToUpdate);
 
         put(BASE_URL, userToUpdate)
                 .andExpect(status().isOk())
@@ -107,8 +99,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
         userToUpdate.setId(userIdToken);
 
-        when(userService.updateProfile(any(User.class)))
-                .thenReturn(userToUpdate);
+        when(userService.updateProfile(any(User.class))).thenReturn(userToUpdate);
 
         put(BASE_URL, userToUpdate)
                 .andExpect(status().isOk())

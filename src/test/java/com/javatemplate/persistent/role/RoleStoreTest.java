@@ -25,16 +25,15 @@ class RoleStoreTest {
     @Test
     void shouldFindById_OK() {
         final var role = buildRoleEntity();
-        final var roleOptional = Optional.of(role);
+        final var expected = Optional.of(role);
 
         when(roleRepository.findById(role.getId()))
-                .thenReturn(roleOptional);
+                .thenReturn(expected);
 
         final var actual = roleStore.findById(role.getId());
-        final var expected = roleOptional.get();
 
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.get().getId(), actual.getId());
+        assertEquals(expected.get().getName(), actual.getName());
 
         verify(roleRepository).findById(role.getId());
     }
