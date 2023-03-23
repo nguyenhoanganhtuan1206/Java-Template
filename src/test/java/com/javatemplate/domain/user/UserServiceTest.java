@@ -118,32 +118,28 @@ class UserServiceTest {
 
     @Test
     void shouldUpdateUser_OK() {
-        final var userToUpdate = buildUser();
-        userToUpdate.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
+        final var user = buildUser();
+        final var userUpdate = buildUser();
 
-        when(authsProvider.getCurrentUserId())
-                .thenReturn(buildAdmin().getUserId());
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
-        userToUpdate.setId(authsProvider.getCurrentUserId());
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userStore.updateUser(user)).thenReturn(user);
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
 
-        when(userStore.updateUser(userToUpdate))
-                .thenReturn(userToUpdate);
-        when(userStore.findById(authsProvider.getCurrentUserId()))
-                .thenReturn(Optional.of(userToUpdate));
+        userUpdate.setId(user.getId());
+        userUpdate.setRoleId(user.getRoleId());
+        userUpdate.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
 
-        final var actual = userService.update(authsProvider.getCurrentUserId(), userToUpdate);
+        final var actual = userService.update(user.getId(), userUpdate);
 
-        assertEquals(userToUpdate.getId().toString(), actual.getId().toString());
-        assertEquals(userToUpdate.getUsername(), actual.getUsername());
-        assertEquals(userToUpdate.getFirstName(), actual.getFirstName());
-        assertEquals(userToUpdate.getLastName(), actual.getLastName());
-        assertEquals(userToUpdate.getAvatar(), actual.getAvatar());
-        assertEquals(userToUpdate.getRoleId().toString(), actual.getRoleId().toString());
-        assertEquals(userToUpdate.getEnabled(), actual.getEnabled());
+        assertEquals(userUpdate.getId(), actual.getId());
+        assertEquals(userUpdate.getUsername(), actual.getUsername());
+        assertEquals(userUpdate.getFirstName(), actual.getFirstName());
+        assertEquals(userUpdate.getLastName(), actual.getLastName());
+        assertEquals(userUpdate.getAvatar(), actual.getAvatar());
+        assertEquals(userUpdate.getRoleId(), actual.getRoleId());
+        assertEquals(userUpdate.getEnabled(), actual.getEnabled());
 
-        verify(userStore).updateUser(userToUpdate);
-        verify(userStore).findById(authsProvider.getCurrentUserId());
+        verify(userStore).updateUser(user);
     }
 
     @Test
@@ -151,16 +147,12 @@ class UserServiceTest {
         final var userToUpdate = buildUser();
         userToUpdate.setPassword(null);
 
-        when(authsProvider.getCurrentUserId())
-                .thenReturn(buildAdmin().getUserId());
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
+        when(authsProvider.getCurrentUserId()).thenReturn(buildAdmin().getUserId());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
         userToUpdate.setId(authsProvider.getCurrentUserId());
 
-        when(userStore.updateUser(userToUpdate))
-                .thenReturn(userToUpdate);
-        when(userStore.findById(authsProvider.getCurrentUserId()))
-                .thenReturn(Optional.of(userToUpdate));
+        when(userStore.updateUser(userToUpdate)).thenReturn(userToUpdate);
+        when(userStore.findById(authsProvider.getCurrentUserId())).thenReturn(Optional.of(userToUpdate));
 
         final var actual = userService.update(authsProvider.getCurrentUserId(), userToUpdate);
 
@@ -183,18 +175,14 @@ class UserServiceTest {
         userUpdate.setUsername(user.getUsername());
         userUpdate.setRoleId(user.getRoleId());
 
-        when(authsProvider.getCurrentUserId())
-                .thenReturn(buildAdmin().getUserId());
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
+        when(authsProvider.getCurrentUserId()).thenReturn(buildAdmin().getUserId());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
 
         user.setId(authsProvider.getCurrentUserId());
         userUpdate.setId(authsProvider.getCurrentUserId());
 
-        when(userStore.findById(user.getId()))
-                .thenReturn(Optional.of(user));
-        when(userStore.updateUser(user))
-                .thenReturn(user);
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userStore.updateUser(user)).thenReturn(user);
 
         final var actual = userService.update(user.getId(), userUpdate);
 
@@ -215,11 +203,9 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setPassword(randomAlphabetic(3, 5));
 
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
 
-        when(userStore.findById(user.getId()))
-                .thenReturn(Optional.of(user));
+        when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> userService.update(user.getId(), userUpdate));
 
@@ -231,10 +217,8 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         final var uuid = randomUUID();
 
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
-        when(userStore.findById(uuid))
-                .thenReturn(Optional.empty());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
+        when(userStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> userService.update(uuid, userUpdate));
         verify(userStore).findById(uuid);
@@ -247,12 +231,9 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setUsername(userExisted.getUsername());
 
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildAdmin().getRole());
-        when(userStore.findById(userToUpdate.getId()))
-                .thenReturn(Optional.of(userToUpdate));
-        when(userStore.findByUsername(userUpdate.getUsername()))
-                .thenReturn(Optional.of(userUpdate));
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
+        when(userStore.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
+        when(userStore.findByUsername(userUpdate.getUsername())).thenReturn(Optional.of(userUpdate));
 
         assertThrows(BadRequestException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
@@ -264,10 +245,8 @@ class UserServiceTest {
         final var userToUpdate = buildUser();
         final var userUpdate = buildUser();
 
-        when(authsProvider.getCurrentUserId())
-                .thenReturn(buildContributor().getUserId());
-        when(authsProvider.getCurrentUserRole())
-                .thenReturn(buildContributor().getRole());
+        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
 
         assertThrows(AccessDeniedException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
@@ -282,6 +261,32 @@ class UserServiceTest {
 
         userService.deleteById(user.getId());
         verify(userStore).deleteById(user.getId());
+    }
+
+    @Test
+    void shouldUpdateProfile_OK() {
+        final var userToUpdate = buildUser();
+        userToUpdate.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
+
+        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
+        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
+        userToUpdate.setId(authsProvider.getCurrentUserId());
+
+        when(userStore.updateUser(userToUpdate)).thenReturn(userToUpdate);
+        when(userStore.findById(authsProvider.getCurrentUserId())).thenReturn(Optional.of(userToUpdate));
+
+        final var actual = userService.updateProfile(userToUpdate);
+
+        assertEquals(userToUpdate.getId().toString(), actual.getId().toString());
+        assertEquals(userToUpdate.getUsername(), actual.getUsername());
+        assertEquals(userToUpdate.getFirstName(), actual.getFirstName());
+        assertEquals(userToUpdate.getLastName(), actual.getLastName());
+        assertEquals(userToUpdate.getAvatar(), actual.getAvatar());
+        assertEquals(userToUpdate.getRoleId().toString(), actual.getRoleId().toString());
+        assertEquals(userToUpdate.getEnabled(), actual.getEnabled());
+
+        verify(userStore).updateUser(userToUpdate);
+        verify(userStore).findById(authsProvider.getCurrentUserId());
     }
 
     @Test
@@ -345,5 +350,23 @@ class UserServiceTest {
 
         assertTrue(actual.isEmpty());
         verify(userStore).findByName(username);
+    }
+
+    @Test
+    void shouldFindProfile_OK() {
+        final var user = buildUser();
+
+        when(authsProvider.getCurrentUserId())
+                .thenReturn(buildAdmin().getUserId());
+
+        user.setId(authsProvider.getCurrentUserId());
+
+        when(userStore.findById(authsProvider.getCurrentUserId()))
+                .thenReturn(Optional.of(user));
+
+        final var actual = userService.findProfile();
+
+        assertEquals(user, actual);
+        verify(userStore).findById(authsProvider.getCurrentUserId());
     }
 }

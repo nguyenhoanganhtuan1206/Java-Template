@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.javatemplate.persistent.user.UserEntityMapper.toUserEntity;
-import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         return userStore.findByUsername(username)
                 .map(user -> buildUser(toUserEntity(user)))
-                .orElseThrow(() -> new UsernameNotFoundException(format("User not found with username: %s", username)));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     private User buildUser(final UserEntity userEntity) {
@@ -37,7 +36,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         return new JwtUserDetails(
                 userEntity.getId(),
-                userEntity.getUsername(), userEntity.getPassword(),
+                userEntity.getUsername(),
+                userEntity.getPassword(),
                 List.of(new SimpleGrantedAuthority(role.getName()))
         );
     }

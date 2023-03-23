@@ -90,6 +90,8 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.lastName").value(userToUpdate.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
                 .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
+
+        verify(userService).updateProfile(any(User.class));
     }
 
     @Test
@@ -109,5 +111,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.lastName").value(userToUpdate.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
                 .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
+
+        verify(userService).updateProfile(any(User.class));
     }
 }
