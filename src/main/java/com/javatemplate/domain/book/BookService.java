@@ -1,7 +1,6 @@
 package com.javatemplate.domain.book;
 
 import com.javatemplate.domain.auth.AuthsProvider;
-import com.javatemplate.domain.auth.UserAuthenticationToken;
 import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,10 +26,6 @@ public class BookService {
         return bookStore.findAll();
     }
 
-    public UserAuthenticationToken getCurrentUserToken() {
-        return authsProvider.getCurrentAuthentication();
-    }
-
     public Book findById(final UUID bookId) {
         return bookStore.findById(bookId).orElseThrow(supplyBookNotFound(bookId));
     }
@@ -42,7 +37,7 @@ public class BookService {
     public Book create(final Book book) {
         validateBookCreateRequest(book);
 
-        book.setUserId(getCurrentUserToken().getUserId());
+        book.setUserId(authsProvider.getCurrentUserId());
         book.setCreatedAt(Instant.now());
 
         return bookStore.save(book);
@@ -72,8 +67,8 @@ public class BookService {
 
 
     private void validateBookPermissions(final UUID userId, final String action) {
-        if (getCurrentUserToken().getRole().equals("ROLE_CONTRIBUTOR")
-                && !getCurrentUserToken().getUserId().equals(userId)) {
+        if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR")
+                && !authsProvider.getCurrentUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to " + action + " this book").get();
         }
     }

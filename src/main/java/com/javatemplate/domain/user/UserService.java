@@ -27,14 +27,6 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private UUID getCurrentUserId() {
-        return authsProvider.getCurrentAuthentication().getUserId();
-    }
-
-    private String getCurrentRole() {
-        return authsProvider.getCurrentAuthentication().getRole();
-    }
-
     public List<User> findAll() {
         return userStore.findAll();
     }
@@ -54,7 +46,7 @@ public class UserService {
     }
 
     public User findProfile() {
-        return findById(getCurrentUserId());
+        return findById(authsProvider.getCurrentUserId());
     }
 
     public User findById(final UUID userId) {
@@ -66,7 +58,7 @@ public class UserService {
     }
 
     public User updateProfile(final User userUpdate) {
-        return update(getCurrentUserId(), userUpdate);
+        return update(authsProvider.getCurrentUserId(), userUpdate);
     }
 
     public User update(final UUID userId, final User userUpdate) {
@@ -100,7 +92,8 @@ public class UserService {
     }
 
     private void validateUserUpdatePermission(final UUID userId) {
-        if (getCurrentRole().equals("ROLE_CONTRIBUTOR") && !getCurrentUserId().equals(userId)) {
+        if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR") &&
+                !authsProvider.getCurrentUserId().equals(userId)) {
             throw supplyAccessDeniedError("You are not authorized to update this user").get();
         }
     }
