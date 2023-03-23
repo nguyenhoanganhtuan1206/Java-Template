@@ -85,10 +85,10 @@ public class UserService {
         return userStore.updateUser(user);
     }
 
-    public void deleteById(final UUID id) {
+    public User deleteById(final UUID id) {
         final User user = findById(id);
 
-        userStore.delete(user);
+        return userStore.delete(user);
     }
 
     private void validateUserUpdatePermission(final UUID userId) {

@@ -18,7 +18,7 @@ public class UserStore {
     private final UserRepository userRepository;
 
     public List<User> findAll() {
-        return toUsers(toList(userRepository.findAllByEnabledTrue()));
+        return toUsers(toList(userRepository.findAll()));
     }
 
     public Optional<User> findById(final UUID userId) {
@@ -41,9 +41,9 @@ public class UserStore {
         return toUser(userRepository.save(toUserEntity(user)));
     }
 
-    public void delete(final User user) {
+    public User delete(final User user) {
         user.setEnabled(false);
 
-        userRepository.save(toUserEntity(user));
+        return toUser(userRepository.save(toUserEntity(user)));
     }
 }

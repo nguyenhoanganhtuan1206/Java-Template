@@ -8,7 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.javatemplate.fakes.UserFakes.*;
+import static com.javatemplate.fakes.UserFakes.buildUserEntity;
+import static com.javatemplate.fakes.UserFakes.builderUserEntities;
 import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,11 +132,16 @@ class UserStoreTest {
 
     @Test
     void shouldDeleteById_OK() {
-        final var user = buildUser();
+        final var user = buildUserEntity();
 
-        userStore.delete(user);
+        when(userRepository.save(any(UserEntity.class)))
+                .thenReturn(user);
 
-        verify(userRepository).deleteById(user.getId());
+        final var actual = userStore.delete(toUser(user));
+        actual.setEnabled(false);
+        assertFalse(actual.getEnabled());
+
+        verify(userRepository).save(any(UserEntity.class));
     }
 
     @Test
