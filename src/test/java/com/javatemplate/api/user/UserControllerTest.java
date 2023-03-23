@@ -136,6 +136,9 @@ class UserControllerTest extends AbstractControllerTest {
     void shouldDeleteById_OK() throws Exception {
         final var user = buildUser();
 
+        when(userService.deleteById(user.getId()))
+                .thenReturn(user);
+
         delete(BASE_URL + "/" + user.getId())
                 .andExpect(status().isOk());
 
