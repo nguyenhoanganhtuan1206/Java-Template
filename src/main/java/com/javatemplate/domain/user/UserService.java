@@ -88,7 +88,7 @@ public class UserService {
     public void deleteById(final UUID id) {
         final User user = findById(id);
 
-        userStore.deleteById(user.getId());
+        userStore.delete(user);
     }
 
     private void validateUserUpdatePermission(final UUID userId) {

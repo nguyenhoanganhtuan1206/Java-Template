@@ -260,7 +260,7 @@ class UserServiceTest {
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
         userService.deleteById(user.getId());
-        verify(userStore).deleteById(user.getId());
+        verify(userStore).delete(user);
     }
 
     @Test
