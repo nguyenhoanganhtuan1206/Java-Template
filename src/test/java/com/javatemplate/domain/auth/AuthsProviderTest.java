@@ -20,13 +20,13 @@ class AuthsProviderTest {
 
     @Test
     void getCurrentAuthentication_OK() {
-        final var admin = buildAdmin();
+        final var user = buildAdmin();
 
-        SecurityContextHolder.getContext().setAuthentication(admin);
+        SecurityContextHolder.getContext().setAuthentication(user);
 
         final var actual = authsProvider.getCurrentAuthentication();
 
-        assertEquals(admin, actual);
+        assertEquals(user, actual);
     }
 
     @Test
@@ -38,23 +38,34 @@ class AuthsProviderTest {
 
     @Test
     void getCurrentUserRole_OK() {
-        final var admin = buildAdmin();
+        final var user = buildAdmin();
 
-        SecurityContextHolder.getContext().setAuthentication(admin);
+        SecurityContextHolder.getContext().setAuthentication(user);
 
-        final var actual = authsProvider.getCurrentAuthentication();
+        final var actual = authsProvider.getCurrentAuthentication().getRole();
 
-        assertEquals(admin.getRole(), actual.getRole());
+        assertEquals(user.getRole(), actual);
+    }
+
+    @Test
+    void getCurrentUsername_OK() {
+        final var user = buildAdmin();
+
+        SecurityContextHolder.getContext().setAuthentication(user);
+
+        final var actual = authsProvider.getCurrentAuthentication().getUsername();
+
+        assertEquals(user.getUsername(), actual);
     }
 
     @Test
     void getCurrentUserId_OK() {
-        final var admin = buildAdmin();
+        final var user = buildAdmin();
 
-        SecurityContextHolder.getContext().setAuthentication(admin);
+        SecurityContextHolder.getContext().setAuthentication(user);
 
-        final var actual = authsProvider.getCurrentAuthentication();
+        final var actual = authsProvider.getCurrentAuthentication().getUserId();
 
-        assertEquals(admin.getUserId(), actual.getUserId());
+        assertEquals(user.getUserId(), actual);
     }
 }

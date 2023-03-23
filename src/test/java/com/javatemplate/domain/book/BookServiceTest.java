@@ -91,13 +91,28 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldCreate_ThrownBadRequest() {
+    void shouldCreateWithoutName_ThrownBadRequest() {
         final var book = buildBook();
         book.setName(null);
 
         assertThrows(BadRequestException.class, () -> bookService.create(book));
     }
 
+    @Test
+    void shouldCreateWithoutDescription_ThrownBadRequest() {
+        final var book = buildBook();
+        book.setDescription(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.create(book));
+    }
+
+    @Test
+    void shouldCreateWithoutAuthor_ThrownBadRequest() {
+        final var book = buildBook();
+        book.setAuthor(null);
+
+        assertThrows(BadRequestException.class, () -> bookService.create(book));
+    }
 
     @Test
     void shouldUpdateWithContributor_OK() {
@@ -158,7 +173,7 @@ class BookServiceTest {
                 .thenReturn(book);
         when(authsProvider.getCurrentUserRole())
                 .thenReturn(buildAdmin().getRole());
-        
+
         bookUpdate.setId(book.getId());
 
         final var actual = bookService.update(book.getId(), bookUpdate);

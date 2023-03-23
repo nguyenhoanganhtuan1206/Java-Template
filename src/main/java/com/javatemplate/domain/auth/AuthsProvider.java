@@ -24,6 +24,10 @@ public class AuthsProvider {
         return getCurrentAuthentication().getRole();
     }
 
+    public String getCurrentUsername() {
+        return getCurrentAuthentication().getUsername();
+    }
+
     public UUID getCurrentUserId() {
         return getCurrentAuthentication().getUserId();
     }

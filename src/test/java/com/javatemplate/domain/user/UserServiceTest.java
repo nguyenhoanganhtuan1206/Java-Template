@@ -360,6 +360,7 @@ class UserServiceTest {
                 .thenReturn(buildAdmin().getUserId());
 
         user.setId(authsProvider.getCurrentUserId());
+        user.setUsername(authsProvider.getCurrentUsername());
 
         when(userStore.findById(authsProvider.getCurrentUserId()))
                 .thenReturn(Optional.of(user));
