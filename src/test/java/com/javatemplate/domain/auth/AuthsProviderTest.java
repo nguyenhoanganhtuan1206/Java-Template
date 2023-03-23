@@ -42,7 +42,7 @@ class AuthsProviderTest {
 
         SecurityContextHolder.getContext().setAuthentication(user);
 
-        final var actual = authsProvider.getCurrentAuthentication().getRole();
+        final var actual = authsProvider.getCurrentUserRole();
 
         assertEquals(user.getRole(), actual);
     }
@@ -53,7 +53,7 @@ class AuthsProviderTest {
 
         SecurityContextHolder.getContext().setAuthentication(user);
 
-        final var actual = authsProvider.getCurrentAuthentication().getUsername();
+        final var actual = authsProvider.getCurrentUsername();
 
         assertEquals(user.getUsername(), actual);
     }
@@ -64,7 +64,7 @@ class AuthsProviderTest {
 
         SecurityContextHolder.getContext().setAuthentication(user);
 
-        final var actual = authsProvider.getCurrentAuthentication().getUserId();
+        final var actual = authsProvider.getCurrentUserId();
 
         assertEquals(user.getUserId(), actual);
     }
