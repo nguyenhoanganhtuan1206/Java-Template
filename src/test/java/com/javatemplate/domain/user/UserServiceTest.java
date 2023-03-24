@@ -146,7 +146,6 @@ class UserServiceTest {
         userToUpdate.setPassword(null);
 
         when(authsProvider.getCurrentUserId()).thenReturn(buildAdmin().getUserId());
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
         userToUpdate.setId(authsProvider.getCurrentUserId());
 
         when(userStore.updateUser(userToUpdate)).thenReturn(userToUpdate);
@@ -174,7 +173,6 @@ class UserServiceTest {
         userUpdate.setRoleId(user.getRoleId());
 
         when(authsProvider.getCurrentUserId()).thenReturn(buildAdmin().getUserId());
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
 
         user.setId(authsProvider.getCurrentUserId());
         userUpdate.setId(authsProvider.getCurrentUserId());
