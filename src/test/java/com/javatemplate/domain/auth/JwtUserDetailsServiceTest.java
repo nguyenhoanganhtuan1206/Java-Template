@@ -14,9 +14,11 @@ import java.util.Optional;
 import static com.javatemplate.fakes.RoleFakes.buildRole;
 import static com.javatemplate.fakes.UserFakes.buildUserEntity;
 import static com.javatemplate.persistent.user.UserEntityMapper.toUser;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -49,12 +51,16 @@ class JwtUserDetailsServiceTest {
         final UserDetails actual = jwtUserDetailsService.loadUserByUsername(user.getUsername());
 
         assertEquals(user.getUsername(), actual.getUsername());
+        verify(userStore).findByUsername(anyString());
+        verify(roleStore).findById(role.getId());
     }
 
     @Test
     public void loadUserByUsername_whenUsernameNotFound_shouldThrowUsernameNotFoundException() {
+        final var username = randomAlphabetic(3, 10);
         when(userStore.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> jwtUserDetailsService.loadUserByUsername("nonexistentusername"));
+        assertThrows(UsernameNotFoundException.class, () -> jwtUserDetailsService.loadUserByUsername(username));
+        verify(userStore).findByUsername(anyString());
     }
 }

@@ -11,7 +11,7 @@ public class CommonError {
         return () -> new BadRequestException(message);
     }
 
-    public static Supplier<AccessDeniedException> supplyAccessDeniedError(final String message) {
-        return () -> new AccessDeniedException(message);
+    public static Supplier<AccessDeniedException> supplyAccessDeniedError() {
+        return () -> new AccessDeniedException("You do not have permission to access this resource");
     }
 }

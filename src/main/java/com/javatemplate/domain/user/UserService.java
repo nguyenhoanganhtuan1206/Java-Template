@@ -94,7 +94,7 @@ public class UserService {
     private void validateUserUpdatePermission(final UUID userId) {
         if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR") &&
                 !authsProvider.getCurrentUserId().equals(userId)) {
-            throw supplyAccessDeniedError("You are not authorized to update this user").get();
+            throw supplyAccessDeniedError().get();
         }
     }
 

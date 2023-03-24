@@ -3,6 +3,7 @@ package com.javatemplate.domain.auth;
 import com.javatemplate.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -38,12 +38,7 @@ public class JwtTokenServiceTest {
 
     @Test
     public void generateToken_ShouldCreateValidToken() {
-        final JwtUserDetails userDetails = new JwtUserDetails(
-                null,
-                "user",
-                "123123",
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        final JwtUserDetails userDetails = new JwtUserDetails(null, "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
 
         when(jwtProperties.getSecret()).thenReturn(SECRET);
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
@@ -55,7 +50,7 @@ public class JwtTokenServiceTest {
 
         assertEquals("user", claims.getSubject());
         assertEquals("ROLE_USER", claims.get("roles").toString());
-        assertThat(expiration).isAfter(issuedAt);
-        assertThat(expiration.getTime() - issuedAt.getTime()).isEqualTo(EXPIRATION * 1000);
+        Assertions.assertTrue(expiration.toInstant().isAfter(issuedAt.toInstant()));
+        assertEquals(expiration.getTime() - issuedAt.getTime(), EXPIRATION * 1000);
     }
 }

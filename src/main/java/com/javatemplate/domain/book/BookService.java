@@ -69,7 +69,7 @@ public class BookService {
     private void validateBookPermissions(final UUID userId, final String action) {
         if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR")
                 && !authsProvider.getCurrentUserId().equals(userId)) {
-            throw supplyAccessDeniedError("You are not authorized to " + action + " this book").get();
+            throw supplyAccessDeniedError().get();
         }
     }
 
