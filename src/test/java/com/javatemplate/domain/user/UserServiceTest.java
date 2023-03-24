@@ -260,33 +260,7 @@ class UserServiceTest {
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
         userService.deleteById(user.getId());
-        verify(userStore).delete(user);
-    }
-
-    @Test
-    void shouldUpdateProfile_OK() {
-        final var userToUpdate = buildUser();
-        userToUpdate.setPassword(passwordEncoder.encode(userToUpdate.getPassword()));
-
-        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
-        userToUpdate.setId(authsProvider.getCurrentUserId());
-
-        when(userStore.updateUser(userToUpdate)).thenReturn(userToUpdate);
-        when(userStore.findById(authsProvider.getCurrentUserId())).thenReturn(Optional.of(userToUpdate));
-
-        final var actual = userService.updateProfile(userToUpdate);
-
-        assertEquals(userToUpdate.getId().toString(), actual.getId().toString());
-        assertEquals(userToUpdate.getUsername(), actual.getUsername());
-        assertEquals(userToUpdate.getFirstName(), actual.getFirstName());
-        assertEquals(userToUpdate.getLastName(), actual.getLastName());
-        assertEquals(userToUpdate.getAvatar(), actual.getAvatar());
-        assertEquals(userToUpdate.getRoleId().toString(), actual.getRoleId().toString());
-        assertEquals(userToUpdate.getEnabled(), actual.getEnabled());
-
-        verify(userStore).updateUser(userToUpdate);
-        verify(userStore).findById(authsProvider.getCurrentUserId());
+        verify(userStore).deleteById(user.getId());
     }
 
     @Test
@@ -350,24 +324,5 @@ class UserServiceTest {
 
         assertTrue(actual.isEmpty());
         verify(userStore).findByName(username);
-    }
-
-    @Test
-    void shouldFindProfile_OK() {
-        final var user = buildUser();
-
-        when(authsProvider.getCurrentUserId())
-                .thenReturn(buildAdmin().getUserId());
-
-        user.setId(authsProvider.getCurrentUserId());
-        user.setUsername(authsProvider.getCurrentUsername());
-
-        when(userStore.findById(authsProvider.getCurrentUserId()))
-                .thenReturn(Optional.of(user));
-
-        final var actual = userService.findProfile();
-
-        assertEquals(user, actual);
-        verify(userStore).findById(authsProvider.getCurrentUserId());
     }
 }

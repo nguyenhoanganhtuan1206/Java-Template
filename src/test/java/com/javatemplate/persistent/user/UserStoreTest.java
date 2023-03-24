@@ -133,15 +133,9 @@ class UserStoreTest {
     @Test
     void shouldDeleteById_OK() {
         final var user = buildUserEntity();
+        userStore.deleteById(user.getId());
 
-        when(userRepository.save(any(UserEntity.class)))
-                .thenReturn(user);
-
-        final var actual = userStore.delete(toUser(user));
-        actual.setEnabled(false);
-        assertFalse(actual.getEnabled());
-
-        verify(userRepository).save(any(UserEntity.class));
+        verify(userRepository).deleteById(user.getId());
     }
 
     @Test

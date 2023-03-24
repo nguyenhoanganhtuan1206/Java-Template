@@ -43,7 +43,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         final var userAuthenticationToken = authsProvider.getCurrentAuthentication();
         user.setId(userAuthenticationToken.getUserId());
 
-        when(userService.findProfile()).thenReturn(user);
+        when(userService.findById(authsProvider.getCurrentUserId())).thenReturn(user);
 
         get(BASE_URL)
                 .andExpect(status().isOk())
@@ -53,7 +53,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()));
 
-        verify(userService).findProfile();
+        verify(userService).findById(authsProvider.getCurrentUserId());
     }
 
     @Test
@@ -61,7 +61,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     void shouldGetProfileWithAdmin_OK() throws Exception {
         final var user = buildUser();
 
-        when(userService.findProfile()).thenReturn(user);
+        when(userService.findById(authsProvider.getCurrentUserId())).thenReturn(user);
 
         get(BASE_URL)
                 .andExpect(status().isOk())
@@ -70,7 +70,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()))
                 .andExpect(jsonPath("$.avatar").value(user.getAvatar()));
 
-        verify(userService).findProfile();
+        verify(userService).findById(authsProvider.getCurrentUserId());
     }
 
     @Test
@@ -80,7 +80,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
         userToUpdate.setId(userIdToken);
 
-        when(userService.updateProfile(any(User.class))).thenReturn(userToUpdate);
+        when(userService.update(userIdToken, any(User.class))).thenReturn(userToUpdate);
 
         put(BASE_URL, userToUpdate)
                 .andExpect(status().isOk())
@@ -91,7 +91,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
                 .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
 
-        verify(userService).updateProfile(any(User.class));
+        verify(userService).update(userIdToken, any(User.class));
     }
 
     @Test
@@ -101,7 +101,7 @@ class ProfileControllerTest extends AbstractControllerTest {
         final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
         userToUpdate.setId(userIdToken);
 
-        when(userService.updateProfile(any(User.class))).thenReturn(userToUpdate);
+        when(userService.update(userIdToken, any(User.class))).thenReturn(userToUpdate);
 
         put(BASE_URL, userToUpdate)
                 .andExpect(status().isOk())
@@ -112,6 +112,6 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
                 .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
 
-        verify(userService).updateProfile(any(User.class));
+        verify(userService).update(userIdToken, any(User.class));
     }
 }
