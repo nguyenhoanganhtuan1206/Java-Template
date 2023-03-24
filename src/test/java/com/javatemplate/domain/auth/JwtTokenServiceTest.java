@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -49,13 +50,11 @@ public class JwtTokenServiceTest {
 
         final String token = jwtTokenService.generateToken(userDetails);
         final Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
-        final String username = claims.getSubject();
         final Date expiration = claims.getExpiration();
         final Date issuedAt = claims.getIssuedAt();
-        final String authority = claims.get("roles").toString();
 
-        assertThat(username).isEqualTo("user");
-        assertThat(authority).isEqualTo("ROLE_USER");
+        assertEquals("user", claims.getSubject());
+        assertEquals("ROLE_USER", claims.get("roles").toString());
         assertThat(expiration).isAfter(issuedAt);
         assertThat(expiration.getTime() - issuedAt.getTime()).isEqualTo(EXPIRATION * 1000);
     }
