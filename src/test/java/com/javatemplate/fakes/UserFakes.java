@@ -21,8 +21,7 @@ public class UserFakes {
                 .firstName(randomAlphabetic(3, 10))
                 .lastName(randomAlphabetic(3, 10))
                 .avatar(randomAlphabetic(3, 10))
-                .enabled(Boolean
-                        .TRUE)
+                .enabled(true)
                 .roleId(randomUUID())
                 .build();
     }
@@ -43,7 +42,7 @@ public class UserFakes {
                 .password(randomAlphabetic(3, 10))
                 .lastName(randomAlphabetic(3, 10))
                 .avatar(randomAlphabetic(3, 10))
-                .enabled(Boolean.TRUE)
+                .enabled(true)
                 .roleId(randomUUID())
                 .build();
     }
