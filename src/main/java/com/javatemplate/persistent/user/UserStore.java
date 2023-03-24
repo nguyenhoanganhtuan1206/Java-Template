@@ -41,9 +41,7 @@ public class UserStore {
         return toUser(userRepository.save(toUserEntity(user)));
     }
 
-    public User delete(final User user) {
-        user.setEnabled(false);
-
-        return toUser(userRepository.save(toUserEntity(user)));
+    public void deleteById(final UUID userId) {
+        userRepository.deleteById(userId);
     }
 }

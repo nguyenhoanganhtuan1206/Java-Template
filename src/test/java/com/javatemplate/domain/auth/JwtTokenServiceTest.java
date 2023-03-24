@@ -3,7 +3,6 @@ package com.javatemplate.domain.auth;
 import com.javatemplate.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -50,7 +50,7 @@ public class JwtTokenServiceTest {
 
         assertEquals("user", claims.getSubject());
         assertEquals("ROLE_USER", claims.get("roles").toString());
-        Assertions.assertTrue(expiration.toInstant().isAfter(issuedAt.toInstant()));
+        assertTrue(expiration.toInstant().isAfter(issuedAt.toInstant()));
         assertEquals(expiration.getTime() - issuedAt.getTime(), EXPIRATION * 1000);
     }
 }

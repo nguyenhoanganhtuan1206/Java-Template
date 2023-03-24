@@ -2,6 +2,7 @@ package com.javatemplate.api.profile;
 
 import com.javatemplate.api.user.UserRequestDTO;
 import com.javatemplate.api.user.UserResponseDTO;
+import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +20,17 @@ public class ProfileController {
 
     private final UserService userService;
 
+    private final AuthsProvider authsProvider;
+
     @Operation(summary = "Update current user's profile")
     @PutMapping
     public UserResponseDTO update(final @RequestBody UserRequestDTO userRequestDTO) {
-        return toUserDTO(userService.updateProfile(toUser(userRequestDTO)));
+        return toUserDTO(userService.update(authsProvider.getCurrentUserId(), toUser(userRequestDTO)));
     }
 
     @Operation(summary = "Get the current user's profile")
     @GetMapping
     public UserResponseDTO getProfile() {
-        return toUserDTO(userService.findProfile());
+        return toUserDTO(userService.findById(authsProvider.getCurrentUserId()));
     }
 }

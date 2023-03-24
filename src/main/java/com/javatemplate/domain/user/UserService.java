@@ -1,6 +1,5 @@
 package com.javatemplate.domain.user;
 
-import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,6 @@ import static com.javatemplate.api.user.UserValidation.validateUserCreate;
 import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
 import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
-import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
@@ -22,8 +20,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class UserService {
 
     private final UserStore userStore;
-
-    private final AuthsProvider authsProvider;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -45,10 +41,6 @@ public class UserService {
         return userStore.findByName(name);
     }
 
-    public User findProfile() {
-        return findById(authsProvider.getCurrentUserId());
-    }
-
     public User findById(final UUID userId) {
         return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
     }
@@ -57,12 +49,7 @@ public class UserService {
         return userStore.findByUsername(username).orElseThrow(supplyUserNotFound(username));
     }
 
-    public User updateProfile(final User userUpdate) {
-        return update(authsProvider.getCurrentUserId(), userUpdate);
-    }
-
     public User update(final UUID userId, final User userUpdate) {
-        validateUserUpdatePermission(userId);
         final User user = findById(userId);
 
         validateUserUpdate(userUpdate);
@@ -85,17 +72,10 @@ public class UserService {
         return userStore.updateUser(user);
     }
 
-    public User deleteById(final UUID id) {
+    public void deleteById(final UUID id) {
         final User user = findById(id);
 
-        return userStore.delete(user);
-    }
-
-    private void validateUserUpdatePermission(final UUID userId) {
-        if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR") &&
-                !authsProvider.getCurrentUserId().equals(userId)) {
-            throw supplyAccessDeniedError().get();
-        }
+        userStore.deleteById(user.getId());
     }
 
     private void verifyUsernameAvailable(final String username) {

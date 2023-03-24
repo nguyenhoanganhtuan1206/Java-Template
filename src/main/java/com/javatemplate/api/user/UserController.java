@@ -53,7 +53,7 @@ public class UserController {
 
     @Operation(summary = "Delete user by Id")
     @DeleteMapping("{userId}")
-    public UserResponseDTO deleteById(final @PathVariable UUID userId) {
-        return toUserDTO(userService.deleteById(userId));
+    public void deleteById(final @PathVariable UUID userId) {
+        userService.deleteById(userId);
     }
 }
