@@ -3,6 +3,7 @@ package com.javatemplate.domain.book;
 import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -47,7 +48,7 @@ public class BookService {
         validateBookUpdateRequest(bookUpdate);
 
         final Book book = findById(bookId);
-        validateBookPermissions(book.getUserId(), "update");
+        validateDeletePermission(book);
 
         book.setName(bookUpdate.getName());
         book.setAuthor(bookUpdate.getAuthor());
@@ -60,15 +61,28 @@ public class BookService {
 
     public void deleteById(final UUID uuid) {
         final Book book = findById(uuid);
-        validateBookPermissions(book.getUserId(), "delete");
+        validateUpdatePermission(book);
 
         bookStore.deleteById(book.getId());
     }
 
 
-    private void validateBookPermissions(final UUID userId, final String action) {
-        if (authsProvider.getCurrentUserRole().equals("ROLE_CONTRIBUTOR")
-                && !authsProvider.getCurrentUserId().equals(userId)) {
+    private void validateDeletePermission(final Book book) {
+        if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
+            return;
+        }
+
+        if (!StringUtils.equals(authsProvider.getCurrentUserId().toString(), book.getUserId().toString())) {
+            throw supplyAccessDeniedError().get();
+        }
+    }
+
+    private void validateUpdatePermission(final Book book) {
+        if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
+            return;
+        }
+
+        if (!StringUtils.equals(authsProvider.getCurrentUserId().toString(), book.getUserId().toString())) {
             throw supplyAccessDeniedError().get();
         }
     }
