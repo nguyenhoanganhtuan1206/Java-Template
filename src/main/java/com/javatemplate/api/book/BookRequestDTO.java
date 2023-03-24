@@ -3,11 +3,9 @@ package com.javatemplate.api.book;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 @Builder
-public class BookCreateRequestDTO {
+public class BookRequestDTO {
 
     private String name;
 
@@ -16,6 +14,4 @@ public class BookCreateRequestDTO {
     private String description;
 
     private String image;
-
-    private UUID userId;
 }

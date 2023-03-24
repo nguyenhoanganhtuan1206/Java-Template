@@ -39,15 +39,15 @@ public class BookController {
     @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Create book")
     @PostMapping
-    public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {
-        return toBookResponseDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
+    public BookResponseDTO create(final @RequestBody BookRequestDTO bookDTO) {
+        return toBookResponseDTO(bookService.create(toBookRequestDTO(bookDTO)));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
-    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {
-        return toBookResponseDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
+    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookRequestDTO bookDTO) {
+        return toBookResponseDTO(bookService.update(bookId, toBookRequestDTO(bookDTO)));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
