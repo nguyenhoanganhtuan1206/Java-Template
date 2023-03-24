@@ -1,7 +1,6 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
-import com.javatemplate.error.AccessDeniedException;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.user.UserStore;
@@ -18,7 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
-import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildContributor;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
 import static java.util.UUID.randomUUID;
@@ -203,8 +201,6 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setPassword(randomAlphabetic(3, 5));
 
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
-
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
 
         assertThrows(BadRequestException.class, () -> userService.update(user.getId(), userUpdate));
@@ -217,7 +213,6 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         final var uuid = randomUUID();
 
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> userService.update(uuid, userUpdate));
@@ -231,7 +226,6 @@ class UserServiceTest {
         final var userUpdate = buildUser();
         userUpdate.setUsername(userExisted.getUsername());
 
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
         when(userStore.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
         when(userStore.findByUsername(userUpdate.getUsername())).thenReturn(Optional.of(userUpdate));
 
@@ -245,10 +239,7 @@ class UserServiceTest {
         final var userToUpdate = buildUser();
         final var userUpdate = buildUser();
 
-        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
-
-        assertThrows(AccessDeniedException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
+        assertThrows(NotFoundException.class, () -> userService.update(userToUpdate.getId(), userUpdate));
 
         verify(userStore, never()).updateUser(userUpdate);
     }

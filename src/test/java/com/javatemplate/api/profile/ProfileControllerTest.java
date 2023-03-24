@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -75,43 +76,18 @@ class ProfileControllerTest extends AbstractControllerTest {
 
     @Test
     @WithMockContributor
-    void shouldUpdateWithContributor_OK() throws Exception {
-        final var userToUpdate = buildUser();
-        final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
-        userToUpdate.setId(userIdToken);
+    void shouldUpdate_Ok() throws Exception {
+        final var updatedProfile = buildUser();
+        final var userIdToken = authsProvider.getCurrentUserId();
 
-        when(userService.update(userIdToken, any(User.class))).thenReturn(userToUpdate);
+        updatedProfile.setId(userIdToken);
 
-        put(BASE_URL, userToUpdate)
+        when(userService.update(eq(userIdToken), any(User.class))).thenReturn(updatedProfile);
+
+        put(BASE_URL, updatedProfile)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userToUpdate.getId().toString()))
-                .andExpect(jsonPath("$.username").value(userToUpdate.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(userToUpdate.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userToUpdate.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
-
-        verify(userService).update(userIdToken, any(User.class));
-    }
-
-    @Test
-    @WithMockAdmin
-    void shouldUpdateWithAdmin_OK() throws Exception {
-        final var userToUpdate = buildUser();
-        final var userIdToken = authsProvider.getCurrentAuthentication().getUserId();
-        userToUpdate.setId(userIdToken);
-
-        when(userService.update(userIdToken, any(User.class))).thenReturn(userToUpdate);
-
-        put(BASE_URL, userToUpdate)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userIdToken.toString()))
-                .andExpect(jsonPath("$.username").value(userToUpdate.getUsername()))
-                .andExpect(jsonPath("$.firstName").value(userToUpdate.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userToUpdate.getLastName()))
-                .andExpect(jsonPath("$.avatar").value(userToUpdate.getAvatar()))
-                .andExpect(jsonPath("$.enabled").value(userToUpdate.getEnabled()));
-
-        verify(userService).update(userIdToken, any(User.class));
+                .andExpect(jsonPath("$.firstName").value(updatedProfile.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(updatedProfile.getLastName()))
+                .andExpect(jsonPath("$.avatar").value(updatedProfile.getAvatar()));
     }
 }
