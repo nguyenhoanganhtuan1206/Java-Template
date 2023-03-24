@@ -121,7 +121,6 @@ class UserServiceTest {
 
         when(userStore.findById(user.getId())).thenReturn(Optional.of(user));
         when(userStore.updateUser(user)).thenReturn(user);
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
 
         userUpdate.setId(user.getId());
         userUpdate.setRoleId(user.getRoleId());
