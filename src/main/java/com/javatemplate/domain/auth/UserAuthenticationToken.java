@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.UUID;
 
+import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
+
 @Getter
 public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
@@ -25,6 +27,6 @@ public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken
         this.role = this.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElseThrow(null);
+                .orElseThrow(supplyAccessDeniedError("You do not have permission to access this resource"));
     }
 }

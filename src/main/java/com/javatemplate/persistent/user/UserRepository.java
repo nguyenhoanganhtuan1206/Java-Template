@@ -11,7 +11,8 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends CrudRepository<UserEntity, UUID> {
 
-    @Query("SELECT u FROM UserEntity u WHERE CONCAT(u.username, u.firstName, u.lastName) ILIKE %:name% and u.enabled = true")
+    @Query(value = "SELECT u FROM UserEntity u WHERE LOWER(CONCAT(u.username, u.firstName, u.lastName))" +
+            " LIKE %LOWER(:name)% and u.enabled = true", nativeQuery = true)
     List<UserEntity> findByName(final String name);
 
     Optional<UserEntity> findByUsernameAndEnabledTrue(final String username);
