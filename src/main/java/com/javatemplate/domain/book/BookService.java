@@ -1,7 +1,9 @@
 package com.javatemplate.domain.book;
 
+import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.persistent.book.BookStore;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -9,14 +11,17 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
+import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
 import static com.javatemplate.error.CommonError.supplyValidationError;
-import static io.micrometer.common.util.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
 
     private final BookStore bookStore;
+
+    private final AuthsProvider authsProvider;
 
     public List<Book> findAll() {
         return bookStore.findAll();
@@ -33,7 +38,9 @@ public class BookService {
     public Book create(final Book book) {
         validateBookCreateRequest(book);
 
+        book.setUserId(authsProvider.getCurrentUserId());
         book.setCreatedAt(Instant.now());
+
         return bookStore.save(book);
     }
 
@@ -41,6 +48,7 @@ public class BookService {
         validateBookUpdateRequest(bookUpdate);
 
         final Book book = findById(bookId);
+        validateDeletePermission(book);
 
         book.setName(bookUpdate.getName());
         book.setAuthor(bookUpdate.getAuthor());
@@ -53,8 +61,30 @@ public class BookService {
 
     public void deleteById(final UUID uuid) {
         final Book book = findById(uuid);
+        validateUpdatePermission(book);
 
         bookStore.deleteById(book.getId());
+    }
+
+
+    private void validateDeletePermission(final Book book) {
+        if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
+            return;
+        }
+
+        if (!StringUtils.equals(authsProvider.getCurrentUserId().toString(), book.getUserId().toString())) {
+            throw supplyAccessDeniedError().get();
+        }
+    }
+
+    private void validateUpdatePermission(final Book book) {
+        if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
+            return;
+        }
+
+        if (!StringUtils.equals(authsProvider.getCurrentUserId().toString(), book.getUserId().toString())) {
+            throw supplyAccessDeniedError().get();
+        }
     }
 
     private void validateBookCreateRequest(final Book book) {
@@ -62,8 +92,8 @@ public class BookService {
             throw supplyValidationError("Author cannot be empty").get();
         }
 
-        if (book.getUserId() == null) {
-            throw supplyValidationError("User cannot be empty").get();
+        if (isBlank(book.getDescription())) {
+            throw supplyValidationError("Description cannot be empty").get();
         }
 
         if (isBlank(book.getName())) {

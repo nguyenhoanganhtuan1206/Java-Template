@@ -3,6 +3,7 @@ package com.javatemplate.api.book;
 import com.javatemplate.domain.book.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,18 +36,21 @@ public class BookController {
         return toBookResponseDTOs(bookService.find(searchTerm));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Create book")
     @PostMapping
-    public BookResponseDTO create(final @RequestBody BookCreateRequestDTO bookDTO) {
-        return toBookResponseDTO(bookService.create(toBookCreateRequestDTO(bookDTO)));
+    public BookResponseDTO create(final @RequestBody BookRequestDTO bookDTO) {
+        return toBookResponseDTO(bookService.create(toBookRequestDTO(bookDTO)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Update book")
     @PutMapping("{bookId}")
-    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookUpdateRequestDTO bookDTO) {
-        return toBookResponseDTO(bookService.update(bookId, toBookUpdateRequestDTO(bookDTO)));
+    public BookResponseDTO update(final @PathVariable UUID bookId, final @RequestBody BookRequestDTO bookDTO) {
+        return toBookResponseDTO(bookService.update(bookId, toBookRequestDTO(bookDTO)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
     @Operation(summary = "Delete book by id")
     @DeleteMapping("{bookId}")
     public void deleteById(final @PathVariable UUID bookId) {

@@ -2,6 +2,7 @@ package com.javatemplate.domain.user;
 
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class UserService {
 
     private final UserStore userStore;
 
+    private final PasswordEncoder passwordEncoder;
+
     public List<User> findAll() {
         return userStore.findAll();
     }
@@ -28,6 +31,8 @@ public class UserService {
         validateUserCreate(user);
 
         verifyUsernameAvailable(user.getUsername());
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userStore.create(user);
     }
@@ -46,6 +51,7 @@ public class UserService {
 
     public User update(final UUID userId, final User userUpdate) {
         final User user = findById(userId);
+
         validateUserUpdate(userUpdate);
 
         if (!(user.getUsername().equals(userUpdate.getUsername()))) {
@@ -55,7 +61,7 @@ public class UserService {
         }
 
         if (isNotBlank(userUpdate.getPassword())) {
-            user.setPassword(userUpdate.getPassword());
+            user.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
         }
 
         user.setFirstName(userUpdate.getFirstName());

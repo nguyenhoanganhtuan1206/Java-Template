@@ -21,31 +21,35 @@ public class UserFakes {
                 .firstName(randomAlphabetic(3, 10))
                 .lastName(randomAlphabetic(3, 10))
                 .avatar(randomAlphabetic(3, 10))
-                .enabled(Boolean.TRUE)
+                .enabled(true)
                 .roleId(randomUUID())
                 .build();
     }
 
     public static List<User> buildUsers() {
-        return IntStream.range(1, 5)
+        return IntStream
+                .range(1, 5)
                 .mapToObj(_ignored -> buildUser())
                 .toList();
     }
 
     public static UserEntity buildUserEntity() {
-        return UserEntity.builder()
+        return UserEntity
+                .builder()
                 .id(randomUUID())
                 .username(randomAlphabetic(3, 10))
                 .firstName(randomAlphabetic(3, 10))
+                .password(randomAlphabetic(3, 10))
                 .lastName(randomAlphabetic(3, 10))
                 .avatar(randomAlphabetic(3, 10))
-                .enabled(Boolean.TRUE)
+                .enabled(true)
                 .roleId(randomUUID())
                 .build();
     }
 
     public static List<UserEntity> builderUserEntities() {
-        return IntStream.range(1, 5)
+        return IntStream
+                .range(1, 5)
                 .mapToObj(_ignored -> buildUserEntity())
                 .toList();
     }

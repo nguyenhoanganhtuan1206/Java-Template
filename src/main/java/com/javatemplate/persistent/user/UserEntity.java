@@ -1,11 +1,11 @@
 package com.javatemplate.persistent.user;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -16,10 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserEntity {
 
-    public static final String ID_FIELD = "id";
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String username;

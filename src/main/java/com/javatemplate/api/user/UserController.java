@@ -3,6 +3,7 @@ package com.javatemplate.api.user;
 import com.javatemplate.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import static com.javatemplate.domain.user.UserMapper.toUser;
 @RestController
 @RequestMapping(value = "/api/v1/users")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;

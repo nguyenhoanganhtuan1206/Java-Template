@@ -22,8 +22,7 @@ public class UserStore {
     }
 
     public Optional<User> findById(final UUID userId) {
-        return userRepository.findById(userId)
-                .map(UserEntityMapper::toUser);
+        return userRepository.findById(userId).map(UserEntityMapper::toUser);
     }
 
     public List<User> findByName(final String name) {
@@ -31,8 +30,7 @@ public class UserStore {
     }
 
     public Optional<User> findByUsername(final String username) {
-        return userRepository.findByUsername(username)
-                .map(UserEntityMapper::toUser);
+        return userRepository.findByUsernameAndEnabledTrue(username).map(UserEntityMapper::toUser);
     }
 
     public User create(final User user) {
@@ -43,7 +41,7 @@ public class UserStore {
         return toUser(userRepository.save(toUserEntity(user)));
     }
 
-    public void deleteById(final UUID id) {
-        userRepository.deleteById(id);
+    public void deleteById(final UUID userId) {
+        userRepository.deleteById(userId);
     }
 }

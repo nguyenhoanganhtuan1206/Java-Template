@@ -67,7 +67,7 @@ class UserStoreTest {
         final var user = buildUserEntity();
         final var userOptional = Optional.of(user);
 
-        when(userRepository.findByUsername(user.getUsername())).thenReturn(userOptional);
+        when(userRepository.findByUsernameAndEnabledTrue(user.getUsername())).thenReturn(userOptional);
 
         final var actual = userStore.findByUsername(user.getUsername()).get();
         final var expected = userOptional.get();
@@ -80,7 +80,7 @@ class UserStoreTest {
         assertEquals(expected.getEnabled(), actual.getEnabled());
         assertEquals(expected.getRoleId(), actual.getRoleId());
 
-        verify(userRepository).findByUsername(user.getUsername());
+        verify(userRepository).findByUsernameAndEnabledTrue(user.getUsername());
     }
 
     @Test
@@ -88,12 +88,12 @@ class UserStoreTest {
         final var username = randomAlphabetic(3, 10);
         final Optional<UserEntity> userOptional = Optional.empty();
 
-        when(userRepository.findByUsername(username)).thenReturn(userOptional);
+        when(userRepository.findByUsernameAndEnabledTrue(username)).thenReturn(userOptional);
 
-        final var actual = userRepository.findByUsername(username);
+        final var actual = userRepository.findByUsernameAndEnabledTrue(username);
 
         assertFalse(actual.isPresent());
-        verify(userRepository).findByUsername(username);
+        verify(userRepository).findByUsernameAndEnabledTrue(username);
     }
 
     @Test
@@ -133,7 +133,6 @@ class UserStoreTest {
     @Test
     void shouldDeleteById_OK() {
         final var user = buildUserEntity();
-
         userStore.deleteById(user.getId());
 
         verify(userRepository).deleteById(user.getId());
@@ -144,8 +143,7 @@ class UserStoreTest {
         final var user = buildUserEntity();
         final var expected = builderUserEntities();
 
-        when(userRepository.findByName(anyString()))
-                .thenReturn(expected);
+        when(userRepository.findByName(anyString())).thenReturn(expected);
 
         final var actual = userStore.findByName(user.getUsername());
 
