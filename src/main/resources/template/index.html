@@ -1,60 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
+    <title>Facebook Login</title>
 </head>
 <body>
-<div>
-    <div onlogin="checkLoginState();" scope="public_profile,email" class="fb-login-button" data-width="150px"
-         data-auto-logout-link="false" data-use-continue-as="false"></div>
-    <div id="status"></div>
-</div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<h1>Facebook Login</h1>
+<button id="fb-login-button">Login with Facebook</button>
+<div id="status"></div>
+<div id="username"></div>
+<div id="email"></div>
 <script>
-
-    function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-        console.log('statusChangeCallback');
-        console.log(response);                   // The current login status of the person.
-        if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-            testAPI();
-        } else {                                 // Not logged into your webpage or we are unable to tell.
-            document.getElementById('status').innerHTML = 'Please log ' +
-                'into this webpage.';
-        }
-    }
-
-
-    function checkLoginState() {               // Called when a person is finished with the Login Button.
-        FB.getLoginStatus(function (response) {   // See the onlogin handler
-            statusChangeCallback(response);
-        });
-    }
-
+    const fbLoginButton = document.getElementById('fb-login-button');
+    const statusDiv = document.getElementById('status');
+    const emailDiv = document.getElementById('email');
+    const usernameDiv = document.getElementById('username');
 
     window.fbAsyncInit = function () {
         FB.init({
             appId: '734519591686833',
-            cookie: true,                     // Enable cookies to allow the server to access the session.
-            xfbml: true,                     // Parse social plugins on this webpage.
-            version: 'v16.0'           // Use this Graph API version for this call.
+            cookie: true,
+            xfbml: true,
+            version: 'v16.0'
         });
 
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
 
-        FB.getLoginStatus(function (response) {   // Called after the JS SDK has been initialized.
-            statusChangeCallback(response);        // Returns the login status.
+        fbLoginButton.addEventListener('click', (e) => {
+            FB.login((response) => {
+                statusChangeCallback(response);
+            }, {scope: 'public_profile,email'});
         });
     };
 
-    function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-        console.log('Welcome!  Fetching your information.... ');
-        FB.api('/me', function (response) {
-            console.log('Successful login for: ' + response.name);
-            document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
-        });
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+            testAPI(response.authResponse.accessToken);
+        } else {
+            statusDiv.innerHTML = 'Please log into this app with Facebook.';
+        }
     }
 
+    function testAPI(accessToken) {
+        FB.api(
+            '/me',
+            'GET',
+            {"fields": "id,name,email"},
+            function (response) {
+                emailDiv.innerHTML = 'Email ' + response.email;
+                usernameDiv.innerHTML = 'Username ' + response.name;
+                fetch('/api/v1/auths/facebook', {
+                    method: 'POST',
+                    body: JSON.stringify({accessToken: accessToken}),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                    .then(response => response.json())
+                    .catch(error => {
+                        console.error("error", error);
+                    });
+            }
+        );
+    }
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 </script>
 </body>
 </html>

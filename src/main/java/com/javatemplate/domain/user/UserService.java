@@ -2,6 +2,7 @@ package com.javatemplate.domain.user;
 
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,12 +38,26 @@ public class UserService {
         return userStore.create(user);
     }
 
+    public User loginWithFacebook(final String email, final String username) {
+        final User user = findByEmail(email);
+
+        if (!StringUtils.equals(user.getUsername(), username)) {
+            user.setUsername(username);
+        }
+
+        return userStore.create(user);
+    }
+
     public List<User> findByName(final String name) {
         return userStore.findByName(name);
     }
 
     public User findById(final UUID userId) {
         return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
+    }
+
+    public User findByEmail(final String email) {
+        return userStore.findByEmail(email).orElseThrow(supplyUserNotFound(email));
     }
 
     public User findByUsername(final String username) {

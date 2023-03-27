@@ -29,7 +29,7 @@ public class JwtWebSecurityConfig {
     };
 
     private static final String[] LOGIN_RESOURCE = {
-            "/api/v1/auths",
+            "/api/v1/auths/**",
     };
 
     private final JwtTokenAuthorizationFilter jwtTokenAuthorizationFilter;

@@ -13,6 +13,7 @@ public class UserEntityMapper {
     public static User toUser(final UserEntity user) {
         return User.builder()
                 .id(user.getId())
+                .email(user.getEmail())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .password(user.getPassword())
@@ -32,6 +33,7 @@ public class UserEntityMapper {
     public static UserEntity toUserEntity(final User user) {
         return UserEntity.builder()
                 .id(user.getId())
+                .email(user.getEmail())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

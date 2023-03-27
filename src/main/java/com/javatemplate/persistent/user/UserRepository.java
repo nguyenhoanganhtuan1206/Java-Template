@@ -19,4 +19,6 @@ public interface UserRepository extends CrudRepository<UserEntity, UUID> {
     List<UserEntity> findByName(final String name);
 
     Optional<UserEntity> findByUsernameAndEnabledTrue(final String username);
+
+    Optional<UserEntity> findByEmail(final String email);
 }
