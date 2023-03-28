@@ -43,7 +43,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation group: 'org.springframework.social', name: 'spring-social-facebook', version: '2.0.3.RELEASE'
 
 

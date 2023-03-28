@@ -1,8 +1,9 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtUserDetailsService jwtUserDetailsService;
+
     public List<User> findAll() {
         return userStore.findAll();
     }
@@ -38,14 +41,14 @@ public class UserService {
         return userStore.create(user);
     }
 
-    public User loginWithFacebook(final String email, final String username) {
-        final User user = findByEmail(email);
+    public UserDetails loginWithFacebook(final org.springframework.social.facebook.api.User userLogin) {
+        final User userFound = findByEmail(userLogin.getEmail());
 
-        if (!StringUtils.equals(user.getUsername(), username)) {
-            user.setUsername(username);
+        if (userFound != null) {
+            userStore.create(userFound);
         }
 
-        return userStore.create(user);
+        return jwtUserDetailsService.loadUserByUsername(userFound.getUsername());
     }
 
     public List<User> findByName(final String name) {

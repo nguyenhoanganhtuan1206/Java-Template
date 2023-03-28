@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
@@ -82,13 +83,13 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldCreateWithoutRole_OK() throws Exception {
+    void shouldCreateWithoutRole_ThroughFoundException() throws Exception {
         final var book = buildBook();
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
         post(BASE_URL, book)
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isFound());
     }
 
     @Test
@@ -167,8 +168,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
-                .thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
@@ -183,7 +183,8 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldUpdateWithoutRole_ThrownUnauthorizedException() throws Exception {
+    @WithMockUser(roles = {})
+    void shouldUpdateWithoutRole_ThrownFound() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
 
@@ -193,7 +194,7 @@ class BookControllerTest extends AbstractControllerTest {
                 .thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isFound());
     }
 
     @Test
@@ -219,11 +220,11 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldDeleteByIdWithoutRole_OK() throws Exception {
+    void shouldDeleteByIdWithoutRole_ThrownFound() throws Exception {
         final var book = buildBook();
 
         delete(BASE_URL + "/" + book.getId())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isFound());
     }
 
     @Test
@@ -234,8 +235,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         final var expected = buildBooks();
 
-        when(bookService.find(anyString()))
-                .thenReturn(expected);
+        when(bookService.find(anyString())).thenReturn(expected);
 
         final var actual = bookService.find(book.getName());
 

@@ -2,7 +2,6 @@ package com.javatemplate.api.auth;
 
 import com.javatemplate.domain.auth.JwtTokenService;
 import com.javatemplate.domain.auth.JwtUserDetails;
-import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,29 +26,28 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
 
-    private final JwtUserDetailsService jwtUserDetailsService;
-
     private final UserService userService;
 
     @PostMapping
     public JwtTokenResponseDTO login(final @RequestBody LoginDTO loginDTO) {
         final Authentication authentication = authenticationManager.authenticate(toAuthentication(loginDTO));
 
-        return JwtTokenResponseDTO.builder()
+        return JwtTokenResponseDTO
+                .builder()
                 .token(jwtTokenService.generateToken((JwtUserDetails) authentication.getPrincipal()))
                 .build();
     }
 
     @PostMapping("/facebook")
-    public JwtTokenResponseDTO loginWithFacebook(@RequestBody TokenRequestDTO tokenRequestDTO) {
+    public JwtTokenResponseDTO loginWithFacebook(final @RequestBody TokenRequestDTO tokenRequestDTO) {
         final Facebook facebook = new FacebookTemplate(tokenRequestDTO.getAccessToken());
-
         final String[] fields = {"email", "name"};
-        final User user = facebook.fetchObject("me", User.class, fields);
-        final com.javatemplate.domain.user.User userCreated = userService.loginWithFacebook(user.getEmail(), user.getName());
-        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(userCreated.getUsername());
 
-        return JwtTokenResponseDTO.builder()
+        final User userLogin = facebook.fetchObject("me", User.class, fields);
+        final UserDetails userDetails = userService.loginWithFacebook(userLogin);
+
+        return JwtTokenResponseDTO
+                .builder()
                 .token(jwtTokenService.generateToken((JwtUserDetails) userDetails))
                 .build();
     }

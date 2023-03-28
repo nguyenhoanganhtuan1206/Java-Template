@@ -13,7 +13,7 @@ import static com.javatemplate.api.user.UserDTOMapper.toUserDTO;
 import static com.javatemplate.domain.user.UserMapper.toUser;
 
 @RestController
-@RequestMapping("api/v1/profile")
+@RequestMapping("/api/v1/profile")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('CONTRIBUTOR', 'ADMIN')")
 public class ProfileController {

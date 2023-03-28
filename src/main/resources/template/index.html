@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Facebook Login</title>
 </head>
@@ -14,6 +14,8 @@
     const statusDiv = document.getElementById('status');
     const emailDiv = document.getElementById('email');
     const usernameDiv = document.getElementById('username');
+    const jwtToken = localStorage.getItem('jwtToken');
+
 
     window.fbAsyncInit = function () {
         FB.init({
@@ -40,6 +42,32 @@
         } else {
             statusDiv.innerHTML = 'Please log into this app with Facebook.';
         }
+
+        if (jwtToken) {
+            fbLoginButton.style.display = 'none';
+            statusDiv.style.display = 'none';
+        }
+    }
+
+    function showProfileUser() {
+        if (jwtToken) {
+            fetch('/api/v1/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                }
+            }).then(response => {
+                return response.json();
+            }).then(user => {
+                localStorage.setItem('userData', JSON.stringify(user));
+
+                let userData = JSON.parse(localStorage.getItem('userData'));
+                emailDiv.innerHTML = "Email: " + userData.email;
+                usernameDiv.innerHTML = "Username: " + userData.username;
+            }).catch(err => {
+                console.log("error get profile user: ", err);
+            })
+        }
     }
 
     function testAPI(accessToken) {
@@ -48,20 +76,25 @@
             'GET',
             {"fields": "id,name,email"},
             function (response) {
-                emailDiv.innerHTML = 'Email ' + response.email;
-                usernameDiv.innerHTML = 'Username ' + response.name;
                 fetch('/api/v1/auths/facebook', {
                     method: 'POST',
                     body: JSON.stringify({accessToken: accessToken}),
                     headers: {'Content-Type': 'application/json'}
                 })
                     .then(response => response.json())
+                    .then(data => {
+                        localStorage.setItem('jwtToken', data.token);
+
+                        showProfileUser();
+                    })
                     .catch(error => {
                         console.error("error", error);
                     });
             }
         );
     }
+
+    showProfileUser();
 
     (function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
