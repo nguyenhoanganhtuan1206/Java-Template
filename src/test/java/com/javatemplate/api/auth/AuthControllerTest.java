@@ -3,6 +3,7 @@ package com.javatemplate.api.auth;
 import com.javatemplate.api.AbstractControllerTest;
 import com.javatemplate.domain.auth.JwtTokenService;
 import com.javatemplate.domain.auth.JwtUserDetails;
+import com.javatemplate.domain.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,6 +29,9 @@ class AuthControllerTest extends AbstractControllerTest {
 
     @MockBean
     private JwtTokenService jwtTokenService;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     void shouldLogin_OK() throws Exception {
