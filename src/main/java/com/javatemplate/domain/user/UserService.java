@@ -1,6 +1,5 @@
 package com.javatemplate.domain.user;
 
-import com.javatemplate.api.auth.TokenRequestDTO;
 import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +43,8 @@ public class UserService {
         return userStore.create(user);
     }
 
-    public UserDetails loginWithFacebook(final TokenRequestDTO tokenRequestDTO) {
-        final Facebook facebook = new FacebookTemplate(tokenRequestDTO.getAccessToken());
+    public UserDetails loginWithFacebook(final String facebookToken) {
+        final Facebook facebook = new FacebookTemplate(facebookToken);
 
         final org.springframework.social.facebook.api.User userLogin = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, "email", "name");
 

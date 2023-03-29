@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/facebook")
     public JwtTokenResponseDTO loginWithFacebook(final @RequestBody TokenRequestDTO tokenRequestDTO) {
-        final UserDetails userDetails = userService.loginWithFacebook(tokenRequestDTO);
+        final UserDetails userDetails = userService.loginWithFacebook(tokenRequestDTO.getAccessToken());
 
         return generateJwtToken((JwtUserDetails) userDetails);
     }

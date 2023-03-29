@@ -53,15 +53,11 @@ class AuthControllerTest extends AbstractControllerTest {
     @Test
     void shouldLoginWithoutAccessToken_OK() throws Exception {
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
-        final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder()
-                .accessToken(randomAlphabetic(3, 10))
-                .build();
+        final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
         final String jwtToken = randomAlphabetic(3, 10);
 
-        when(userService.loginWithFacebook(tokenRequestDTO))
-                .thenReturn(userDetails);
-        when(jwtTokenService.generateToken(userDetails))
-                .thenReturn(jwtToken);
+        when(userService.loginWithFacebook(tokenRequestDTO.getAccessToken())).thenReturn(userDetails);
+        when(jwtTokenService.generateToken(userDetails)).thenReturn(jwtToken);
 
         final var jwtTokenActual = jwtTokenService.generateToken(userDetails);
 
@@ -74,9 +70,8 @@ class AuthControllerTest extends AbstractControllerTest {
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
 
-        when(userService.loginWithFacebook(tokenRequestDTO)).thenReturn(userDetails);
+        when(userService.loginWithFacebook(tokenRequestDTO.getAccessToken())).thenReturn(userDetails);
 
-        post(BASE_URL + "/facebook", null)
-                .andExpect(status().isBadRequest());
+        post(BASE_URL + "/facebook", null).andExpect(status().isBadRequest());
     }
 }
