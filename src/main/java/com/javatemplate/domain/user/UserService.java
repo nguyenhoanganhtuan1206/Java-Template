@@ -1,7 +1,6 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.JwtUserDetailsService;
-import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +22,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class UserService {
 
     private final UserStore userStore;
-
-    private final RoleStore roleStore;
 
     private final PasswordEncoder passwordEncoder;
 
