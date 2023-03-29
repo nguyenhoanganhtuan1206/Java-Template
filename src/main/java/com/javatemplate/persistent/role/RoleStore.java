@@ -17,8 +17,4 @@ public class RoleStore {
     public Role findById(final UUID id) {
         return toRole(roleRepository.findById(id).orElseThrow(null));
     }
-
-    public Role findByName(final String name) {
-        return toRole(roleRepository.findByName(name).orElseThrow(null));
-    }
 }

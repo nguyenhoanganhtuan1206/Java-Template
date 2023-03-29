@@ -10,10 +10,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.social.facebook.api.User;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 import static com.javatemplate.fakes.AuthFakes.buildAuth;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +40,12 @@ class AuthControllerTest extends AbstractControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private FacebookTemplate facebookTemplate;
+
+    @MockBean
+    private User user;
+
     @Test
     void shouldLogin_OK() throws Exception {
         final var auth = buildAuth();
@@ -42,5 +55,19 @@ class AuthControllerTest extends AbstractControllerTest {
         when(jwtTokenService.generateToken((JwtUserDetails) auth.getPrincipal())).thenReturn(token);
 
         post(BASE_URL, auth).andExpect(status().isOk()).andExpect(jsonPath("$.token").value(token));
+    }
+
+    @Test
+    void shouldLoginWithoutAccessToken_ThroughBadRequest() throws Exception {
+        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+
+        final var jwtToken = randomAlphabetic(3, 10);
+        final String[] fields = {"email", "name"};
+
+        when(userService.loginWithFacebook(any(User.class))).thenReturn(userDetails);
+        when(facebookTemplate.fetchObject(eq("me"), eq(User.class), eq(fields))).thenReturn(user);
+        when(jwtTokenService.generateToken(userDetails)).thenReturn(jwtToken);
+
+        post(BASE_URL + "/facebook", null).andExpect(status().isBadRequest());
     }
 }
