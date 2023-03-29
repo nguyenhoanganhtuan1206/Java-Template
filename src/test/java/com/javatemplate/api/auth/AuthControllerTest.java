@@ -11,8 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.social.facebook.api.User;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +20,7 @@ import java.util.UUID;
 import static com.javatemplate.fakes.AuthFakes.buildAuth;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,23 +41,28 @@ class AuthControllerTest extends AbstractControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private FacebookTemplate facebookTemplate;
+
+    @MockBean
+    private User user;
+
     @Test
     void shouldLoginFacebook_OK() throws Exception {
-        final TokenRequestDTO tokenRequestDTO = new TokenRequestDTO("facebook-access-token");
-        final UserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "test", "password", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
-        final JwtTokenResponseDTO expectedResponseDTO = new JwtTokenResponseDTO("jwt-token");
+        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "test_name", "test_email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+        final var tokenRequestDTO = TokenRequestDTO.builder().accessToken("EAAKcCqtX0rEBAKvG9rT7rTIzIr1J0ZCT4rsTkny5Dibq2echTZAddPJcrQkKf9yQDnvWkaHDBnnBvb1VuOchoA23HmeCtDPAILhfXDTyH8zCOaHHPblkLuLvnpdG46jZAZAblCZA0etL0WpbTt5VpIOaCWA3j4aiTd5CmFgPboSSD8oFq6Gi4OM3KXVnDLtxsCba1K3FW8OxuZBWfWqH5caJO3i6GNctYZD").build();
+
+        final var jwtToken = randomAlphabetic(3, 10);
+        final String[] fields = {"email", "name"};
 
         when(userService.loginWithFacebook(any(User.class))).thenReturn(userDetails);
-        when(jwtTokenService.generateToken(any(JwtUserDetails.class))).thenReturn(expectedResponseDTO.getToken());
+        when(facebookTemplate.fetchObject(eq("me"), eq(User.class), eq(fields))).thenReturn(user);
+        when(jwtTokenService.generateToken(userDetails)).thenReturn(jwtToken);
 
-        // when
-        post(BASE_URL + "/facebook", tokenRequestDTO)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(expectedResponseDTO.getToken()));
+        post(BASE_URL + "/facebook", tokenRequestDTO.getAccessToken()).andExpect(status().isOk());
 
-        // then
         verify(userService).loginWithFacebook(any(User.class));
-        verify(jwtTokenService).generateToken(any(JwtUserDetails.class));
+        verify(jwtTokenService).generateToken(userDetails);
     }
 
     @Test
@@ -64,13 +70,9 @@ class AuthControllerTest extends AbstractControllerTest {
         final var auth = buildAuth();
         final var token = randomAlphabetic(3, 10);
 
-        when(authenticationManager.authenticate(any(Authentication.class)))
-                .thenReturn(auth);
-        when(jwtTokenService.generateToken((JwtUserDetails) auth.getPrincipal()))
-                .thenReturn(token);
+        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(auth);
+        when(jwtTokenService.generateToken((JwtUserDetails) auth.getPrincipal())).thenReturn(token);
 
-        post(BASE_URL, auth)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(token));
+        post(BASE_URL, auth).andExpect(status().isOk()).andExpect(jsonPath("$.token").value(token));
     }
 }

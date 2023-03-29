@@ -1,6 +1,7 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.JwtUserDetailsService;
+import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,8 @@ public class UserService {
 
     private final UserStore userStore;
 
+    private final RoleStore roleStore;
+
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUserDetailsService jwtUserDetailsService;
@@ -42,13 +45,9 @@ public class UserService {
     }
 
     public UserDetails loginWithFacebook(final org.springframework.social.facebook.api.User userLogin) {
-        final User userFound = findByEmail(userLogin.getEmail());
+        final Optional<User> userFoundOptional = userStore.findByEmail(userLogin.getEmail());
 
-        if (userFound != null) {
-            userStore.create(userFound);
-        }
-
-        return jwtUserDetailsService.loadUserByUsername(userFound.getUsername());
+        return jwtUserDetailsService.loadUserByUsername(userFoundOptional.get().getUsername());
     }
 
     public List<User> findByName(final String name) {
@@ -57,10 +56,6 @@ public class UserService {
 
     public User findById(final UUID userId) {
         return userStore.findById(userId).orElseThrow(supplyUserNotFound(userId));
-    }
-
-    public User findByEmail(final String email) {
-        return userStore.findByEmail(email).orElseThrow(supplyUserNotFound(email));
     }
 
     public User findByUsername(final String username) {

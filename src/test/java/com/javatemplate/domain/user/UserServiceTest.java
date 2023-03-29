@@ -1,8 +1,11 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.domain.auth.JwtUserDetails;
+import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
+import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,12 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.User;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static com.javatemplate.fakes.RoleFakes.buildRole;
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
@@ -31,6 +35,9 @@ class UserServiceTest {
     @Mock
     private UserStore userStore;
 
+    @Mock
+    private RoleStore roleStore;
+
     @InjectMocks
     private UserService userService;
 
@@ -39,6 +46,9 @@ class UserServiceTest {
 
     @Spy
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtUserDetailsService jwtUserDetailsService;
 
     @Test
     void shouldFindAll_OK() {
@@ -89,6 +99,54 @@ class UserServiceTest {
 
         assertThrows(BadRequestException.class, () -> userService.create(user));
         verify(userStore).findByUsername(user.getUsername());
+    }
+
+    @Test
+    void shouldLoginWithFacebook_OK() {
+        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "test_name", "test_email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+        final var userLogin = new User("123", "Tuan", "Nguyen h", "Anh Tuan", "MALE", Locale.ENGLISH);
+        final var userFound = buildUser();
+
+        when(userStore.findByEmail(userLogin.getEmail()))
+                .thenReturn(Optional.of(userFound));
+        when(jwtUserDetailsService.loadUserByUsername(userFound.getUsername()))
+                .thenReturn(userDetails);
+
+        final var actual = userService.loginWithFacebook(userLogin);
+
+        assertEquals(userDetails, actual);
+
+        verify(userStore).findByEmail(userLogin.getEmail());
+        verify(jwtUserDetailsService).loadUserByUsername(userFound.getUsername());
+    }
+
+    @Test
+    void shouldLoginWithFacebook_withUserFoundIsNull_OK() {
+        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+        final var userLogin = new User("123", "Tuan", "Nguyen h", "Anh Tuan", "MALE", Locale.ENGLISH);
+        final var role = buildRole();
+        final com.javatemplate.domain.user.User newUser = com.javatemplate.domain.user.User.builder()
+                .username(userLogin.getName())
+                .firstName(userLogin.getFirstName())
+                .lastName(userLogin.getLastName())
+                .email(userLogin.getEmail())
+                .enabled(true)
+                .build();
+
+        when(userStore.findByEmail(null))
+                .thenReturn(Optional.empty());
+        when(roleStore.findByName(anyString()))
+                .thenReturn(role);
+        when(userStore.create(any(com.javatemplate.domain.user.User.class)))
+                .thenReturn(newUser);
+        when(jwtUserDetailsService.loadUserByUsername(newUser.getUsername()))
+                .thenReturn(userDetails);
+
+        final var actual = userService.loginWithFacebook(userLogin);
+        final var userSaved = userService.create(newUser);
+
+        assertEquals(userDetails, actual);
+        assertEquals(userSaved.getUsername(), userLogin.getName());
     }
 
     @Test

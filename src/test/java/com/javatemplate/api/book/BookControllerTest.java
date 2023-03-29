@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
@@ -183,7 +182,6 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = {})
     void shouldUpdateWithoutRole_ThrownFound() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();

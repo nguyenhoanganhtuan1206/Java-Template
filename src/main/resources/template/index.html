@@ -74,7 +74,7 @@
         FB.api(
             '/me',
             'GET',
-            {"fields": "id,name,email"},
+            {"fields": "name,email"},
             function (response) {
                 fetch('/api/v1/auths/facebook', {
                     method: 'POST',
@@ -84,7 +84,6 @@
                     .then(response => response.json())
                     .then(data => {
                         localStorage.setItem('jwtToken', data.token);
-
                         showProfileUser();
                     })
                     .catch(error => {
