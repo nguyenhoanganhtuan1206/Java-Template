@@ -82,13 +82,13 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldCreateWithoutRole_ThroughFoundException() throws Exception {
+    void shouldCreateWithoutRole_ThroughUnauthorizedException() throws Exception {
         final var book = buildBook();
 
         when(bookService.create(any(Book.class))).thenReturn(book);
 
         post(BASE_URL, book)
-                .andExpect(status().isFound());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -182,7 +182,7 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldUpdateWithoutRole_ThrownFound() throws Exception {
+    void shouldUpdateWithoutRole_ThrownUnauthorizedException() throws Exception {
         final var bookToUpdate = buildBook();
         final var bookUpdate = buildBook();
 
@@ -192,7 +192,7 @@ class BookControllerTest extends AbstractControllerTest {
                 .thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
-                .andExpect(status().isFound());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -218,11 +218,11 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldDeleteByIdWithoutRole_ThrownFound() throws Exception {
+    void shouldDeleteByIdWithoutRole_ThrownUnauthorizedException() throws Exception {
         final var book = buildBook();
 
         delete(BASE_URL + "/" + book.getId())
-                .andExpect(status().isFound());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
