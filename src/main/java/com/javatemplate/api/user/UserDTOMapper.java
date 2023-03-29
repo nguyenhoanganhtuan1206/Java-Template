@@ -14,7 +14,6 @@ public class UserDTOMapper {
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .avatar(user.getAvatar())

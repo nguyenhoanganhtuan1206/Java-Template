@@ -13,8 +13,6 @@ public class UserResponseDTO {
 
     private String username;
 
-    private String email;
-
     private String firstName;
 
     private String lastName;

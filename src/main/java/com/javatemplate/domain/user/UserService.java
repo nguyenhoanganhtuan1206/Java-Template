@@ -1,10 +1,13 @@
 package com.javatemplate.domain.user;
 
+import com.javatemplate.api.auth.TokenRequestDTO;
 import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,10 +44,12 @@ public class UserService {
         return userStore.create(user);
     }
 
-    public UserDetails loginWithFacebook(final org.springframework.social.facebook.api.User userLogin) {
-        final Optional<User> userFoundOptional = userStore.findByEmail(userLogin.getEmail());
+    public UserDetails loginWithFacebook(final TokenRequestDTO tokenRequestDTO) {
+        final Facebook facebook = new FacebookTemplate(tokenRequestDTO.getAccessToken());
 
-        return jwtUserDetailsService.loadUserByUsername(userFoundOptional.get().getUsername());
+        final org.springframework.social.facebook.api.User userLogin = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, "email", "name");
+
+        return jwtUserDetailsService.loadUserByUsername(userLogin.getEmail());
     }
 
     public List<User> findByName(final String name) {

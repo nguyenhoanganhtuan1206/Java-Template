@@ -25,10 +25,6 @@ public class UserStore {
         return userRepository.findById(userId).map(UserEntityMapper::toUser);
     }
 
-    public Optional<User> findByEmail(final String email) {
-        return userRepository.findByEmail(email).map(UserEntityMapper::toUser);
-    }
-
     public List<User> findByName(final String name) {
         return toUsers(userRepository.findByName(name));
     }

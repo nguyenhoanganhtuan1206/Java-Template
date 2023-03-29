@@ -8,11 +8,9 @@
 <button id="fb-login-button">Login with Facebook</button>
 <div id="status"></div>
 <div id="username"></div>
-<div id="email"></div>
 <script>
     const fbLoginButton = document.getElementById('fb-login-button');
     const statusDiv = document.getElementById('status');
-    const emailDiv = document.getElementById('email');
     const usernameDiv = document.getElementById('username');
     const jwtToken = localStorage.getItem('jwtToken');
 
@@ -62,7 +60,6 @@
                 localStorage.setItem('userData', JSON.stringify(user));
 
                 let userData = JSON.parse(localStorage.getItem('userData'));
-                emailDiv.innerHTML = "Email: " + userData.email;
                 usernameDiv.innerHTML = "Username: " + userData.username;
             }).catch(err => {
                 console.log("error get profile user: ", err);
