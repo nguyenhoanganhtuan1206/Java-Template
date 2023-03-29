@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <title>Facebook Login</title>
 </head>
@@ -29,7 +29,7 @@
             statusChangeCallback(response);
         });
 
-        fbLoginButton.addEventListener('click', (e) => {
+        fbLoginButton.addEventListener('click', () => {
             FB.login((response) => {
                 statusChangeCallback(response);
             }, {scope: 'public_profile,email'});
@@ -75,7 +75,7 @@
             '/me',
             'GET',
             {"fields": "name,email"},
-            function (response) {
+            function () {
                 fetch('/api/v1/auths/facebook', {
                     method: 'POST',
                     body: JSON.stringify({accessToken: accessToken}),

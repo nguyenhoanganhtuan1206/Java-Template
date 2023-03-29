@@ -18,6 +18,7 @@ class AuthsProviderTest {
     @InjectMocks
     private AuthsProvider authsProvider;
 
+
     @Test
     void getCurrentAuthentication_OK() {
         final var user = buildAdmin();
