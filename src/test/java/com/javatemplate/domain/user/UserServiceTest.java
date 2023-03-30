@@ -30,13 +30,10 @@ class UserServiceTest {
 
     @Mock
     private UserStore userStore;
-
     @InjectMocks
     private UserService userService;
-
     @Mock
     private AuthsProvider authsProvider;
-
     @Spy
     private PasswordEncoder passwordEncoder;
 

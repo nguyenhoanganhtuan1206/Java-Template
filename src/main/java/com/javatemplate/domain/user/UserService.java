@@ -1,6 +1,7 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.JwtUserDetailsService;
+import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,13 +18,17 @@ import static com.javatemplate.api.user.UserValidation.validateUserCreate;
 import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
 import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserStore userStore;
+
+    private final RoleStore roleStore;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -45,8 +50,30 @@ public class UserService {
 
     public UserDetails loginWithFacebook(final String facebookToken) {
         final Facebook facebook = new FacebookTemplate(facebookToken);
+        final org.springframework.social.facebook.api.User userLogin = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, "email", "name", "first_name", "last_name");
+        String username;
 
-        final org.springframework.social.facebook.api.User userLogin = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, "email", "name");
+        if (isEmpty(userLogin.getEmail())) {
+            username = userLogin.getName();
+        } else {
+            username = userLogin.getEmail();
+        }
+
+        final Optional<User> userFound = userStore.findByUsername(username);
+
+        if (userFound.isEmpty()) {
+            final User user = User.builder()
+                    .username(username)
+                    .password(randomUUID().toString())
+                    .firstName(userLogin.getFirstName())
+                    .lastName(userLogin.getLastName())
+                    .enabled(true)
+                    .roleId(roleStore.findByName("CONTRIBUTOR").getId())
+                    .build();
+
+            userStore.create(user);
+            return jwtUserDetailsService.loadUserByUsername(user.getUsername());
+        }
 
         return jwtUserDetailsService.loadUserByUsername(userLogin.getEmail());
     }

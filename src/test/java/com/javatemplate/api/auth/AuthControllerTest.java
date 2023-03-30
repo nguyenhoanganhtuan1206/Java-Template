@@ -51,7 +51,7 @@ class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldLoginWithoutAccessToken_OK() throws Exception {
+    void shouldLoginWithoutAccessToken_OK() {
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
         final String jwtToken = randomAlphabetic(3, 10);

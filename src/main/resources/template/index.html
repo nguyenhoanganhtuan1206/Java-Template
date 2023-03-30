@@ -36,7 +36,7 @@
 
     function statusChangeCallback(response) {
         if (response.status === 'connected') {
-            testAPI(response.authResponse.accessToken);
+            sendApi(response.authResponse.accessToken);
         } else {
             statusDiv.innerHTML = 'Please log into this app with Facebook.';
         }
@@ -67,11 +67,11 @@
         }
     }
 
-    function testAPI(accessToken) {
+    function sendApi(accessToken) {
         FB.api(
             '/me',
             'GET',
-            {"fields": "name,email"},
+            {"fields": "name,email,first_name,last_name"},
             function () {
                 fetch('/api/v1/auths/facebook', {
                     method: 'POST',
@@ -93,7 +93,7 @@
     showProfileUser();
 
     (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
+        let js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {
             return;
         }
