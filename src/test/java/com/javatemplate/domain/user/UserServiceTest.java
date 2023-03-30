@@ -38,6 +38,11 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
+    void shouldLoginWithFacebook_OK() {
+
+    }
+
+    @Test
     void shouldFindAll_OK() {
         final var expected = buildUsers();
 
