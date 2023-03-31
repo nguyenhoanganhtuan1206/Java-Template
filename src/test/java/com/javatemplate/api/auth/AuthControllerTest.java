@@ -10,12 +10,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.List;
-import java.util.UUID;
 
 import static com.javatemplate.fakes.AuthFakes.buildAuth;
+import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,7 +49,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldLoginFacebookWithoutAccessToken_OK() {
-        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+        final JwtUserDetails userDetails = buildJwtUserDetails();
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
         final String jwtToken = randomAlphabetic(3, 10);
 
@@ -67,7 +64,7 @@ class AuthControllerTest extends AbstractControllerTest {
 
     @Test
     void shouldLoginFacebookWithoutAccessToken_ThroughBadRequest() throws Exception {
-        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
+        final JwtUserDetails userDetails = buildJwtUserDetails();
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
 
         when(userService.loginWithFacebook(tokenRequestDTO.getAccessToken())).thenReturn(userDetails);

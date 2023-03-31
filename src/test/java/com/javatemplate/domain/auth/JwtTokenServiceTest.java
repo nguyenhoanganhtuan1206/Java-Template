@@ -10,12 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.UUID;
 
+import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
@@ -41,7 +39,7 @@ public class JwtTokenServiceTest {
 
     @Test
     public void shouldParseToken_OK() {
-        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        final JwtUserDetails userDetails = buildJwtUserDetails();
 
         when(jwtProperties.getSecret()).thenReturn(SECRET);
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
@@ -67,9 +65,7 @@ public class JwtTokenServiceTest {
 
     @Test
     public void shouldParseTokenWithoutUserId_ReturnNull() {
-        final JwtUserDetails userDetails = new JwtUserDetails(null, "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
-
-        when(jwtProperties.getSecret()).thenReturn(SECRET);
+        final JwtUserDetails userDetails = buildJwtUserDetails();
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
 
         final String token = jwtTokenService.generateToken(userDetails);
@@ -80,7 +76,7 @@ public class JwtTokenServiceTest {
 
     @Test
     public void generateToken_ShouldCreateValidToken() {
-        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        final JwtUserDetails userDetails = buildJwtUserDetails();
 
         when(jwtProperties.getSecret()).thenReturn(SECRET);
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
