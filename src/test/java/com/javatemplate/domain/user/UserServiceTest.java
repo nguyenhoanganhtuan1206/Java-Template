@@ -3,6 +3,7 @@ package com.javatemplate.domain.user;
 import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
+import com.javatemplate.fakes.ITestCredentials;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,11 +11,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.facebook.api.TestUser;
+import org.springframework.social.facebook.api.TestUserOperations;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
+import org.springframework.social.facebook.connect.FacebookServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.social.oauth2.OAuth2Operations;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserFakes.buildUser;
@@ -26,19 +32,45 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceTest implements ITestCredentials {
 
     @Mock
     private UserStore userStore;
+
     @InjectMocks
     private UserService userService;
+
     @Mock
     private AuthsProvider authsProvider;
+
     @Spy
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private TestUser user;
+
+    @Mock
+    private TestUserOperations testUserOperations;
+
     @Test
     void shouldLoginWithFacebook_OK() {
+        final OAuth2Operations oauth = new FacebookServiceProvider(APP_ID, APP_SECRET, null).getOAuthOperations();
+        final AccessGrant clientGrant = oauth.authenticateClient();
+        final FacebookTemplate facebookTemplate = new FacebookTemplate(clientGrant.getAccessToken(), "", APP_ID);
+        final List<String> testUserIds = new ArrayList<>();
+
+// Create a test user and add it to the list of test user IDs
+        when(facebookTemplate.testUserOperations().createTestUser(anyBoolean(), anyString(), anyString()))
+                .thenReturn(user);
+        final TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream,user_posts,user_tagged_places", "Alice Arensen");
+        testUserIds.add(testUser.getId());
+
+        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
+
+// Delete the test user
+        for (String testUserId : testUserIds) {
+            testUserOperations.deleteTestUser(testUserId);
+        }
 
     }
 

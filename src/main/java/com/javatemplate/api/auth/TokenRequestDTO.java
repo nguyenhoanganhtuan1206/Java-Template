@@ -1,12 +1,14 @@
 package com.javatemplate.api.auth;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 public class TokenRequestDTO {
 
     private String accessToken;
