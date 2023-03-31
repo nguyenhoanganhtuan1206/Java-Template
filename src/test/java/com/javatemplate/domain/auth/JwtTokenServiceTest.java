@@ -10,7 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collections;
 import java.util.Date;
 
 import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
@@ -65,9 +67,10 @@ public class JwtTokenServiceTest {
 
     @Test
     public void shouldParseTokenWithoutUserId_ReturnNull() {
-        final JwtUserDetails userDetails = buildJwtUserDetails();
+        final JwtUserDetails userDetails = new JwtUserDetails(null, "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
-
+        when(jwtProperties.getSecret()).thenReturn(SECRET);
+        
         final String token = jwtTokenService.generateToken(userDetails);
         final Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
 

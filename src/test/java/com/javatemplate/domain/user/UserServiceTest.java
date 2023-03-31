@@ -5,7 +5,6 @@ import com.javatemplate.domain.auth.JwtUserDetails;
 import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
-import com.javatemplate.fakes.ITestCredentials;
 import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest implements ITestCredentials {
+class UserServiceTest {
 
     @Mock
     private UserStore userStore;
