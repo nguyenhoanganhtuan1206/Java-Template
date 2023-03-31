@@ -6,6 +6,7 @@ import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.fakes.ITestCredentials;
+import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.javatemplate.fakes.RoleFakes.buildRole;
+import static com.javatemplate.fakes.SocialUserFakes.buildSocialUser;
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
@@ -47,12 +50,29 @@ class UserServiceTest implements ITestCredentials {
     @Mock
     private JwtUserDetailsService jwtUserDetailsService;
 
+    @Mock
+    private RoleStore roleStore;
+
+    @Mock
+    private FacebookService facebookService;
+
     @Test
     public void testLoginWithFacebook_UserExisted_OK() {
+        final var accessToken = randomAlphabetic(6, 10);
+        final var socialUser = buildSocialUser();
+        final var role = buildRole();
         final var user = buildUser();
         final JwtUserDetails userDetails = new JwtUserDetails(randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        user.setUsername(socialUser.getUsername());
 
-        when(jwtUserDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
+        when(facebookService.parseToken(anyString()))
+                .thenReturn(socialUser);
+        when(roleStore.findByName(anyString()))
+                .thenReturn(role);
+        when(userService.loginWithFacebook(accessToken))
+                .thenReturn(userDetails);
+        when(jwtUserDetailsService.loadUserByUsername(user.getUsername()))
+                .thenReturn(userDetails);
 
         final var actual = jwtUserDetailsService.loadUserByUsername(user.getUsername());
 
@@ -61,10 +81,22 @@ class UserServiceTest implements ITestCredentials {
 
     @Test
     public void testLoginWithFacebook_UserEmpty_OK() {
+        final var accessToken = randomAlphabetic(6, 10);
+        final var socialUser = buildSocialUser();
+        final var role = buildRole();
         final var user = buildUser();
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        user.setUsername(socialUser.getUsername());
 
-        when(userStore.create(any(User.class))).thenReturn(user);
+        when(facebookService.parseToken(anyString()))
+                .thenReturn(socialUser);
+        when(roleStore.findByName(anyString()))
+                .thenReturn(role);
+        when(userService.loginWithFacebook(accessToken))
+                .thenReturn(userDetails);
+
+        when(userStore.create(any(User.class)))
+                .thenReturn(user);
         final var userCreated = userStore.create(user);
 
         when(jwtUserDetailsService.loadUserByUsername(userCreated.getUsername()))
