@@ -1,6 +1,8 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.domain.auth.JwtUserDetails;
+import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.fakes.ITestCredentials;
@@ -11,9 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.social.facebook.api.TestUser;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -43,46 +44,35 @@ class UserServiceTest implements ITestCredentials {
     @Spy
     private PasswordEncoder passwordEncoder;
 
-    @Test
-    void shouldLoginWithFacebook_OK() {
-        // Create a Facebook template with the application credentials
-        FacebookTemplate facebookTemplate = new FacebookTemplate(APP_ID, APP_SECRET);
+    @Mock
+    private JwtUserDetailsService jwtUserDetailsService;
 
-        // Create the test user using the Facebook API
-        TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream", "Alice Arensen");
-        facebookTemplate.testUserOperations().deleteTestUser(testUser.getId());
-//        // Mock the user service's response to the login request
-//        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
-//
-//        // Delete the test user after the test is complete
-//        facebookTemplate.testUserOperations().deleteTestUser(testUser.getId());
-//
-//        // Call the user service's loginWithFacebook method with the access token
-//        UserDetails userDetails = userService.loginWithFacebook(testUser.getAccessToken());
-//
-//        // Verify that the user service returned the expected result
-//        assertNotNull(userDetails);
+    @Test
+    public void testLoginWithFacebook_UserExisted_OK() {
+        final var user = buildUser();
+        final JwtUserDetails userDetails = new JwtUserDetails(randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+
+        when(jwtUserDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
+
+        final var actual = jwtUserDetailsService.loadUserByUsername(user.getUsername());
+
+        assertEquals(userDetails, actual);
     }
 
+    @Test
+    public void testLoginWithFacebook_UserEmpty_OK() {
+        final var user = buildUser();
+        final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
 
-//    @Test
-//    void shouldLoginWithFacebook_OK() {
-//        final OAuth2Operations oauth = new FacebookServiceProvider(APP_ID, APP_SECRET, null).getOAuthOperations();
-//        final AccessGrant clientGrant = oauth.authenticateClient();
-//        final FacebookTemplate facebookTemplate = new FacebookTemplate(clientGrant.getAccessToken(), "", APP_ID);
-//        final List<String> testUserIds = new ArrayList<>();
-//
-//        when(facebookTemplate.testUserOperations().createTestUser(anyBoolean(), anyString(), anyString())).thenReturn(user);
-//        final TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream,user_posts,user_tagged_places", "Alice Arensen");
-//        testUserIds.add(testUser.getId());
-//
-//        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
-//
-//        for (String testUserId : testUserIds) {
-//            testUserOperations.deleteTestUser(testUserId);
-//        }
-//
-//    }
+        when(userStore.create(any(User.class))).thenReturn(user);
+        final var userCreated = userStore.create(user);
+
+        when(jwtUserDetailsService.loadUserByUsername(userCreated.getUsername()))
+                .thenReturn(userDetails);
+
+        final var actual = jwtUserDetailsService.loadUserByUsername(userCreated.getUsername());
+        assertEquals(userDetails, actual);
+    }
 
     @Test
     void shouldFindAll_OK() {

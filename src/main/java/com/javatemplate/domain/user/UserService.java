@@ -6,8 +6,6 @@ import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +18,6 @@ import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUserDetailsService jwtUserDetailsService;
+    private final FacebookService facebookService;
 
     public List<User> findAll() {
         return userStore.findAll();
@@ -48,25 +46,18 @@ public class UserService {
         return userStore.create(user);
     }
 
+
     public UserDetails loginWithFacebook(final String facebookToken) {
-        final Facebook facebook = new FacebookTemplate(facebookToken);
-        final org.springframework.social.facebook.api.User userLogin = facebook.fetchObject("me", org.springframework.social.facebook.api.User.class, "email", "name", "first_name", "last_name");
-        String username;
+        final SocialUser socialUser = facebookService.parseToken(facebookToken);
 
-        if (isEmpty(userLogin.getEmail())) {
-            username = userLogin.getName();
-        } else {
-            username = userLogin.getEmail();
-        }
-
-        final Optional<User> userFound = userStore.findByUsername(username);
+        final Optional<User> userFound = userStore.findByUsername(socialUser.getUsername());
 
         if (userFound.isEmpty()) {
             final User user = User.builder()
-                    .username(username)
+                    .username(socialUser.getUsername())
                     .password(randomUUID().toString())
-                    .firstName(userLogin.getFirstName())
-                    .lastName(userLogin.getLastName())
+                    .firstName(socialUser.getFirstName())
+                    .lastName(socialUser.getLastName())
                     .enabled(true)
                     .roleId(roleStore.findByName("CONTRIBUTOR").getId())
                     .build();
@@ -75,7 +66,7 @@ public class UserService {
             return jwtUserDetailsService.loadUserByUsername(user.getUsername());
         }
 
-        return jwtUserDetailsService.loadUserByUsername(userLogin.getEmail());
+        return jwtUserDetailsService.loadUserByUsername(userFound.get().getUsername());
     }
 
     public List<User> findByName(final String name) {
