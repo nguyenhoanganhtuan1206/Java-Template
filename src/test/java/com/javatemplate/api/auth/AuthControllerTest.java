@@ -51,7 +51,7 @@ class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldLoginWithoutAccessToken_OK() {
+    void shouldLoginFacebookWithoutAccessToken_OK() {
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
         final String jwtToken = randomAlphabetic(3, 10);
@@ -66,7 +66,7 @@ class AuthControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldLoginWithoutAccessToken_ThroughBadRequest() throws Exception {
+    void shouldLoginFacebookWithoutAccessToken_ThroughBadRequest() throws Exception {
         final JwtUserDetails userDetails = new JwtUserDetails(UUID.randomUUID(), "name", "email", List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
         final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
 

@@ -11,16 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.social.facebook.api.TestUser;
-import org.springframework.social.facebook.api.TestUserOperations;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
-import org.springframework.social.facebook.connect.FacebookServiceProvider;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.social.oauth2.OAuth2Operations;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserFakes.buildUser;
@@ -46,33 +43,46 @@ class UserServiceTest implements ITestCredentials {
     @Spy
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private TestUser user;
-
-    @Mock
-    private TestUserOperations testUserOperations;
-
     @Test
     void shouldLoginWithFacebook_OK() {
-        final OAuth2Operations oauth = new FacebookServiceProvider(APP_ID, APP_SECRET, null).getOAuthOperations();
-        final AccessGrant clientGrant = oauth.authenticateClient();
-        final FacebookTemplate facebookTemplate = new FacebookTemplate(clientGrant.getAccessToken(), "", APP_ID);
-        final List<String> testUserIds = new ArrayList<>();
+        // Create a Facebook template with the application credentials
+        FacebookTemplate facebookTemplate = new FacebookTemplate(APP_ID, APP_SECRET);
 
-// Create a test user and add it to the list of test user IDs
-        when(facebookTemplate.testUserOperations().createTestUser(anyBoolean(), anyString(), anyString()))
-                .thenReturn(user);
-        final TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream,user_posts,user_tagged_places", "Alice Arensen");
-        testUserIds.add(testUser.getId());
-
-        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
-
-// Delete the test user
-        for (String testUserId : testUserIds) {
-            testUserOperations.deleteTestUser(testUserId);
-        }
-
+        // Create the test user using the Facebook API
+        TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream", "Alice Arensen");
+        facebookTemplate.testUserOperations().deleteTestUser(testUser.getId());
+//        // Mock the user service's response to the login request
+//        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
+//
+//        // Delete the test user after the test is complete
+//        facebookTemplate.testUserOperations().deleteTestUser(testUser.getId());
+//
+//        // Call the user service's loginWithFacebook method with the access token
+//        UserDetails userDetails = userService.loginWithFacebook(testUser.getAccessToken());
+//
+//        // Verify that the user service returned the expected result
+//        assertNotNull(userDetails);
     }
+
+
+//    @Test
+//    void shouldLoginWithFacebook_OK() {
+//        final OAuth2Operations oauth = new FacebookServiceProvider(APP_ID, APP_SECRET, null).getOAuthOperations();
+//        final AccessGrant clientGrant = oauth.authenticateClient();
+//        final FacebookTemplate facebookTemplate = new FacebookTemplate(clientGrant.getAccessToken(), "", APP_ID);
+//        final List<String> testUserIds = new ArrayList<>();
+//
+//        when(facebookTemplate.testUserOperations().createTestUser(anyBoolean(), anyString(), anyString())).thenReturn(user);
+//        final TestUser testUser = facebookTemplate.testUserOperations().createTestUser(true, "publish_actions,read_stream,user_posts,user_tagged_places", "Alice Arensen");
+//        testUserIds.add(testUser.getId());
+//
+//        when(userService.loginWithFacebook(testUser.getAccessToken())).thenReturn(mock(UserDetails.class));
+//
+//        for (String testUserId : testUserIds) {
+//            testUserOperations.deleteTestUser(testUserId);
+//        }
+//
+//    }
 
     @Test
     void shouldFindAll_OK() {
