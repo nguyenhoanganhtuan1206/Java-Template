@@ -23,10 +23,6 @@
             version: 'v16.0'
         });
 
-        FB.getLoginStatus(function (response) {
-            statusChangeCallback(response);
-        });
-
         fbLoginButton.addEventListener('click', () => {
             FB.login((response) => {
                 statusChangeCallback(response);
@@ -40,11 +36,6 @@
         } else {
             statusDiv.innerHTML = 'Please log into this app with Facebook.';
         }
-
-        if (jwtToken) {
-            fbLoginButton.style.display = 'none';
-            statusDiv.style.display = 'none';
-        }
     }
 
     function showProfileUser() {
@@ -55,6 +46,9 @@
                     'Authorization': `Bearer ${jwtToken}`
                 }
             }).then(response => {
+                fbLoginButton.style.display = 'none';
+                statusDiv.style.display = 'none';
+
                 return response.json();
             }).then(user => {
                 localStorage.setItem('userData', JSON.stringify(user));
