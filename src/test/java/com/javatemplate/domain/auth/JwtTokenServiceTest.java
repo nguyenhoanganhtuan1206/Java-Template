@@ -98,9 +98,7 @@ public class JwtTokenServiceTest {
 
         when(jwtProperties.getSecret()).thenReturn(SECRET);
 
-        final List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        final List<String> roles = Collections.emptyList();
 
         final String token = Jwts.builder()
                 .setSubject(null)
