@@ -3,6 +3,7 @@ package com.javatemplate.domain.auth;
 import com.javatemplate.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,11 +69,34 @@ public class JwtTokenServiceTest {
     }
 
     @Test
+    public void shouldParseTokenWithoutSubjectId_ReturnNull() {
+        final JwtUserDetails userDetails = buildJwtUserDetails();
+
+        when(jwtProperties.getSecret()).thenReturn(SECRET);
+
+        final List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        final String token = Jwts.builder()
+                .setSubject(null)
+                .claim("roles", String.join(",", roles))
+                .claim("userId", userDetails.getUserId())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
+                .compact();
+
+        final Authentication authentication = jwtTokenService.parse(token);
+
+        assertNull(authentication);
+    }
+
+    @Test
     public void shouldParseTokenWithoutUserId_ReturnNull() {
         final JwtUserDetails userDetails = new JwtUserDetails(null, "user", "123123", Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
         when(jwtProperties.getSecret()).thenReturn(SECRET);
-        
+
         final String token = jwtTokenService.generateToken(userDetails);
         final Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
 
