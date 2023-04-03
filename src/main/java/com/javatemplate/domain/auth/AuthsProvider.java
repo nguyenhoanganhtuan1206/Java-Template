@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Service
 public class AuthsProvider {
-
     public UserAuthenticationToken getCurrentAuthentication() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

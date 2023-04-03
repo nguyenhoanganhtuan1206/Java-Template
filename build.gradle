@@ -28,7 +28,6 @@ flyway {
     locations = ['classpath:db/migration/COMMON', 'classpath:db/migration/DEV']
 }
 
-
 repositories {
     mavenCentral()
 }
@@ -42,6 +41,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation group: 'org.springframework.social', name: 'spring-social-facebook', version: '2.0.3.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '2.7.5'
 
     implementation "org.apache.commons:commons-collections4:4.4"
 

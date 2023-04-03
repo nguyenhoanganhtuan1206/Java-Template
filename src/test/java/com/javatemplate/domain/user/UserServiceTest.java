@@ -1,8 +1,11 @@
 package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
+import com.javatemplate.domain.auth.JwtUserDetails;
+import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
+import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,9 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
+import static com.javatemplate.fakes.RoleFakes.buildRole;
+import static com.javatemplate.fakes.SocialUserFakes.buildSocialUser;
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static com.javatemplate.fakes.UserFakes.buildUsers;
@@ -39,6 +45,57 @@ class UserServiceTest {
 
     @Spy
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Mock
+    private RoleStore roleStore;
+
+    @Mock
+    private FacebookService facebookService;
+
+    @Test
+    public void testLoginWithFacebook_UserExisted_OK() {
+        final var accessToken = randomAlphabetic(6, 10);
+        final var socialUser = buildSocialUser();
+        final var user = buildUser();
+        socialUser.setUsername(user.getUsername());
+
+        when(facebookService.parseToken(anyString())).thenReturn(socialUser);
+        when(userStore.findByUsername(user.getUsername()))
+                .thenReturn(Optional.of(user));
+        final var userFound = userService.findByUsername(socialUser.getUsername());
+        final JwtUserDetails userDetails = buildJwtUserDetails();
+        userFound.setUsername(userDetails.getUsername());
+        when(userService.loginWithFacebook(accessToken)).thenReturn(userDetails);
+        when(jwtUserDetailsService.loadUserByUsername(userFound.getUsername())).thenReturn(userDetails);
+        final var actual = jwtUserDetailsService.loadUserByUsername(userFound.getUsername());
+
+        assertEquals(userDetails, actual);
+    }
+
+    @Test
+    public void testLoginWithFacebook_UserEmpty_OK() {
+        final var accessToken = randomAlphabetic(6, 10);
+        final var socialUser = buildSocialUser();
+        final var role = buildRole();
+        final var user = buildUser();
+        final JwtUserDetails userDetails = buildJwtUserDetails();
+        user.setUsername(socialUser.getUsername());
+
+        when(facebookService.parseToken(anyString())).thenReturn(socialUser);
+        when(roleStore.findByName(anyString())).thenReturn(role);
+        when(userService.loginWithFacebook(accessToken)).thenReturn(userDetails);
+
+        when(userStore.create(any(User.class))).thenReturn(user);
+        final var userCreated = userStore.create(user);
+
+        when(jwtUserDetailsService.loadUserByUsername(userCreated.getUsername())).thenReturn(userDetails);
+
+        final var actual = jwtUserDetailsService.loadUserByUsername(userCreated.getUsername());
+        assertEquals(userDetails, actual);
+    }
 
     @Test
     void shouldFindAll_OK() {

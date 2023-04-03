@@ -82,7 +82,7 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldCreateWithoutRole_OK() throws Exception {
+    void shouldCreateWithoutRole_ThroughUnauthorizedException() throws Exception {
         final var book = buildBook();
 
         when(bookService.create(any(Book.class))).thenReturn(book);
@@ -167,8 +167,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         bookUpdate.setId(bookToUpdate.getId());
 
-        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class)))
-                .thenReturn(bookUpdate);
+        when(bookService.update(eq(bookToUpdate.getId()), any(Book.class))).thenReturn(bookUpdate);
 
         put(BASE_URL + "/" + bookToUpdate.getId(), bookUpdate)
                 .andExpect(status().isOk())
@@ -219,7 +218,7 @@ class BookControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void shouldDeleteByIdWithoutRole_OK() throws Exception {
+    void shouldDeleteByIdWithoutRole_ThrownUnauthorizedException() throws Exception {
         final var book = buildBook();
 
         delete(BASE_URL + "/" + book.getId())
@@ -234,8 +233,7 @@ class BookControllerTest extends AbstractControllerTest {
 
         final var expected = buildBooks();
 
-        when(bookService.find(anyString()))
-                .thenReturn(expected);
+        when(bookService.find(anyString())).thenReturn(expected);
 
         final var actual = bookService.find(book.getName());
 
