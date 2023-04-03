@@ -72,9 +72,6 @@ public class JwtWebSecurityConfig {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .oauth2Login()
-                .permitAll()
-                .and()
                 .addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
