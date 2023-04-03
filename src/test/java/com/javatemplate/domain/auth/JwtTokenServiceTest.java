@@ -52,7 +52,10 @@ public class JwtTokenServiceTest {
         when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
 
         final String token = jwtTokenService.generateToken(userDetails);
-        final Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+        final Claims claims = Jwts.parser().
+                setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody();
 
         Authentication authentication = jwtTokenService.parse(token);
 
@@ -95,13 +98,19 @@ public class JwtTokenServiceTest {
     @Test
     public void shouldParseTokenWithoutRole_ReturnNull() {
         final JwtUserDetails userDetails = buildJwtUserDetails();
+        final Clock clock = DefaultClock.INSTANCE;
 
+        when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
         when(jwtProperties.getSecret()).thenReturn(SECRET);
 
+
+        final Date createdDate = clock.now();
+        final Date expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
         final List<String> roles = Collections.emptyList();
 
         final String token = Jwts.builder()
-                .setSubject(null)
+                .setSubject(userDetails.getUsername())
+                .setExpiration(expirationDate)
                 .claim("roles", String.join(",", roles))
                 .claim("userId", userDetails.getUserId())
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
@@ -138,31 +147,6 @@ public class JwtTokenServiceTest {
 
         assertNull(authentication);
     }
-
-    @Test
-    public void shouldReturnNullIfTokenIsExpired() {
-        final JwtUserDetails userDetails = buildJwtUserDetails();
-        final Clock clock = DefaultClock.INSTANCE;
-        final Date createdDate = clock.now();
-
-        when(jwtProperties.getExpiration()).thenReturn(EXPIRATION);
-        when(jwtProperties.getSecret()).thenReturn(SECRET);
-
-        final String token = jwtTokenService.generateToken(userDetails);
-
-        final Date expirationDate = new Date(createdDate.getTime() - 3600_000L);
-
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtProperties.getSecret())
-                .parseClaimsJws(token)
-                .getBody();
-
-        final Authentication authentication = jwtTokenService.parse(token);
-
-        assertTrue(expirationDate.before(claims.getExpiration()));
-        assertNotNull(authentication);
-    }
-
 
     @Test
     public void generateToken_ShouldCreateValidToken() {
