@@ -10,6 +10,10 @@ import java.util.Collections;
 public class UserDetailsMapper {
 
     public static UserDetails toUserDetails(final com.javatemplate.domain.user.User user, final String roleName) {
+        if (user == null) {
+            return null;
+        }
+
         return new JwtUserDetails(
                 user.getId(),
                 user.getUsername(),

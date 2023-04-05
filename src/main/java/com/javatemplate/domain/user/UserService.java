@@ -99,7 +99,7 @@ public class UserService {
     }
 
     private User createNewUserFromSocialUser(final SocialUser socialUser) {
-        return User.builder()
+        final User user = User.builder()
                 .username(socialUser.getUsername())
                 .password(randomUUID().toString())
                 .firstName(socialUser.getFirstName())
@@ -107,6 +107,8 @@ public class UserService {
                 .enabled(true)
                 .roleId(roleStore.findByName("CONTRIBUTOR").getId())
                 .build();
+
+        return userStore.create(user);
     }
 
     private void verifyUsernameAvailable(final String username) {
