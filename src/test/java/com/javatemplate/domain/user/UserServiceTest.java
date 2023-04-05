@@ -2,7 +2,6 @@ package com.javatemplate.domain.user;
 
 import com.javatemplate.domain.auth.AuthsProvider;
 import com.javatemplate.domain.auth.JwtUserDetails;
-import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.error.BadRequestException;
 import com.javatemplate.error.NotFoundException;
 import com.javatemplate.persistent.role.RoleStore;
@@ -46,9 +45,6 @@ class UserServiceTest {
 
     @Spy
     private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private JwtUserDetailsService jwtUserDetailsService;
 
     @Mock
     private RoleStore roleStore;
