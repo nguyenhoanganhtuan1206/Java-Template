@@ -69,7 +69,7 @@ class UserServiceTest {
 
     @Test
     public void testLoginWithFacebook_CreateNewUser_OK() {
-        final String facebookToken = "some_token";
+        final String facebookToken = randomAlphabetic(6, 10);
         final var socialUser = buildSocialUser();
         final var role = buildRole();
         final var user = buildUser();
