@@ -14,7 +14,6 @@
     const usernameDiv = document.getElementById('username');
     const jwtToken = localStorage.getItem('jwtToken');
 
-
     window.fbAsyncInit = function () {
         FB.init({
             appId: '734519591686833',
@@ -97,5 +96,6 @@
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 </script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 </body>
 </html>

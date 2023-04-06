@@ -1,6 +1,5 @@
 package com.javatemplate.domain.user;
 
-import com.javatemplate.domain.auth.JwtUserDetailsService;
 import com.javatemplate.persistent.role.RoleStore;
 import com.javatemplate.persistent.user.UserStore;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import java.util.UUID;
 
 import static com.javatemplate.api.user.UserValidation.validateUserCreate;
 import static com.javatemplate.api.user.UserValidation.validateUserUpdate;
+import static com.javatemplate.domain.auth.UserDetailsMapper.toUserDetails;
 import static com.javatemplate.domain.user.UserError.supplyUserExisted;
 import static com.javatemplate.domain.user.UserError.supplyUserNotFound;
 import static java.util.UUID.randomUUID;
@@ -29,7 +29,6 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JwtUserDetailsService jwtUserDetailsService;
     private final FacebookService facebookService;
 
     public List<User> findAll() {
@@ -46,27 +45,16 @@ public class UserService {
         return userStore.create(user);
     }
 
-
     public UserDetails loginWithFacebook(final String facebookToken) {
         final SocialUser socialUser = facebookService.parseToken(facebookToken);
 
-        final Optional<User> userFound = userStore.findByUsername(socialUser.getUsername());
+        return userStore.findByUsername(socialUser.getUsername())
+                .map(user -> toUserDetails(user, "CONTRIBUTOR"))
+                .orElseGet(() -> {
+                    final User user = createNewUserFromSocialUser(socialUser);
 
-        if (userFound.isEmpty()) {
-            final User user = User.builder()
-                    .username(socialUser.getUsername())
-                    .password(randomUUID().toString())
-                    .firstName(socialUser.getFirstName())
-                    .lastName(socialUser.getLastName())
-                    .enabled(true)
-                    .roleId(roleStore.findByName("CONTRIBUTOR").getId())
-                    .build();
-
-            userStore.create(user);
-            return jwtUserDetailsService.loadUserByUsername(user.getUsername());
-        }
-
-        return jwtUserDetailsService.loadUserByUsername(userFound.get().getUsername());
+                    return toUserDetails(user, "CONTRIBUTOR");
+                });
     }
 
     public List<User> findByName(final String name) {
@@ -108,6 +96,19 @@ public class UserService {
         final User user = findById(id);
 
         userStore.deleteById(user.getId());
+    }
+
+    private User createNewUserFromSocialUser(final SocialUser socialUser) {
+        final User user = User.builder()
+                .username(socialUser.getUsername())
+                .password(randomUUID().toString())
+                .firstName(socialUser.getFirstName())
+                .lastName(socialUser.getLastName())
+                .enabled(true)
+                .roleId(roleStore.findByName("CONTRIBUTOR").getId())
+                .build();
+
+        return userStore.create(user);
     }
 
     private void verifyUsernameAvailable(final String username) {
