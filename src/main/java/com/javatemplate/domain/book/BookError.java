@@ -10,10 +10,10 @@ import java.util.function.Supplier;
 public class BookError {
 
     public static Supplier<NotFoundException> supplyBookNotFound(final String fieldName, final String fieldValue) {
-        return () -> new NotFoundException("Book with %n %v not found", fieldName, fieldValue);
+        return () -> new NotFoundException("Book with %s %s not found", fieldName, fieldValue);
     }
 
-    public static Supplier<BadRequestException> supplyBookAlreadyExisted(final String fieldName, final String fieldValue) {
-        return () -> new BadRequestException("Book with %n %v is already existed", fieldName, fieldValue);
+    public static Supplier<BadRequestException> supplyBookAlreadyExisted(final String isbn13) {
+        return () -> new BadRequestException("Book with isbn13 %s already exist", isbn13);
     }
 }

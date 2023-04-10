@@ -27,6 +27,10 @@ public class BookValidation {
             throw new BadRequestException("Publisher is required, please check again");
         }
 
+        if (isBlank(book.getDescription())) {
+            throw new BadRequestException("Description is required, please check again");
+        }
+
         if (isBlank(book.getIsbn13())) {
             throw new BadRequestException("Isbn13 is required, please check again");
         }

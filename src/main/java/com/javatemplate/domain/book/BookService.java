@@ -32,7 +32,8 @@ public class BookService {
     }
 
     public Book findByIsbn13(final String isbn13) {
-        return bookStore.findByIsbn13(isbn13).orElseThrow(supplyBookNotFound("Isbn13", isbn13));
+        return bookStore.findByIsbn13(isbn13)
+                .orElseThrow(supplyBookNotFound("Isbn13", isbn13));
     }
 
     public List<Book> find(final String input) {
@@ -60,6 +61,11 @@ public class BookService {
         final Book book = findById(bookId);
         validateDeletePermission(book);
 
+        if (!StringUtils.equals(book.getIsbn13(), bookUpdate.getIsbn13())) {
+            verifyIfIsbn13Available(bookUpdate.getIsbn13());
+            book.setIsbn13(bookUpdate.getIsbn13());
+        }
+
         book.setName(bookUpdate.getName());
         book.setAuthor(bookUpdate.getAuthor());
         book.setImage(bookUpdate.getImage());
@@ -79,7 +85,7 @@ public class BookService {
     private void verifyIfIsbn13Available(final String isbn13) {
         bookStore.findByIsbn13(isbn13)
                 .ifPresent(b -> {
-                    throw supplyBookAlreadyExisted("isbn13", isbn13).get();
+                    throw supplyBookAlreadyExisted(isbn13).get();
                 });
     }
 
