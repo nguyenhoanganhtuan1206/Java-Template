@@ -10,13 +10,22 @@ import lombok.*;
 public class ItBookDetailDTO {
 
     private String name;
+
     private String subtitle;
+
     private String authors;
+
     private String publisher;
+
     private String isbn13;
+
     private Integer year;
+
     private Double rating;
+
     private String desc;
+
     private String price;
+
     private String image;
 }
