@@ -22,6 +22,12 @@ class BookDTOMapperTest {
         assertEquals(book.getCreatedAt(), bookDTO.getCreatedAt());
         assertEquals(book.getDescription(), bookDTO.getDescription());
         assertEquals(book.getImage(), bookDTO.getImage());
+        assertEquals(book.getSubtitle(), bookDTO.getSubtitle());
+        assertEquals(book.getPublisher(), bookDTO.getPublisher());
+        assertEquals(book.getIsbn13(), bookDTO.getIsbn13());
+        assertEquals(book.getPrice(), bookDTO.getPrice());
+        assertEquals(book.getYear(), bookDTO.getYear());
+        assertEquals(book.getRating(), bookDTO.getRating());
     }
 
     @Test

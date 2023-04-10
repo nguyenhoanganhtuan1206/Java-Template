@@ -13,6 +13,7 @@ import static com.javatemplate.fakes.BookFakes.buildBookEntity;
 import static com.javatemplate.persistent.book.BookEntityMapper.toBook;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,20 +44,65 @@ class BookStoreTest {
     }
 
     @Test
-    void shouldSave_OK() {
+    void shouldFindBookByIsbn13_OK() {
         final var book = buildBookEntity();
 
-        when(bookRepository.save(any())).thenReturn(book);
+        when(bookRepository.findByIsbn13(book.getIsbn13())).thenReturn(Optional.of(book));
 
-        final var actual = bookStore.save(toBook(book));
+        final var actual = bookStore.findByIsbn13(book.getIsbn13()).get();
+        final var expected = book;
 
-        assertEquals(book.getId(), actual.getId());
-        assertEquals(book.getName(), actual.getName());
-        assertEquals(book.getAuthor(), actual.getAuthor());
-        assertEquals(book.getUpdatedAt(), actual.getUpdatedAt());
-        assertEquals(book.getCreatedAt(), actual.getCreatedAt());
-        assertEquals(book.getDescription(), actual.getDescription());
-        assertEquals(book.getImage(), actual.getImage());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getUpdatedAt(), actual.getUpdatedAt());
+        assertEquals(expected.getCreatedAt(), actual.getCreatedAt());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getImage(), actual.getImage());
+        assertEquals(expected.getSubtitle(), actual.getSubtitle());
+        assertEquals(expected.getPublisher(), actual.getPublisher());
+        assertEquals(expected.getIsbn13(), actual.getIsbn13());
+        assertEquals(expected.getPrice(), actual.getPrice());
+        assertEquals(expected.getYear(), actual.getYear());
+        assertEquals(expected.getRating(), actual.getRating());
+        assertEquals(expected.getUserId(), actual.getUserId());
+
+        verify(bookRepository).findByIsbn13(book.getIsbn13());
+    }
+
+    @Test
+    void shouldFindBookByIsbn13_Empty() {
+        final var isbn13 = randomNumeric(13);
+
+        when(bookRepository.findByIsbn13(isbn13)).thenReturn(Optional.empty());
+
+        assertFalse(bookStore.findByIsbn13(isbn13).isPresent());
+        verify(bookRepository).findByIsbn13(isbn13);
+    }
+
+    @Test
+    void shouldSave_OK() {
+        final var bookSave = buildBookEntity();
+
+        when(bookRepository.save(any())).thenReturn(bookSave);
+
+        final var actual = bookStore.save(toBook(bookSave));
+
+        assertEquals(bookSave.getId().toString(), actual.getId().toString());
+        assertEquals(bookSave.getName(), actual.getName());
+        assertEquals(bookSave.getAuthor(), actual.getAuthor());
+        assertEquals(bookSave.getDescription(), actual.getDescription());
+        assertEquals(bookSave.getUpdatedAt(), actual.getUpdatedAt());
+        assertEquals(bookSave.getImage(), actual.getImage());
+        assertEquals(bookSave.getSubtitle(), actual.getSubtitle());
+        assertEquals(bookSave.getPublisher(), actual.getPublisher());
+        assertEquals(bookSave.getIsbn13(), actual.getIsbn13());
+        assertEquals(bookSave.getPrice(), actual.getPrice());
+        assertEquals(bookSave.getYear(), actual.getYear());
+        assertEquals(bookSave.getRating(), actual.getRating());
+        assertEquals(bookSave.getUserId(), actual.getUserId());
+
+        verify(bookRepository).save(any());
     }
 
     @Test
