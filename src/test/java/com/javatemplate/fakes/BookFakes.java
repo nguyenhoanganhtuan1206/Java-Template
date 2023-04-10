@@ -7,10 +7,10 @@ import lombok.experimental.UtilityClass;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.time.Year.now;
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 
@@ -19,7 +19,7 @@ public class BookFakes {
 
     public static Book buildBook() {
         return Book.builder()
-                .id(UUID.randomUUID())
+                .id(randomUUID())
                 .name(randomAlphabetic(3, 10))
                 .author(randomAlphabetic(3, 10))
                 .description(randomAlphabetic(3, 10))
@@ -32,7 +32,7 @@ public class BookFakes {
                 .price(randomAlphabetic(3, 10))
                 .year(generateYear())
                 .rating(generateRating())
-                .userId(UUID.randomUUID())
+                .userId(randomUUID())
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class BookFakes {
 
     public static BookEntity buildBookEntity() {
         return BookEntity.builder()
-                .id(UUID.randomUUID())
+                .id(randomUUID())
                 .name(randomAlphabetic(3, 10))
                 .author(randomAlphabetic(3, 10))
                 .description(randomAlphabetic(3, 10))
@@ -57,7 +57,7 @@ public class BookFakes {
                 .price(randomAlphabetic(3, 10))
                 .year(2023)
                 .rating(generateRating())
-                .userId(UUID.randomUUID())
+                .userId(randomUUID())
                 .build();
     }
 
