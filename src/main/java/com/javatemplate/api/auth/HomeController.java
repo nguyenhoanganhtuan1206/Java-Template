@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping
+    @GetMapping("/social")
     public String loginPage() {
         return "index.html";
     }
