@@ -9,8 +9,7 @@ public class SocialTokenPayloadMapper {
 
     public static SocialTokenPayload toSocialTokenPayloadFromGoogle(final GoogleIdToken.Payload payload) {
         return SocialTokenPayload.builder()
-                .email(payload.getEmail())
-                .username(String.valueOf(payload.get("name")))
+                .username(payload.getEmail())
                 .firstName(String.valueOf(payload.get("family_name")))
                 .lastName(String.valueOf(payload.get("given_name")))
                 .build();
@@ -18,7 +17,6 @@ public class SocialTokenPayloadMapper {
 
     public static SocialTokenPayload toSocialTokenPayloadFromFacebook(final User user) {
         return SocialTokenPayload.builder()
-                .email(user.getEmail())
                 .username(user.getId())
                 .name(user.getName())
                 .firstName(user.getFirstName())
