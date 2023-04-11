@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 public class SocialUser {
 
+    private String id;
+
     private String firstName;
 
     private String lastName;
-
-    private String username;
 }

@@ -48,7 +48,7 @@ public class UserService {
     public UserDetails loginWithFacebook(final String facebookToken) {
         final SocialUser socialUser = facebookService.parseToken(facebookToken);
 
-        return userStore.findByUsername(socialUser.getUsername())
+        return userStore.findByUsername(socialUser.getId())
                 .map(user -> toUserDetails(user, "CONTRIBUTOR"))
                 .orElseGet(() -> {
                     final User user = createNewUserFromSocialUser(socialUser);
@@ -100,7 +100,7 @@ public class UserService {
 
     private User createNewUserFromSocialUser(final SocialUser socialUser) {
         final User user = User.builder()
-                .username(socialUser.getUsername())
+                .username(socialUser.getId())
                 .password(randomUUID().toString())
                 .firstName(socialUser.getFirstName())
                 .lastName(socialUser.getLastName())

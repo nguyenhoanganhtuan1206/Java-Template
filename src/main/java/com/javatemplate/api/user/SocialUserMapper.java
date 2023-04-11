@@ -9,7 +9,7 @@ public class SocialUserMapper {
 
     public static SocialUser toSocialUser(final User user) {
         return SocialUser.builder()
-                .username(user.getUsername())
+                .id(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .build();
