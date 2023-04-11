@@ -13,7 +13,7 @@ class SocialUserMapperTest {
         final var user = buildUser();
         final var socialUser = toSocialUser(user);
 
-        assertEquals(user.getUsername(), socialUser.getUsername());
+        assertEquals(user.getUsername(), socialUser.getId());
         assertEquals(user.getFirstName(), socialUser.getFirstName());
         assertEquals(user.getLastName(), socialUser.getLastName());
     }

@@ -59,7 +59,7 @@ class UserServiceTest {
         final var user = buildUser();
 
         when(facebookService.parseToken(facebookToken)).thenReturn(socialUser);
-        when(userStore.findByUsername(socialUser.getUsername())).thenReturn(Optional.of(user));
+        when(userStore.findByUsername(socialUser.getId())).thenReturn(Optional.of(user));
 
         final var userDetails = toUserDetails(user, "CONTRIBUTOR");
         final var actual = userService.loginWithFacebook(facebookToken);
@@ -76,7 +76,7 @@ class UserServiceTest {
         final String roleName = "CONTRIBUTOR";
 
         when(facebookService.parseToken(facebookToken)).thenReturn(socialUser);
-        when(userStore.findByUsername(socialUser.getUsername())).thenReturn(Optional.empty());
+        when(userStore.findByUsername(socialUser.getId())).thenReturn(Optional.empty());
         when(roleStore.findByName(roleName)).thenReturn(role);
         when(userStore.create(any(User.class))).thenReturn(user);
 
@@ -95,7 +95,7 @@ class UserServiceTest {
         assertEquals(expected.getPassword(), actual.getPassword());
 
         verify(facebookService).parseToken(facebookToken);
-        verify(userStore).findByUsername(socialUser.getUsername());
+        verify(userStore).findByUsername(socialUser.getId());
         verify(roleStore).findByName(roleName);
     }
 
