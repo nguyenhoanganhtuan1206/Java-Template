@@ -12,9 +12,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.javatemplate.domain.book.ItBookMapper.toBook;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class ItBookService {
     private List<ItBookItemDTO> filterNewBooks(final List<ItBookItemDTO> newBooks) {
         final Set<String> existingIsbn13 = bookStore.findAll().stream()
                 .map(Book::getIsbn13)
-                .collect(Collectors.toSet());
+                .collect(toSet());
 
         return newBooks.stream()
                 .filter(book -> existingIsbn13.contains(book.getIsbn13()))

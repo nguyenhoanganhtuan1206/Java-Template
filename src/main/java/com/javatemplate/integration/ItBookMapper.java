@@ -4,7 +4,7 @@ import com.javatemplate.domain.book.Book;
 
 public class ItBookMapper {
 
-    public static Book toBook(ItBookDetailDTO itBookDetailDTO) {
+    public static Book toBook(final ItBookDetailDTO itBookDetailDTO) {
         return Book.builder()
                 .name(itBookDetailDTO.getName())
                 .subtitle(itBookDetailDTO.getSubtitle())
