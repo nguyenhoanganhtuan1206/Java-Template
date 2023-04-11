@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class BookService {
 
     private final BookStore bookStore;
+
+    private final CloudinaryService cloudinaryService;
 
     private final AuthsProvider authsProvider;
 
@@ -66,6 +69,12 @@ public class BookService {
         bookStore.deleteById(book.getId());
     }
 
+    public void uploadImage(final UUID id, final byte[] image) throws IOException {
+        final Book book = findById(id);
+        book.setImage(cloudinaryService.upload(image));
+        book.setUpdatedAt(Instant.now());
+        bookStore.save(book);
+    }
 
     private void validateDeletePermission(final Book book) {
         if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
