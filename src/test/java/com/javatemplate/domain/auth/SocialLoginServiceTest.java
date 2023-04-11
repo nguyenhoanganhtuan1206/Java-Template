@@ -46,7 +46,7 @@ class SocialLoginServiceTest {
     void shouldLoginGoogle_OK() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
         final var user = buildUser();
-        user.setUsername(tokenPayload.getEmail());
+        user.setUsername(tokenPayload.getUsername());
 
         final var userDetails = toUserDetails(user, "CONTRIBUTOR");
 
@@ -68,13 +68,13 @@ class SocialLoginServiceTest {
 
         when(googleTokenVerifierService.verifyGoogleIdToken(anyString()))
                 .thenReturn(tokenPayload);
-        when(userStore.findByUsername(tokenPayload.getEmail()))
+        when(userStore.findByUsername(tokenPayload.getUsername()))
                 .thenReturn(Optional.empty());
 
         when(roleStore.findByName(anyString())).thenReturn(role);
 
         final User newUser = User.builder()
-                .username(tokenPayload.getEmail())
+                .username(tokenPayload.getUsername())
                 .password(randomUUID().toString())
                 .firstName(tokenPayload.getFirstName())
                 .lastName(tokenPayload.getLastName())
@@ -95,7 +95,7 @@ class SocialLoginServiceTest {
         assertEquals(userDetails, actual);
 
         verify(googleTokenVerifierService).verifyGoogleIdToken(anyString());
-        verify(userStore).findByUsername(tokenPayload.getEmail());
+        verify(userStore).findByUsername(tokenPayload.getUsername());
         verify(roleStore).findByName(anyString());
         verify(userStore).create(any());
     }

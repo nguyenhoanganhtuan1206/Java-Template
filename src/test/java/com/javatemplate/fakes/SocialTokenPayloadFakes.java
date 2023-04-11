@@ -8,7 +8,6 @@ public class SocialTokenPayloadFakes {
 
     public static SocialTokenPayload buildTokenSocial() {
         return SocialTokenPayload.builder()
-                .email("test@gmail.com")
                 .name("test")
                 .username("test")
                 .firstName("test")
