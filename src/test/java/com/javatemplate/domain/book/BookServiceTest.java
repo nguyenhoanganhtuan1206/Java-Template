@@ -110,6 +110,17 @@ class BookServiceTest {
     }
 
     @Test
+    void shouldCreateBookByIsbn13_ThrownExisted() {
+        final var book = buildBook();
+
+        when(bookStore.findByIsbn13(anyString())).thenReturn(Optional.of(book));
+
+        assertThrows(BadRequestException.class, () -> bookService.create(book));
+
+        verify(bookStore).findByIsbn13(book.getIsbn13());
+    }
+
+    @Test
     void shouldCreateWithoutAuthor_ThrownBadRequest() {
         final var book = buildBook();
         book.setAuthor(null);
