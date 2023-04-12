@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 import static com.javatemplate.domain.auth.UserDetailsMapper.toUserDetails;
 import static java.util.UUID.randomUUID;
 
@@ -37,21 +39,18 @@ public class SocialLoginService {
     private UserDetails getJwtUserDetails(final SocialTokenPayload socialTokenPayload) {
         return userStore.findByUsername(socialTokenPayload.getUsername())
                 .map(user -> toUserDetails(user, "CONTRIBUTOR"))
-                .orElseGet(() -> {
-                    final User user = createNewUserFromSocialToken(socialTokenPayload);
-
-                    return toUserDetails(user, "CONTRIBUTOR");
-                });
+                .orElse(toUserDetails(createNewUserFromSocialToken(socialTokenPayload), "CONTRIBUTOR"));
     }
 
     private User createNewUserFromSocialToken(final SocialTokenPayload socialTokenPayload) {
+        final UUID roleId = roleStore.findByName("CONTRIBUTOR").getId();
         final User user = User.builder()
                 .username(socialTokenPayload.getUsername())
                 .password(randomUUID().toString())
                 .firstName(socialTokenPayload.getFirstName())
                 .lastName(socialTokenPayload.getLastName())
                 .enabled(true)
-                .roleId(roleStore.findByName("CONTRIBUTOR").getId())
+                .roleId(roleId)
                 .build();
 
         return userStore.create(user);

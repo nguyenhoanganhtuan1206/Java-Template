@@ -8,10 +8,10 @@ public class SocialTokenPayloadFakes {
 
     public static SocialTokenPayload buildTokenSocial() {
         return SocialTokenPayload.builder()
-                .name("test")
-                .username("test")
-                .firstName("test")
-                .lastName("test")
+                .name("tuan123")
+                .username("anh tuan")
+                .firstName("anh")
+                .lastName("tuan")
                 .build();
     }
 }

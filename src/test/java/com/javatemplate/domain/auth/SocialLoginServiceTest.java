@@ -20,8 +20,8 @@ import static com.javatemplate.fakes.RoleFakes.buildRole;
 import static com.javatemplate.fakes.SocialTokenPayloadFakes.buildTokenSocial;
 import static com.javatemplate.fakes.UserFakes.buildUser;
 import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,19 +45,22 @@ class SocialLoginServiceTest {
     @Test
     void shouldLoginGoogle_OK() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
+        final var accessToken = randomAlphabetic(3, 10);
         final var user = buildUser();
         user.setUsername(tokenPayload.getUsername());
 
         final var userDetails = toUserDetails(user, "CONTRIBUTOR");
 
-        when(googleTokenVerifierService.verifyGoogleIdToken(anyString())).thenReturn(tokenPayload);
-        when(userStore.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        when(googleTokenVerifierService.verifyGoogleIdToken(accessToken))
+                .thenReturn(tokenPayload);
+        when(userStore.findByUsername(user.getUsername()))
+                .thenReturn(Optional.of(user));
 
-        final var actual = socialLoginService.loginWithGoogle(anyString());
+        final var actual = socialLoginService.loginWithGoogle(accessToken);
 
         assertEquals(userDetails, actual);
 
-        verify(googleTokenVerifierService).verifyGoogleIdToken(anyString());
+        verify(googleTokenVerifierService).verifyGoogleIdToken(accessToken);
         verify(userStore).findByUsername(user.getUsername());
     }
 
@@ -65,22 +68,21 @@ class SocialLoginServiceTest {
     void shouldLoginGoogle_CreateNewUser() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
         final Role role = buildRole();
+        final var accessToken = randomAlphabetic(3, 10);
+        final User newUser = buildUser()
+                .withUsername(tokenPayload.getUsername())
+                .withPassword(randomUUID().toString())
+                .withFirstName(tokenPayload.getFirstName())
+                .withLastName(tokenPayload.getLastName())
+                .withEnabled(true)
+                .withRoleId(role.getId());
 
-        when(googleTokenVerifierService.verifyGoogleIdToken(anyString()))
+        when(googleTokenVerifierService.verifyGoogleIdToken(accessToken))
                 .thenReturn(tokenPayload);
         when(userStore.findByUsername(tokenPayload.getUsername()))
                 .thenReturn(Optional.empty());
-
-        when(roleStore.findByName(anyString())).thenReturn(role);
-
-        final User newUser = User.builder()
-                .username(tokenPayload.getUsername())
-                .password(randomUUID().toString())
-                .firstName(tokenPayload.getFirstName())
-                .lastName(tokenPayload.getLastName())
-                .enabled(true)
-                .roleId(role.getId())
-                .build();
+        when(roleStore.findByName(any(String.class)))
+                .thenReturn(role);
 
         when(userStore.create(any())).thenReturn(newUser);
 
@@ -91,35 +93,34 @@ class SocialLoginServiceTest {
                 List.of(new SimpleGrantedAuthority("CONTRIBUTOR")));
 
 
-        final var actual = socialLoginService.loginWithGoogle(anyString());
+        final var actual = socialLoginService.loginWithGoogle(accessToken);
         assertEquals(userDetails, actual);
 
-        verify(googleTokenVerifierService).verifyGoogleIdToken(anyString());
+        verify(googleTokenVerifierService).verifyGoogleIdToken(accessToken);
         verify(userStore).findByUsername(tokenPayload.getUsername());
-        verify(roleStore).findByName(anyString());
+        verify(roleStore).findByName(any(String.class));
         verify(userStore).create(any());
     }
 
     @Test
     void shouldLoginFacebook_OK() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
-        final var user = buildUser();
+        final var user = buildUser().withUsername(tokenPayload.getUsername());
         final var role = buildRole();
-
-        user.setUsername(tokenPayload.getUsername());
+        final var accessToken = randomAlphabetic(3, 10);
 
         final UserDetails userDetails = toUserDetails(user, role.getName());
 
-        when(facebookTokenVerifierService.verifyFacebookIdToken(anyString()))
+        when(facebookTokenVerifierService.verifyFacebookIdToken(accessToken))
                 .thenReturn(tokenPayload);
         when(userStore.findByUsername(user.getUsername()))
                 .thenReturn(Optional.of(user));
 
-        final var actual = socialLoginService.loginWithFacebook(anyString());
+        final var actual = socialLoginService.loginWithFacebook(accessToken);
 
         assertEquals(userDetails, actual);
 
-        verify(facebookTokenVerifierService).verifyFacebookIdToken(anyString());
+        verify(facebookTokenVerifierService).verifyFacebookIdToken(accessToken);
         verify(userStore).findByUsername(user.getUsername());
     }
 
@@ -127,33 +128,32 @@ class SocialLoginServiceTest {
     void shouldLoginFacebook_CreateNewUser() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
         final var role = buildRole();
+        final var accessToken = randomAlphabetic(3, 10);
+        final User newUser = buildUser()
+                .withUsername(tokenPayload.getUsername())
+                .withPassword(randomUUID().toString())
+                .withFirstName(tokenPayload.getFirstName())
+                .withLastName(tokenPayload.getLastName())
+                .withEnabled(true)
+                .withRoleId(role.getId());
 
-        when(facebookTokenVerifierService.verifyFacebookIdToken(anyString()))
+        when(facebookTokenVerifierService.verifyFacebookIdToken(accessToken))
                 .thenReturn(tokenPayload);
         when(userStore.findByUsername(tokenPayload.getUsername()))
                 .thenReturn(Optional.empty());
 
-        when(roleStore.findByName(anyString())).thenReturn(role);
-
-        final User newUser = User.builder()
-                .username(tokenPayload.getUsername())
-                .password(randomUUID().toString())
-                .firstName(tokenPayload.getFirstName())
-                .lastName(tokenPayload.getLastName())
-                .enabled(true)
-                .roleId(role.getId())
-                .build();
+        when(roleStore.findByName(any(String.class))).thenReturn(role);
 
         when(userStore.create(any())).thenReturn(newUser);
 
         final UserDetails userDetails = toUserDetails(newUser, role.getName());
 
-        final var actual = socialLoginService.loginWithFacebook(anyString());
+        final var actual = socialLoginService.loginWithFacebook(accessToken);
         assertEquals(userDetails, actual);
 
-        verify(facebookTokenVerifierService).verifyFacebookIdToken(anyString());
+        verify(facebookTokenVerifierService).verifyFacebookIdToken(accessToken);
         verify(userStore).findByUsername(tokenPayload.getUsername());
-        verify(roleStore).findByName(anyString());
+        verify(roleStore).findByName(any(String.class));
         verify(userStore).create(any());
     }
 }

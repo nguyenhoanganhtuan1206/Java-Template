@@ -14,7 +14,7 @@ public class LoginControllerTest extends AbstractControllerTest {
     @Test
     @WithMockAdmin
     public void shouldLoginPage_OK() throws Exception {
-        get("/login-social")
+        get("/login")
                 .andExpect(status().isOk())
                 .andExpect(view().name("index.html"));
     }
