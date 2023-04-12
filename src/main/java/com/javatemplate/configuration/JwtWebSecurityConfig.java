@@ -69,11 +69,10 @@ public class JwtWebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/v1/books/**")
                 .permitAll()
+                .antMatchers(HttpMethod.GET, "/login")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
-                .and()
-                .oauth2Login()
-                .permitAll()
                 .and()
                 .addFilterBefore(jwtTokenAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

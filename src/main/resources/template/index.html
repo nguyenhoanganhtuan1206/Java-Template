@@ -58,9 +58,7 @@
     }
 
     function showProfileUser() {
-        console.log("top", jwtToken);
         if (jwtToken) {
-            console.log("bot", jwtToken);
             fetch('/api/v1/profile', {
                 method: 'GET',
                 headers: {
