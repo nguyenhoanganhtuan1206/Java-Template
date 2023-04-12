@@ -3,10 +3,10 @@
 <head>
     <script src="https://apis.google.com/js/api.js?onload=onLibraryLoaded" async defer></script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    <title>Facebook Login</title>
+    <title>Social Login</title>
 </head>
 <body>
-<h1>Login</h1>
+<h1>Social Login</h1>
 <button class="google-btn" onclick="signInGoogle()">Sign in with Google</button>
 <button class="facebook-btn" onclick="signInFacebook()">Sign in with Facebook</button>
 <div id="status"></div>
@@ -18,7 +18,7 @@
     function onLibraryLoaded() {
         gapi.load('auth2', function () {
             auth2 = gapi.auth2.init({
-                client_id: '25431146830-7b3jjs432lb7v03lji1674v02sro5trk.apps.googleusercontent.com',
+                client_id: '132277928500-pm0g7afpdgbrbahl6thd0luicsdj11ar.apps.googleusercontent.com',
                 scope: 'profile',
                 plugin_name: 'book-api',
                 response_type: 'id_token'
@@ -28,7 +28,7 @@
 
     window.fbAsyncInit = function () {
         FB.init({
-            appId: '734519591686833',
+            appId: '1243782392890330',
             cookie: true,
             xfbml: true,
             version: 'v16.0'
@@ -46,7 +46,7 @@
     function signInFacebook() {
         FB.login((response) => {
             statusChangeCallback(response);
-        }, {scope: 'public_profile,email'});
+        }, {scope: 'email,public_profile'});
     }
 
     function statusChangeCallback(response) {
@@ -58,7 +58,9 @@
     }
 
     function showProfileUser() {
+        console.log("top", jwtToken);
         if (jwtToken) {
+            console.log("bot", jwtToken);
             fetch('/api/v1/profile', {
                 method: 'GET',
                 headers: {
@@ -94,7 +96,7 @@
         FB.api(
             '/me',
             'GET',
-            {"fields": "id,email,first_name,last_name"},
+            {"fields": "id,first_name,last_name"},
             function () {
                 fetch('/api/v1/auths/facebook', {
                     method: 'POST',

@@ -21,6 +21,7 @@ import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildAdmin;
 import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildContributor;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.RandomUtils.nextBytes;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -375,5 +376,25 @@ class BookServiceTest {
         assertTrue(actual.isEmpty());
 
         verify(bookStore).find(input);
+    }
+
+    @Test
+    void shouldFindBookByIsbn13_OK() {
+        final var book = buildBook();
+
+        when(bookStore.findByIsbn13(book.getIsbn13())).thenReturn(Optional.of(book));
+
+        assertEquals(book, bookService.findBookByIsbn13(book.getIsbn13()));
+        verify(bookStore).findByIsbn13(book.getIsbn13());
+    }
+
+    @Test
+    void shouldFindBookByIsbn13_ThrownNotFound() {
+        final var isbn13 = randomNumeric(13);
+
+        when(bookStore.findByIsbn13(isbn13)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.findBookByIsbn13(isbn13));
+        verify(bookStore).findByIsbn13(isbn13);
     }
 }
