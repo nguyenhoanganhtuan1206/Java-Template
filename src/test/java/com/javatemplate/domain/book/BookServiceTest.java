@@ -87,12 +87,13 @@ class BookServiceTest {
     void shouldCreateWithContributor_OK() {
         final var book = buildBook();
 
-        when(bookStore.save(book)).thenReturn(book);
+        when(bookStore.save(any(Book.class))).thenReturn(book);
         when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
 
-        assertEquals(book, bookService.create(book));
+        final var actual = bookService.create(book);
 
-        verify(bookStore).save(book);
+        assertEquals(book, actual);
+        verify(bookStore).save(any(Book.class));
     }
 
     @Test
@@ -196,20 +197,24 @@ class BookServiceTest {
     @Test
     void shouldUpdate_WithNameEmpty() {
         final var book = buildBook();
-        final var bookUpdate = buildBook();
-        bookUpdate.setId(book.getId());
-        bookUpdate.setName(null);
+        final var bookUpdate = buildBook()
+                .withId(book.getId())
+                .withName(null);
 
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
     }
 
     @Test
     void shouldUpdate_WithUserIdEmpty() {
         final var book = buildBook();
-        final var bookUpdate = buildBook();
-        bookUpdate.setId(book.getId());
-        bookUpdate.setUserId(null);
+        final var bookUpdate = buildBook()
+                .withId(book.getId())
+                .withUserId(null);
 
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
     }
 
@@ -220,6 +225,8 @@ class BookServiceTest {
         bookUpdate.setId(book.getId());
         bookUpdate.setAuthor(null);
 
+        when(bookStore.findById(book.getId()))
+                .thenReturn(Optional.of(book));
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
     }
 
