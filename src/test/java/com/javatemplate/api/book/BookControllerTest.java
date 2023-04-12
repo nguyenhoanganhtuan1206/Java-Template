@@ -12,7 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.UUID;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
@@ -134,6 +137,35 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.image").value(book.getImage()));
 
         verify(bookService).findById(book.getId());
+    }
+
+    @Test
+    @WithMockAdmin
+    void shouldUploadImage_OK() throws Exception {
+        final var book = buildBook();
+        final var bytes = "image".getBytes();
+        final var file = new MockMultipartFile("file", "image.png", "image/png", bytes);
+
+        when(bookService.uploadImage(any(UUID.class), any(byte[].class)))
+                .thenReturn(book);
+
+        post(BASE_URL + "/" + book.getId() + "/image", file)
+                .andExpect(status().isOk());
+
+        verify(bookService).uploadImage(book.getId(), bytes);
+    }
+
+    @Test
+    void shouldUploadImage_WithoutRoleThroughAccessDeniedException() throws Exception {
+        final var book = buildBook();
+        final var bytes = "image".getBytes();
+        final var file = new MockMultipartFile("file", "image.png", "image/png", bytes);
+
+        when(bookService.uploadImage(any(UUID.class), any(byte[].class)))
+                .thenReturn(book);
+
+        post(BASE_URL + "/" + book.getId() + "/image", file)
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
