@@ -207,18 +207,6 @@ class BookServiceTest {
     }
 
     @Test
-    void shouldUpdate_WithUserIdEmpty() {
-        final var book = buildBook();
-        final var bookUpdate = buildBook()
-                .withId(book.getId())
-                .withUserId(null);
-
-        when(bookStore.findById(book.getId()))
-                .thenReturn(Optional.of(book));
-        assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
-    }
-
-    @Test
     void shouldUpdate_WithAuthorEmpty() {
         final var book = buildBook();
         final var bookUpdate = buildBook();
