@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.javatemplate.domain.auth.UserDetailsMapper.toUserDetails;
 import static com.javatemplate.fakes.RoleFakes.buildRole;
@@ -79,8 +78,6 @@ class UserServiceTest {
         when(userStore.findByUsername(socialUser.getUsername())).thenReturn(Optional.empty());
         when(roleStore.findByName(roleName)).thenReturn(role);
         when(userStore.create(any(User.class))).thenReturn(user);
-
-        final var userDetails = userService.loginWithFacebook(facebookToken);
 
         final var actual = userStore.create(user);
         final var expected = new JwtUserDetails(
@@ -312,7 +309,7 @@ class UserServiceTest {
 
     @Test
     void shouldDeleteById_NotFound() {
-        final var uuid = UUID.randomUUID();
+        final var uuid = randomUUID();
 
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
 

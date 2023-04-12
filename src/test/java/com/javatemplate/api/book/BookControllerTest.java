@@ -58,6 +58,12 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
                 .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
                 .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
+                .andExpect(jsonPath("$.subtitle").value(book.getSubtitle()))
+                .andExpect(jsonPath("$.publisher").value(book.getPublisher()))
+                .andExpect(jsonPath("$.isbn13").value(book.getIsbn13()))
+                .andExpect(jsonPath("$.price").value(book.getPrice()))
+                .andExpect(jsonPath("$.year").value(book.getYear()))
+                .andExpect(jsonPath("$.rating").value(book.getRating()))
                 .andExpect(jsonPath("$.image").value(book.getImage()));
 
         verify(bookService).create(argThat(b -> StringUtils.equals(b.getName(), book.getName())));
@@ -79,6 +85,12 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
                 .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
                 .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
+                .andExpect(jsonPath("$.subtitle").value(book.getSubtitle()))
+                .andExpect(jsonPath("$.publisher").value(book.getPublisher()))
+                .andExpect(jsonPath("$.isbn13").value(book.getIsbn13()))
+                .andExpect(jsonPath("$.price").value(book.getPrice()))
+                .andExpect(jsonPath("$.year").value(book.getYear()))
+                .andExpect(jsonPath("$.rating").value(book.getRating()))
                 .andExpect(jsonPath("$.image").value(book.getImage()));
 
         verify(bookService).create(argThat(b -> StringUtils.equals(b.getName(), book.getName())));
@@ -112,6 +124,12 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$[0].createdAt").value(books.get(0).getCreatedAt().toString()))
                 .andExpect(jsonPath("$[0].updatedAt").value(books.get(0).getUpdatedAt().toString()))
                 .andExpect(jsonPath("$[0].userId").value(books.get(0).getUserId().toString()))
+                .andExpect(jsonPath("$[0].subtitle").value(books.get(0).getSubtitle()))
+                .andExpect(jsonPath("$[0].publisher").value(books.get(0).getPublisher()))
+                .andExpect(jsonPath("$[0].isbn13").value(books.get(0).getIsbn13()))
+                .andExpect(jsonPath("$[0].price").value(books.get(0).getPrice()))
+                .andExpect(jsonPath("$[0].year").value(books.get(0).getYear()))
+                .andExpect(jsonPath("$[0].rating").value(books.get(0).getRating()))
                 .andExpect(jsonPath("$[0].image").value(books.get(0).getImage()));
 
         verify(bookService).findAll();
@@ -133,8 +151,14 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.description").value(book.getDescription()))
                 .andExpect(jsonPath("$.createdAt").value(book.getCreatedAt().toString()))
                 .andExpect(jsonPath("$.updatedAt").value(book.getUpdatedAt().toString()))
-                .andExpect(jsonPath("$.userId").value(book.getUserId().toString()))
-                .andExpect(jsonPath("$.image").value(book.getImage()));
+                .andExpect(jsonPath("$.image").value(book.getImage()))
+                .andExpect(jsonPath("$.subtitle").value(book.getSubtitle()))
+                .andExpect(jsonPath("$.publisher").value(book.getPublisher()))
+                .andExpect(jsonPath("$.isbn13").value(book.getIsbn13()))
+                .andExpect(jsonPath("$.price").value(book.getPrice()))
+                .andExpect(jsonPath("$.year").value(book.getYear()))
+                .andExpect(jsonPath("$.rating").value(book.getRating()))
+                .andExpect(jsonPath("$.userId").value(book.getUserId().toString()));
 
         verify(bookService).findById(book.getId());
     }
@@ -188,6 +212,12 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(bookUpdate.getCreatedAt().toString()))
                 .andExpect(jsonPath("$.updatedAt").value(bookUpdate.getUpdatedAt().toString()))
                 .andExpect(jsonPath("$.userId").value(bookUpdate.getUserId().toString()))
+                .andExpect(jsonPath("$.subtitle").value(bookUpdate.getSubtitle()))
+                .andExpect(jsonPath("$.publisher").value(bookUpdate.getPublisher()))
+                .andExpect(jsonPath("$.isbn13").value(bookUpdate.getIsbn13()))
+                .andExpect(jsonPath("$.price").value(bookUpdate.getPrice()))
+                .andExpect(jsonPath("$.year").value(bookUpdate.getYear()))
+                .andExpect(jsonPath("$.rating").value(bookUpdate.getRating()))
                 .andExpect(jsonPath("$.image").value(bookUpdate.getImage()));
     }
 
@@ -210,6 +240,13 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(bookUpdate.getCreatedAt().toString()))
                 .andExpect(jsonPath("$.updatedAt").value(bookUpdate.getUpdatedAt().toString()))
                 .andExpect(jsonPath("$.userId").value(bookUpdate.getUserId().toString()))
+                .andExpect(jsonPath("$.image").value(bookUpdate.getImage()))
+                .andExpect(jsonPath("$.subtitle").value(bookUpdate.getSubtitle()))
+                .andExpect(jsonPath("$.publisher").value(bookUpdate.getPublisher()))
+                .andExpect(jsonPath("$.isbn13").value(bookUpdate.getIsbn13()))
+                .andExpect(jsonPath("$.price").value(bookUpdate.getPrice()))
+                .andExpect(jsonPath("$.year").value(bookUpdate.getYear()))
+                .andExpect(jsonPath("$.rating").value(bookUpdate.getRating()))
                 .andExpect(jsonPath("$.image").value(bookUpdate.getImage()));
     }
 
@@ -279,6 +316,12 @@ class BookControllerTest extends AbstractControllerTest {
                 .andExpect(jsonPath("$[0].createdAt").value(actual.get(0).getCreatedAt().toString()))
                 .andExpect(jsonPath("$[0].updatedAt").value(actual.get(0).getUpdatedAt().toString()))
                 .andExpect(jsonPath("$[0].userId").value(actual.get(0).getUserId().toString()))
+                .andExpect(jsonPath("$[0].subtitle").value(actual.get(0).getSubtitle()))
+                .andExpect(jsonPath("$[0].publisher").value(actual.get(0).getPublisher()))
+                .andExpect(jsonPath("$[0].isbn13").value(actual.get(0).getIsbn13()))
+                .andExpect(jsonPath("$[0].price").value(actual.get(0).getPrice()))
+                .andExpect(jsonPath("$[0].year").value(actual.get(0).getYear()))
+                .andExpect(jsonPath("$[0].rating").value(actual.get(0).getRating()))
                 .andExpect(jsonPath("$[0].image").value(actual.get(0).getImage()));
     }
 }
