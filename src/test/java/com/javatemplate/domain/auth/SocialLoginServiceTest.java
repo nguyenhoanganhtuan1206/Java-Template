@@ -46,8 +46,9 @@ class SocialLoginServiceTest {
     void shouldLoginGoogle_OK() {
         final SocialTokenPayload tokenPayload = buildTokenSocial();
         final var accessToken = randomAlphabetic(3, 10);
-        final var user = buildUser();
-        user.setUsername(tokenPayload.getUsername());
+        final var role = buildRole();
+        final var user = buildUser()
+                .withUsername(tokenPayload.getUsername());
 
         final var userDetails = toUserDetails(user, "CONTRIBUTOR");
 
@@ -55,6 +56,8 @@ class SocialLoginServiceTest {
                 .thenReturn(tokenPayload);
         when(userStore.findByUsername(user.getUsername()))
                 .thenReturn(Optional.of(user));
+        when(roleStore.findByName(any(String.class)))
+                .thenReturn(role);
 
         final var actual = socialLoginService.loginWithGoogle(accessToken);
 
@@ -115,6 +118,8 @@ class SocialLoginServiceTest {
                 .thenReturn(tokenPayload);
         when(userStore.findByUsername(user.getUsername()))
                 .thenReturn(Optional.of(user));
+        when(roleStore.findByName(any(String.class)))
+                .thenReturn(role);
 
         final var actual = socialLoginService.loginWithFacebook(accessToken);
 

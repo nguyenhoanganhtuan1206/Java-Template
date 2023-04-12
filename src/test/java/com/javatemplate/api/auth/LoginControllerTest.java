@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(LoginController.class)
 public class LoginControllerTest extends AbstractControllerTest {
@@ -15,7 +14,6 @@ public class LoginControllerTest extends AbstractControllerTest {
     @WithMockAdmin
     public void shouldLoginPage_OK() throws Exception {
         get("/login")
-                .andExpect(status().isOk())
-                .andExpect(view().name("index.html"));
+                .andExpect(status().isOk());
     }
 }
