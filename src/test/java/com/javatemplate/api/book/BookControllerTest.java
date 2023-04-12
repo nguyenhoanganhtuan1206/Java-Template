@@ -15,8 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.UUID;
-
 import static com.javatemplate.fakes.BookFakes.buildBook;
 import static com.javatemplate.fakes.BookFakes.buildBooks;
 import static org.mockito.ArgumentMatchers.*;
@@ -170,9 +168,6 @@ class BookControllerTest extends AbstractControllerTest {
         final var bytes = "image".getBytes();
         final var file = new MockMultipartFile("file", "image.png", "image/png", bytes);
 
-        when(bookService.uploadImage(any(UUID.class), any(byte[].class)))
-                .thenReturn(book);
-
         post(BASE_URL + "/" + book.getId() + "/image", file)
                 .andExpect(status().isOk());
 
@@ -184,9 +179,6 @@ class BookControllerTest extends AbstractControllerTest {
         final var book = buildBook();
         final var bytes = "image".getBytes();
         final var file = new MockMultipartFile("file", "image.png", "image/png", bytes);
-
-        when(bookService.uploadImage(any(UUID.class), any(byte[].class)))
-                .thenReturn(book);
 
         post(BASE_URL + "/" + book.getId() + "/image", file)
                 .andExpect(status().isUnauthorized());

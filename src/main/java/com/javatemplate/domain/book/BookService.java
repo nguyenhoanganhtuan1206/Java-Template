@@ -69,14 +69,14 @@ public class BookService {
         bookStore.deleteById(book.getId());
     }
 
-    public Book uploadImage(final UUID id, final byte[] image) throws IOException {
+    public void uploadImage(final UUID id, final byte[] image) throws IOException {
         final Book book = findById(id);
         validateUpdatePermission(book);
 
         book.setImage(cloudinaryService.upload(image));
         book.setUpdatedAt(Instant.now());
 
-        return bookStore.save(book);
+        bookStore.save(book);
     }
 
     private void validateDeletePermission(final Book book) {
