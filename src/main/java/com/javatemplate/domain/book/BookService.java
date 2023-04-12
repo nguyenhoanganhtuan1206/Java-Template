@@ -31,7 +31,7 @@ public class BookService {
     }
 
     public Book findById(final UUID bookId) {
-        return bookStore.findById(bookId).orElseThrow(supplyBookNotFound(bookId));
+        return bookStore.findById(bookId).orElseThrow(supplyBookNotFound("id", bookId.toString()));
     }
 
     public List<Book> find(final String input) {
