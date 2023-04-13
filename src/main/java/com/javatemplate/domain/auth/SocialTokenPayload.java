@@ -13,6 +13,8 @@ public class SocialTokenPayload {
 
     private String name;
 
+    private String id;
+
     private String firstName;
 
     private String lastName;

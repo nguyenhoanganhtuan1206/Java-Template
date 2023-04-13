@@ -39,6 +39,7 @@ class UserServiceTest {
     @Spy
     private PasswordEncoder passwordEncoder;
 
+
     @Test
     void shouldFindAll_OK() {
         final var expected = buildUsers();
