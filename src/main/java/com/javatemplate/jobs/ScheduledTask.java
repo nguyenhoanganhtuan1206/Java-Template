@@ -1,4 +1,4 @@
-package com.javatemplate.api.schedule;
+package com.javatemplate.jobs;
 
 import com.javatemplate.domain.book.ItBookService;
 import lombok.RequiredArgsConstructor;
