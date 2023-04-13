@@ -69,7 +69,7 @@ public class JwtWebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/v1/books/**")
                 .permitAll()
-                .antMatchers("/social")
+                .antMatchers(HttpMethod.GET, "/login")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
