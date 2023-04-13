@@ -1,4 +1,4 @@
-package com.javatemplate.domain.auth;
+package com.javatemplate.domain.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,13 +7,11 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class SocialTokenPayload {
-
-    private String username;
-
-    private String name;
+public class SocialUser {
 
     private String firstName;
 
     private String lastName;
+
+    private String username;
 }

@@ -2,7 +2,7 @@ package com.javatemplate.api.auth;
 
 import com.javatemplate.domain.auth.JwtTokenService;
 import com.javatemplate.domain.auth.JwtUserDetails;
-import com.javatemplate.domain.auth.SocialLoginService;
+import com.javatemplate.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -23,7 +23,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
 
-    private final SocialLoginService socialLoginService;
+    private final UserService userService;
 
     @PostMapping
     public JwtTokenResponseDTO login(final @RequestBody LoginDTO loginDTO) {
@@ -34,14 +34,7 @@ public class AuthController {
 
     @PostMapping("/facebook")
     public JwtTokenResponseDTO loginWithFacebook(final @RequestBody TokenRequestDTO tokenRequestDTO) {
-        final UserDetails userDetails = socialLoginService.loginWithFacebook(tokenRequestDTO.getAccessToken());
-
-        return generateJwtToken((JwtUserDetails) userDetails);
-    }
-
-    @PostMapping("/google")
-    public JwtTokenResponseDTO loginWithGoogle(final @RequestBody TokenRequestDTO tokenRequestDTO) {
-        final UserDetails userDetails = socialLoginService.loginWithGoogle(tokenRequestDTO.getAccessToken());
+        final UserDetails userDetails = userService.loginWithFacebook(tokenRequestDTO.getAccessToken());
 
         return generateJwtToken((JwtUserDetails) userDetails);
     }

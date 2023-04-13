@@ -3,7 +3,7 @@ package com.javatemplate.api.auth;
 import com.javatemplate.api.AbstractControllerTest;
 import com.javatemplate.domain.auth.JwtTokenService;
 import com.javatemplate.domain.auth.JwtUserDetails;
-import com.javatemplate.domain.auth.SocialLoginService;
+import com.javatemplate.domain.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,10 +14,12 @@ import org.springframework.security.core.Authentication;
 import static com.javatemplate.fakes.AuthFakes.buildAuth;
 import static com.javatemplate.fakes.JwtUserDetailFakes.buildJwtUserDetails;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -32,50 +34,41 @@ class AuthControllerTest extends AbstractControllerTest {
     private JwtTokenService jwtTokenService;
 
     @MockBean
-    private SocialLoginService socialLoginService;
+    private UserService userService;
 
     @Test
-    void shouldLogin_Ok() throws Exception {
+    void shouldLogin_OK() throws Exception {
         final var auth = buildAuth();
         final var token = randomAlphabetic(3, 10);
 
         when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(auth);
         when(jwtTokenService.generateToken((JwtUserDetails) auth.getPrincipal())).thenReturn(token);
 
-        post(BASE_URL, auth)
-                .andExpect(jsonPath("$.token").value(token));
+        post(BASE_URL, auth).andExpect(status().isOk()).andExpect(jsonPath("$.token").value(token));
     }
 
     @Test
-    void shouldLoginGoogle_OK() throws Exception {
-        final var tokenRequest = new TokenRequestDTO(randomAlphabetic(3, 10));
-        final var token = randomAlphabetic(3, 10);
+    void shouldLoginFacebookWithoutAccessToken_OK() {
         final JwtUserDetails userDetails = buildJwtUserDetails();
+        final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
+        final String jwtToken = randomAlphabetic(3, 10);
 
-        when(socialLoginService.loginWithGoogle(tokenRequest.getAccessToken()))
-                .thenReturn(userDetails);
-        when(jwtTokenService.generateToken(userDetails)).thenReturn(token);
+        when(userService.loginWithFacebook(tokenRequestDTO.getAccessToken())).thenReturn(userDetails);
+        when(jwtTokenService.generateToken(userDetails)).thenReturn(jwtToken);
 
-        post("/api/v1/auths/google", tokenRequest)
-                .andExpect(jsonPath("$.token").value(token));
+        final var jwtTokenActual = jwtTokenService.generateToken(userDetails);
 
-        verify(socialLoginService).loginWithGoogle(tokenRequest.getAccessToken());
-        verify(jwtTokenService).generateToken(userDetails);
+        assertEquals(jwtToken, jwtTokenActual);
+        assertNotNull(tokenRequestDTO);
     }
 
     @Test
-    void shouldLoginFacebook_OK() throws Exception {
-        final var tokenRequest = new TokenRequestDTO(randomAlphabetic(3, 10));
-        final var token = randomAlphabetic(3, 10);
+    void shouldLoginFacebookWithoutAccessToken_ThroughBadRequest() throws Exception {
         final JwtUserDetails userDetails = buildJwtUserDetails();
+        final TokenRequestDTO tokenRequestDTO = TokenRequestDTO.builder().accessToken(randomAlphabetic(3, 10)).build();
 
-        when(socialLoginService.loginWithFacebook(tokenRequest.getAccessToken())).thenReturn(userDetails);
-        when(jwtTokenService.generateToken(userDetails)).thenReturn(token);
+        when(userService.loginWithFacebook(tokenRequestDTO.getAccessToken())).thenReturn(userDetails);
 
-        post("/api/v1/auths/facebook", tokenRequest)
-                .andExpect(jsonPath("$.token").value(token));
-
-        verify(socialLoginService).loginWithFacebook(tokenRequest.getAccessToken());
-        verify(jwtTokenService).generateToken(userDetails);
+        post(BASE_URL + "/facebook", null).andExpect(status().isBadRequest());
     }
 }

@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,12 +41,6 @@ public class BookController {
     @PostMapping
     public BookResponseDTO create(final @RequestBody BookRequestDTO bookDTO) {
         return toBookResponseDTO(bookService.create(toBookRequestDTO(bookDTO)));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")
-    @PostMapping("{id}/image")
-    public void upload(final @PathVariable UUID id, @RequestParam("file") final MultipartFile file) throws IOException {
-        bookService.uploadImage(id, file.getBytes());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CONTRIBUTOR')")

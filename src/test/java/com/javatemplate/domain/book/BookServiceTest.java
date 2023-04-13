@@ -11,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.time.Instant;
 import java.util.Optional;
 
 import static com.javatemplate.fakes.BookFakes.buildBook;
@@ -22,10 +20,12 @@ import static com.javatemplate.fakes.UserAuthenticationTokenFakes.buildContribut
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang3.RandomUtils.nextBytes;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 class BookServiceTest {
@@ -35,9 +35,6 @@ class BookServiceTest {
 
     @Mock
     private AuthsProvider authsProvider;
-
-    @Mock
-    private CloudinaryService cloudinaryService;
 
     @InjectMocks
     private BookService bookService;
@@ -110,6 +107,17 @@ class BookServiceTest {
         book.setDescription(null);
 
         assertThrows(BadRequestException.class, () -> bookService.create(book));
+    }
+
+    @Test
+    void shouldCreateBookByIsbn13_ThrownExisted() {
+        final var book = buildBook();
+
+        when(bookStore.findByIsbn13(anyString())).thenReturn(Optional.of(book));
+
+        assertThrows(BadRequestException.class, () -> bookService.create(book));
+
+        verify(bookStore).findByIsbn13(book.getIsbn13());
     }
 
     @Test
@@ -197,12 +205,10 @@ class BookServiceTest {
     @Test
     void shouldUpdate_WithNameEmpty() {
         final var book = buildBook();
-        final var bookUpdate = buildBook()
-                .withId(book.getId())
-                .withName(null);
+        final var bookUpdate = buildBook();
+        bookUpdate.setId(book.getId());
+        bookUpdate.setName(null);
 
-        when(bookStore.findById(book.getId()))
-                .thenReturn(Optional.of(book));
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
     }
 
@@ -213,80 +219,7 @@ class BookServiceTest {
         bookUpdate.setId(book.getId());
         bookUpdate.setAuthor(null);
 
-        when(bookStore.findById(book.getId()))
-                .thenReturn(Optional.of(book));
         assertThrows(BadRequestException.class, () -> bookService.update(book.getId(), bookUpdate));
-    }
-
-    @Test
-    void shouldUploadImage_Contributor_OK() throws IOException {
-        final var book = buildBook();
-        final var bookUpdate = buildBook()
-                .withId(book.getId());
-        final var bytes = nextBytes(20);
-
-        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
-        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
-
-        book.setUserId(authsProvider.getCurrentUserId());
-        bookUpdate.setUserId(authsProvider.getCurrentUserId());
-
-        bookUpdate.setImage(cloudinaryService.upload(bytes));
-        bookUpdate.setCreatedAt(Instant.now());
-        bookService.uploadImage(bookUpdate.getId(), bytes);
-
-        verify(bookStore).findById(book.getId());
-    }
-
-    @Test
-    void shouldUploadImage_Admin_OK() throws IOException {
-        final var book = buildBook();
-        final var bookUpdate = buildBook()
-                .withId(book.getId())
-                .withUserId(book.getUserId());
-        final var bytes = nextBytes(20);
-
-        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildAdmin().getRole());
-
-        bookUpdate.setImage(cloudinaryService.upload(bytes));
-        bookUpdate.setCreatedAt(Instant.now());
-        bookUpdate.setUserId(authsProvider.getCurrentUserId());
-        bookService.uploadImage(bookUpdate.getId(), bytes);
-
-        verify(bookStore).findById(book.getId());
-        verify(authsProvider).getCurrentUserRole();
-    }
-
-    @Test
-    void shouldUploadImage_Contributor_ThrownAccessDeniedException() {
-        final var book = buildBook();
-        final var bytes = nextBytes(20);
-
-        when(bookStore.findById(book.getId())).thenReturn(Optional.of(book));
-        when(authsProvider.getCurrentUserRole()).thenReturn(buildContributor().getRole());
-        when(authsProvider.getCurrentUserId()).thenReturn(buildContributor().getUserId());
-
-        assertThrows(AccessDeniedException.class, () -> bookService.uploadImage(book.getId(), bytes));
-
-        verify(bookStore).findById(book.getId());
-        verify(authsProvider).getCurrentUserRole();
-        verify(authsProvider).getCurrentUserId();
-        verify(bookStore, never()).save(book);
-    }
-
-    @Test
-    void shouldUploadImage_ThrownNotFound() {
-        final var book = buildBook();
-        final var bytes = nextBytes(20);
-
-        when(bookStore.findById(book.getId())).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> bookService.uploadImage(book.getId(), bytes));
-
-        verify(bookStore).findById(book.getId());
-        verify(bookStore, never()).save(book);
     }
 
     @Test
@@ -299,6 +232,26 @@ class BookServiceTest {
         assertThrows(NotFoundException.class, () -> bookService.update(bookId, bookUpdate));
 
         verify(bookStore).findById(bookId);
+    }
+
+    @Test
+    void shouldFindBookByIsbn13_OK() {
+        final var book = buildBook();
+
+        when(bookStore.findByIsbn13(book.getIsbn13())).thenReturn(Optional.of(book));
+
+        assertEquals(book, bookService.findByIsbn13(book.getIsbn13()));
+        verify(bookStore).findByIsbn13(book.getIsbn13());
+    }
+
+    @Test
+    void shouldFindBookByIsbn13_ThrownNotFound() {
+        final var isbn13 = randomNumeric(13);
+
+        when(bookStore.findByIsbn13(isbn13)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bookService.findByIsbn13(isbn13));
+        verify(bookStore).findByIsbn13(isbn13);
     }
 
     @Test
@@ -351,7 +304,7 @@ class BookServiceTest {
         final var book = buildBook();
         final var expected = buildBooks();
 
-        when(bookStore.find(any(String.class))).thenReturn(expected);
+        when(bookStore.find(anyString())).thenReturn(expected);
 
         final var actual = bookService.find(book.getName());
 
@@ -371,25 +324,5 @@ class BookServiceTest {
         assertTrue(actual.isEmpty());
 
         verify(bookStore).find(input);
-    }
-
-    @Test
-    void shouldFindBookByIsbn13_OK() {
-        final var book = buildBook();
-
-        when(bookStore.findByIsbn13(book.getIsbn13())).thenReturn(Optional.of(book));
-
-        assertEquals(book, bookService.findBookByIsbn13(book.getIsbn13()));
-        verify(bookStore).findByIsbn13(book.getIsbn13());
-    }
-
-    @Test
-    void shouldFindBookByIsbn13_ThrownNotFound() {
-        final var isbn13 = randomNumeric(13);
-
-        when(bookStore.findByIsbn13(isbn13)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> bookService.findBookByIsbn13(isbn13));
-        verify(bookStore).findByIsbn13(isbn13);
     }
 }
