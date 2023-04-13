@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.javatemplate.domain.auth.UserDetailsMapper.toUserDetails;
 import static com.javatemplate.fakes.RoleFakes.buildRole;
@@ -311,7 +312,7 @@ class UserServiceTest {
 
     @Test
     void shouldDeleteById_NotFound() {
-        final var uuid = randomUUID();
+        final var uuid = UUID.randomUUID();
 
         when(userStore.findById(uuid)).thenReturn(Optional.empty());
 

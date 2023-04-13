@@ -5,22 +5,21 @@ import lombok.experimental.UtilityClass;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
-
-import static java.util.UUID.randomUUID;
+import java.util.UUID;
 
 @UtilityClass
 public class UserAuthenticationTokenFakes {
 
     public static UserAuthenticationToken buildAdmin() {
         return new UserAuthenticationToken(
-                randomUUID(),
+                UUID.randomUUID(),
                 "admin",
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 
     public static UserAuthenticationToken buildContributor() {
         return new UserAuthenticationToken(
-                randomUUID(),
+                UUID.randomUUID(),
                 "contributor",
                 List.of(new SimpleGrantedAuthority("ROLE_CONTRIBUTOR")));
     }

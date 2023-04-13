@@ -6,8 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import java.util.Collections;
+import java.util.UUID;
 
-import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 @UtilityClass
@@ -15,7 +15,7 @@ public class AuthFakes {
 
     public static Authentication buildAuth() {
         JwtUserDetails userDetails = new JwtUserDetails(
-                randomUUID(),
+                UUID.randomUUID(),
                 randomAlphabetic(3, 10),
                 randomAlphabetic(3, 10),
                 Collections.emptyList()

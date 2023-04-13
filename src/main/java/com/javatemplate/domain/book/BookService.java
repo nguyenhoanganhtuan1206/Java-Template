@@ -10,10 +10,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import static com.javatemplate.domain.book.BookError.supplyBookAlreadyExisted;
 import static com.javatemplate.domain.book.BookError.supplyBookNotFound;
-import static com.javatemplate.domain.book.BookValidation.validateBook;
 import static com.javatemplate.error.CommonError.supplyAccessDeniedError;
+import static com.javatemplate.error.CommonError.supplyValidationError;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +28,7 @@ public class BookService {
     }
 
     public Book findById(final UUID bookId) {
-        return bookStore.findById(bookId).orElseThrow(supplyBookNotFound("id", String.valueOf(bookId)));
-    }
-
-    public Book findByIsbn13(final String isbn13) {
-        return bookStore.findByIsbn13(isbn13)
-                .orElseThrow(supplyBookNotFound("Isbn13", isbn13));
+        return bookStore.findById(bookId).orElseThrow(supplyBookNotFound(bookId));
     }
 
     public List<Book> find(final String input) {
@@ -41,30 +36,19 @@ public class BookService {
     }
 
     public Book create(final Book book) {
-        validateBook(book);
-        verifyIfIsbn13Available(book.getIsbn13());
+        validateBookCreateRequest(book);
 
-        final double bookRating = book.getRating() == null ? 0.0 : book.getRating();
+        book.setUserId(authsProvider.getCurrentUserId());
+        book.setCreatedAt(Instant.now());
 
-        final Book bookToCreate = book
-                .withUserId(authsProvider.getCurrentUserId())
-                .withIsbn13(book.getIsbn13())
-                .withCreatedAt(Instant.now())
-                .withRating(bookRating);
-
-        return bookStore.save(bookToCreate);
+        return bookStore.save(book);
     }
 
     public Book update(final UUID bookId, final Book bookUpdate) {
-        validateBook(bookUpdate);
+        validateBookUpdateRequest(bookUpdate);
 
         final Book book = findById(bookId);
         validateDeletePermission(book);
-
-        if (!StringUtils.equals(book.getIsbn13(), bookUpdate.getIsbn13())) {
-            verifyIfIsbn13Available(bookUpdate.getIsbn13());
-            book.setIsbn13(bookUpdate.getIsbn13());
-        }
 
         book.setName(bookUpdate.getName());
         book.setAuthor(bookUpdate.getAuthor());
@@ -82,12 +66,6 @@ public class BookService {
         bookStore.deleteById(book.getId());
     }
 
-    private void verifyIfIsbn13Available(final String isbn13) {
-        bookStore.findByIsbn13(isbn13)
-                .ifPresent(b -> {
-                    throw supplyBookAlreadyExisted(isbn13).get();
-                });
-    }
 
     private void validateDeletePermission(final Book book) {
         if (StringUtils.equals(authsProvider.getCurrentUserRole(), "ROLE_ADMIN")) {
@@ -106,6 +84,34 @@ public class BookService {
 
         if (!StringUtils.equals(authsProvider.getCurrentUserId().toString(), book.getUserId().toString())) {
             throw supplyAccessDeniedError().get();
+        }
+    }
+
+    private void validateBookCreateRequest(final Book book) {
+        if (isBlank(book.getAuthor())) {
+            throw supplyValidationError("Author cannot be empty").get();
+        }
+
+        if (isBlank(book.getDescription())) {
+            throw supplyValidationError("Description cannot be empty").get();
+        }
+
+        if (isBlank(book.getName())) {
+            throw supplyValidationError("Book name cannot be empty").get();
+        }
+    }
+
+    private void validateBookUpdateRequest(final Book book) {
+        if (isBlank(book.getAuthor())) {
+            throw supplyValidationError("Author cannot be empty").get();
+        }
+
+        if (book.getUserId() == null) {
+            throw supplyValidationError("User cannot be empty").get();
+        }
+
+        if (isBlank(book.getName())) {
+            throw supplyValidationError("Book name cannot be empty").get();
         }
     }
 }
